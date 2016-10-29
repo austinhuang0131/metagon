@@ -1,5 +1,7 @@
 # Metagon on Telegram
-A somehow-official fork of Metagon, the Discord bot.
+[![Add me!](https://img.shields.io/badge/telegram-%40metagon__bot-0088cc.svg)](http://telegram.me/metagon_bot)
+
+A somehow-official fork of [Metagon, the Discord bot](http://metagon.tk).
 
 ## License
 ```diff
