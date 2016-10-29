@@ -1,0 +1,20 @@
+{
+  "name": "metagon-on-telegram",
+  "version": "1.0.0",
+  "description": "Metagon on Telegram",
+  "private": false,
+  "main": "start.js",
+  "scripts": {
+    "start": "node start.js"
+  },
+  "author": "Austin Huang <austinhuang0131@icloud.com>",
+  "license": "SEE LICENSE IN readme.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/austinhuang0131/metagon-telegram.git"
+  },
+  "dependencies": {
+    "request": "^2.76.0",
+    "telegram-api": "^0.7.6"
+  }
+}
