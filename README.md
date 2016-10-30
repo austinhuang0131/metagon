@@ -1,6 +1,6 @@
 # Metagon on Telegram
 [![Add me!](https://img.shields.io/badge/telegram-%40metagon__bot-0088cc.svg)](http://telegram.me/metagon_bot)
-A somehow-official fork of [Metagon, the Discord bot](http://metagon.tk).
+An official fork of [Metagon, the Discord bot](http://metagon.tk).
 
 ## License
 ```diff
@@ -14,13 +14,9 @@ A somehow-official fork of [Metagon, the Discord bot](http://metagon.tk).
 ## Documentation
 [Here](https://github.com/austinhuang0131/metagon-telegram/wiki).
 
-## Somehow-Official???
-I am an official co-developer of Metagon on Discord, but however the owner did not actually approve this. (He didn't disagree either.)
-
 ## How to run it?
 1. Node.js v7.0.0 or higher
 2. Clone it, then terminal: `npm install`
-3. Go to start.js
-4. Put bot token on Line 8
-5. (Optional) Put your ID on Line 10. Find out your ID by asking [@userinfobot](https://telegram.me/userinfobot) `/start`.
-6. Terminal: `npm start`
+3. Go to setup.json and input necessary values.
+4. (Optional) Put your user ID on Myid in the json file. Find out your ID by asking [@userinfobot](https://telegram.me/userinfobot) `/start`.
+5. Terminal: `npm start`
