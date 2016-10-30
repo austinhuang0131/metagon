@@ -1,15 +1,15 @@
 "use strict";
-
 var Bot = require('telegram-api').default;
 var Message = require('telegram-api/types/Message');
 var File = require('telegram-api/types/File'); 
-var Keyboard = require('telegram-api/types/Keyboard'); 
-var bot = new Bot({
-  token: 'Put your token here'
-});
-var myid = 265228448; // Replace it with your token
-var request = require('request');
+var Keyboard = require('telegram-api/types/Keyboard');
 var fs = require('fs'); // Config
+var setup = JSON.parse(fs.readFileSync("./setup.json", "utf8"));
+var config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+var bot = new Bot({
+  token: setup.bot_token
+});
+var request = require('request');
 var yoda_said = [
   '"Fear is the path to the dark side. Fear leads to anger, anger leads to hate, hate leads to suffering." -- Yoda \n',
   '"Confer on you, the level of Jedi Knight, the Council does. But, agree with your taking this boy as your Padawan Learner, I do not." -- Yoda to Obi-Wan Kenobi\n',
@@ -104,19 +104,28 @@ var yoda_said = [
   '"Yoda, you seek?" -- Yoda\n', '"My ally is the Force" -- Yoda\n'
 ]; // Yoda said, copied from a npm module
 const menu = new Keyboard()
-                .keys([['Images'], ['Utility'], ['Fun'], ['Settings'], ['About/Support'], ['Feedback']])
+                .keys([['Images','Utility'], ['Fun','Settings'], ['About/Support','Feedback']])
                 .force(true)
 				.oneTime(true)
                 .resize(true)
                 .selective(true); // Main Menu
+const BMM = new Keyboard().keys([['Back to Main Menu']]).oneTime(true).resize(true).selective(true);
+var gyazo = require('gyazo-upload'); // Gyazo
+var gag = require('node-9gag');
+var gagbrds = ['Funny', 'WTF', 'GIF', 'Gaming', 'Anime-Manga', 'Movie-TV', 'Cute', 'Girl', 'Awesome', 'Cosplay', 'Sport', 'Food', 'Ask9gag', 'Timely'];
+var gagsubs = ['Hot', 'Fresh'];
 
 bot.start();
 console.log("Metagon for Telegram, Beta 0.0.1 by austinhuang.");
 
 bot.command('start', function(message) {
+	if (message.chat.id !== message.from.id) {
+		var rep = new Message().text('Keyboard mode is NOT available in group chats.').to(message.chat.id);
+		bot.send(rep);
+		return;
+	}
 	var rep = new Message().text('What do you want to do now?').to(message.chat.id).keyboard(menu);
 	bot.send(rep);
-	console.log(message);
 });
 bot.command('cat', function(message) {
 	request('http://random.cat/meow', function(error, response, body) {
@@ -263,60 +272,229 @@ bot.command('yoda', function(message) {
 	var rep = new Message().text(yoda_said[Math.floor(Math.random() * yoda_said.length)]).to(message.chat.id);
 	bot.send(rep);
 });
+bot.command('gyazo', function(message) {
+	var q = new Message().text('You can use the following methods to upload an image to gyazo...\n* Send me the direct URL to the image\n* Upload it here (PLEASE COMPRESS IT, or it\'ll upload as a document and it just won\'t work)\nType anything else to exit this menu.').to(message.chat.id);
+	bot.send(q).then(answer => {
+		if (answer.photo !== undefined) {
+			request("https://api.telegram.org/bot"+setup.bot_token+"/getFile?file_id="+answer.photo[answer.photo.length -1].file_id, function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					body = JSON.parse(body);
+					gyazo("https://api.telegram.org/file/bot"+setup.bot_token+"/"+body.result.file_path).then(function (urls) {
+						var rep = new Message().text(urls[0]).to(message.chat.id);
+						bot.send(rep);
+					});
+				}
+			});
+		}
+		else if (answer.document !== undefined) {
+			var rep = new Message().text('I TOLD you to COMPRESS it but you didn\'t!').to(message.chat.id);
+			bot.send(rep);
+		}
+		else if (answer.text.startsWith("http")) {
+			gyazo(answer.text).then(function (urls) {
+				var rep = new Message().text(urls[0]).to(message.chat.id);
+				bot.send(rep);
+			});
+		}
+		else {
+			var rep = new Message().text("Exited.").to(message.chat.id);
+			bot.send(rep);
+		}
+	});
+});
 
 const image = new Keyboard()
-				.keys([['Cat'], ['Penguin'], ['Snake'], ['Anime'], ['Back to Main Menu']])
-				.force(true)
-				.oneTime(true)
-				.resize(true)
-				.selective(true);
+					.keys([['Cat', 'Penguin'], ['Snake', 'Anime'], ['Back to Main Menu']])
+					.force(true)
+					.oneTime(true)
+					.resize(true)
+					.selective(true);
 bot.get(/Images/i, function(message) {
-	if (message !== "Images") {return;}
-	var answer = new Message().text('You\'ve chosen the Image category. Choose one of the following options, or click "Back to Main Menu". (You may need to scroll down)').to(message.chat.id).keyboard(image);
+	if (message.text !== "Images") {return;}
+	var answer = new Message().text('You\'ve chosen the Image category. Choose one of the following options, or click "Back to Main Menu".').to(message.chat.id).keyboard(image);
 	bot.send(answer);
 });
-bot.get(/Cat/i, function(message) {
-	if (message !== "Cat") {return;}
-	request('http://random.cat/meow', function(error, response, body) {
-		if (!error && response.statusCode === 200) {
-			body = JSON.parse(body);
-			var rep = new File().file(body.file).caption('').to(message.chat.id).keyboard(image);
-			bot.send(rep);
-		} else {
-			var err = new Message().text('An error occured. Please check whether http://random.cat is online or not, and retry.').to(message.chat.id).keyboard(image);
-			bot.send(err);
-		}
+	bot.get(/Cat/i, function(message) {
+		if (message.text !== "Cat") {return;}
+		request('http://random.cat/meow', function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				body = JSON.parse(body);
+				var rep = new File().file(body.file).caption('').to(message.chat.id).keyboard(image);
+				bot.send(rep);
+			} else {
+				var err = new Message().text('An error occured. Please check whether http://random.cat is online or not, and retry.').to(message.chat.id).keyboard(image);
+				bot.send(err);
+			}
+		});
 	});
-});
-bot.get(/Penguin/i, function(message) {
-	if (message !== "Penguin") {return;}
-	request('http://penguin.wtf/', function(error, response, body) {
-		if (!error && response.statusCode === 200) {
-			var rep = new File().file(body).caption('').to(message.chat.id).keyboard(image);
-			bot.send(rep);
-		} else {
-			var err = new Message().text('An error occured. Please check whether http://penguin.wtf is online or not, and retry.').to(message.chat.id).keyboard(image);
-			bot.send(err);
-		}
+	bot.get(/Penguin/i, function(message) {
+		if (message.text !== "Penguin") {return;}
+		request('http://penguin.wtf/', function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				var rep = new File().file(body).caption('').to(message.chat.id).keyboard(image);
+				bot.send(rep);
+			} else {
+				var err = new Message().text('An error occured. Please check whether http://penguin.wtf is online or not, and retry.').to(message.chat.id).keyboard(image);
+				bot.send(err);
+			}
+		});
 	});
-});
-bot.get(/Snake/i, function(message) {
-	if (message !== "Snake") {return;}
-	request('http://fur.im/snek/snek.php', function(error, response, body) {
-		if (!error && response.statusCode === 200) {
-			body = JSON.parse(body);
-			var rep = new File().file(body.file).caption('').to(message.chat.id).keyboard(image);
-			bot.send(rep);
-		} else {
-			var err = new Message().text('An error occured. Please check whether http://penguin.wtf is online or not, and retry.').to(message.chat.id).keyboard(image);
-			bot.send(err);
-		}
+	bot.get(/Snake/i, function(message) {
+		if (message.text !== "Snake") {return;}
+		request('http://fur.im/snek/snek.php', function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				body = JSON.parse(body);
+				var rep = new File().file(body.file).caption('').to(message.chat.id).keyboard(image);
+				bot.send(rep);
+			} else {
+				var err = new Message().text('An error occured. Please check whether http://penguin.wtf is online or not, and retry.').to(message.chat.id).keyboard(image);
+				bot.send(err);
+			}
+		});
 	});
+	
+const fun = new Keyboard()
+					.keys([['Truth', 'Dare'], ['Yoda Quote', 'Chuck Norris'], ['9gag', 'Back to Main Menu']])
+					.force(true)
+					.oneTime(true)
+					.resize(true)
+					.selective(true);
+bot.get(/Fun/i, function(message) {
+	if (message.text !== "Fun") {return;}
+	var answer = new Message().text('You\'ve chosen the Fun category. Choose one of the following options, or click "Back to Main Menu".').to(message.chat.id).keyboard(fun);
+	bot.send(answer);
 });
+	bot.get(/Truth/i, function(message) {
+		if (message.text !== "Truth") {return;}
+		request('http://unknowndeveloper.tk/truths.php', function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				body = JSON.parse(body);
+				var rep = new Message().text(body[0].Truth).to(message.chat.id).keyboard(fun);
+				bot.send(rep);
+			} else {
+				var err = new Message().text('An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.').to(message.chat.id).keyboard(fun);
+				bot.send(err);
+			}
+		});
+	});
+	bot.get(/Dare/i, function(message) {
+		if (message.text !== "Dare") {return;}
+		request('http://unknowndeveloper.tk/dares.php', function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				body = JSON.parse(body);
+				var rep = new Message().text(body[0].Dare).to(message.chat.id).keyboard(fun);
+				bot.send(rep);
+			} else {
+				var err = new Message().text('An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.').to(message.chat.id).keyboard(fun);
+				bot.send(err);
+			}
+		});
+	});
+	bot.get(/Yoda\sQuote/i, function(message) {
+		if (message.text !== "Yoda Quote") {return;}
+		var rep = new Message().text(yoda_said[Math.floor(Math.random() * yoda_said.length)]).to(message.chat.id).keyboard(fun);
+		bot.send(rep);
+	});
+	bot.get(/Chuck\sNorris/i, function(message) {
+		if (message.text !== "Chuck Norris") {return;}
+		const cn = new Keyboard()
+							.keys([['Nerdy & Explicit Only', 'Exclude Nerdy & Explicit'], ['Nerdy Only', 'Exclude Nerdy'], ['Explicit Only', 'Exclude Explicit'] , ['Nah, any joke is fine.']])
+							.force(true)
+							.oneTime(true)
+							.resize(true)
+							.selective(true);
+		var q = new Message().text('Choose an option for filter.').to(message.chat.id).keyboard(cn);
+		bot.send(q).then(answer => {
+			var url = "http://api.icndb.com/jokes/random?escape=javascript"
+			if (answer.text === 'Nerdy & Explicit Only') {url += "&limitTo=[nerdy,explicit]";}
+			if (answer.text === 'Explicit Only') {url += "&limitTo=[explicit]";}
+			if (answer.text === 'Nerdy Only') {url += "&limitTo=[nerdy]";}
+			if (answer.text === "Exclude Nerdy & Explicit") {url += "&exclude=[nerdy,explicit]";}
+			if (answer.text === "Exclude Nerdy") {url += "&exclude=[nerdy]";}
+			if (answer.text === "Exclude Explicit") {url += "&exclude=[explicit]";}
+			request(url, function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					body = JSON.parse(body);
+					var res = new Message().text(body.value.joke).to(message.chat.id).keyboard(fun);
+					bot.send(res);
+				}
+				else {
+					var res = new Message().text("An error occured. Please check whether http://www.icndb.com/api/ is online or not, and retry.").to(message.chat.id).keyboard(fun);
+					bot.send(res);
+				}
+			});
+		});
+	});
+	bot.get(/9gag/i, function(message) {
+		if (message.text !== "9gag") {return;}
+		const gagkb = new Keyboard()
+							.keys([['Search', 'Back to Main Menu'], ['Funny', 'WTF', 'GIF'], ['Trending', 'Gaming', 'Anime-Manga'], ['Movie-TV', 'Cute', 'Girl'], ['Awesome', 'Cosplay', 'Sport'], ['Food', 'Ask9gag', 'Timely']])
+							.force(true)
+							.oneTime(true)
+							.resize(true)
+							.selective(true);
+		var rep = new Message().text('If you want to search using a specific query, click "Search".\nIf you want to get a random gag in a specific category, click your prefered category.\nYou can also click "Back to Main Menu".').to(message.chat.id).keyboard(gagkb);
+		bot.send(rep).then(answer => {
+			if (gagbrds.indexOf(answer.text) > -1) {
+				const subs = new Keyboard()
+									.keys([['Hot', 'Fresh'], ['Back to Main Menu']])
+									.force(true)
+									.oneTime(true)
+									.resize(true)
+									.selective(true);
+				var rep = new Message().text("Choose a subsection.").to(message.chat.id).keyboard(subs);
+				bot.send(rep).then(subanswer => {
+					if (gagsubs.indexOf(subanswer.text) > -1) {
+						gag.section(answer.text, subanswer.text, function(err, res) {
+							if (err) {
+								var rep = new Message().text("An error occured. Retry?").to(message.chat.id).keyboard(fun);
+								bot.send(rep);
+							}
+							else {
+								var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id).keyboard(fun);
+								bot.send(rep);
+							}
+						});
+					}
+				});
+			}
+			else if (answer.text === "Search") {
+				var rep = new Message().text("Enter your query.").to(message.chat.id).keyboard(BMM);
+				bot.send(rep).then(answer => {
+					if (answer.text === "Back to Main Menu"){return;}
+					gag.find(answer.text, function(err, res) {
+						if (err) {
+							var rep = new Message().text("An error occured. Retry?").to(message.chat.id).keyboard(fun);
+							bot.send(rep);
+						}
+						else if (res.result.length === 0) {
+							var rep = new Message().text("No results.").to(message.chat.id).keyboard(fun);
+							bot.send(rep);
+						}
+						else {
+							var rep = new Message().text(res.result[Math.floor(Math.random() * res.result.length)].url).to(message.chat.id).keyboard(fun);
+							bot.send(rep);
+						}
+					});
+				});
+			}
+			else if (answer.text === "Trending") {
+				gag.section('Trending', function (err, res) {
+					if (err) {
+						var rep = new Message().text("An error occured. Retry?").to(message.chat.id).keyboard(fun);
+						bot.send(rep);
+					}
+					else {
+						var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id).keyboard(fun);
+						bot.send(rep);
+					}
+				});
+			}
+		});
+	});
 
 bot.get(/Settings/i, function(message) {
-	if (message !== "Settings") {return;}
-	var config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+	if (message.text !== "Settings") {return;}
 	var output = "Your current settings:\n* NSFW Images in Booru commands: ";
 	if (config.nsfw.indexOf(message.chat.id) > -1) {output += "Enabled\n* Notify me about updates: ";} else {output += "Disabled\n* Notify me about updates: ";}
 	if (config.notif.indexOf(message.chat.id) > -1) {output += "Enabled";} else {output += "Disabled";}
@@ -363,19 +541,31 @@ bot.get(/Settings/i, function(message) {
 		}
 		else if (answer.text !== "Back to Main Menu") {
 			var rep = new Message().text("Not a valid entry. I have bought you back to the menu.").to(message.chat.id).keyboard(menu);
-			
 			bot.send(rep);
 		}
 	});
 });
 
-/*bot.get(/About\/Support/i, function(message) {
-	if (message !== "About/Support") {return;}
-	var err = new Message().text('Metagon, Confidence in Usability.\n\nThe bot is originally in Discord.').to(message.chat.id).keyboard(menu);
-});*/
+bot.get(/About\/Support/i, function(message) {
+	if (message.text !== "About/Support") {return;}
+	var err = new Message().text('Metagon, Confidence in Usability.\n\nOriginally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/metagon-telegram.').to(message.chat.id).keyboard(menu);
+	bot.send(err);
+});
+
+bot.get(/Feedback/i, function(message) {
+	if (message.text !== "Feedback") {return;}
+	var rep = new Message().text('Hello, fellow user. If you\'d like to suggest a new feature, please type it here. Thank you!\n---@austinhuang\n\nWARNING: If you want to report a bug, go to https://github.com/austinhuang0131/metagon-telegram/issues').to(message.chat.id).keyboard(BMM);
+	bot.send(rep).then(answer => {
+		if (answer.text === "Back to Main Menu"){return;}
+		var get = new Message().text('Feedback from @'+message.from.username+': '+answer.text).to(setup.myid);
+		bot.send(get);
+		var rep = new Message().text('Thank you for your feedback! I\'ll read it carefully.\n---@austinhuang').to(message.chat.id).keyboard(menu);
+		bot.send(rep);
+	});
+});
 
 bot.get(/Back\sto\sMain\sMenu/i, function(message) {
-	if (message !== "Back to Main Menu") {return;}
+	if (message.text !== "Back to Main Menu") {return;}
 	var rep = new Message().text('What do you want to do now?').to(message.chat.id).keyboard(menu);
 	bot.send(rep);
 });
