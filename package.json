@@ -14,6 +14,8 @@
     "url": "https://github.com/austinhuang0131/metagon-telegram.git"
   },
   "dependencies": {
+    "gyazo-upload": "0.0.2",
+    "node-9gag": "^0.2.3",
     "request": "^2.76.0",
     "telegram-api": "^0.7.6"
   }
