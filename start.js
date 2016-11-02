@@ -474,9 +474,9 @@ bot.get(/Fun/i, function(message) {
 	});
 	bot.get(/9gag/i, function(message) {
 		if (message.text !== "9gag") {return;}
-		var gagbrd = [['Search', 'Back to Main Menu'], ['Funny', 'WTF', 'GIF'], ['Trending', 'Gaming', 'Anime-Manga'], ['Movie-TV', 'Cute', 'Girl'], ['Awesome', 'Cosplay', 'Sport'], ['Food', 'Ask9gag', 'Timely']];
+		var gagbrd = ['Funny', 'WTF', 'GIF', 'Trending', 'Gaming', 'Anime-Manga', 'Movie-TV', 'Cute', 'Girl', 'Awesome', 'Cosplay', 'Sport', 'Food', 'Ask9gag', 'Timely'];
 		const gagkb = new Keyboard()
-							.keys(gagbrd)
+							.keys([['Search', 'Back to Main Menu'], ['Funny', 'WTF', 'GIF'], ['Trending', 'Gaming', 'Anime-Manga'], ['Movie-TV', 'Cute', 'Girl'], ['Awesome', 'Cosplay', 'Sport'], ['Food', 'Ask9gag', 'Timely']])
 							.force(true)
 							.oneTime(true)
 							.resize(true)
