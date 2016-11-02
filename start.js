@@ -112,7 +112,7 @@ const menu = new Keyboard()
 const BMM = new Keyboard().keys([['Back to Main Menu']]).oneTime(true).resize(true).selective(true);
 var gyazo = require('gyazo-upload'); // Gyazo
 var gag = require('node-9gag');
-var gagbrds = ['Funny', 'WTF', 'GIF', 'Gaming', 'Anime-Manga', 'Movie-TV', 'Cute', 'Girl', 'Awesome', 'Cosplay', 'Sport', 'Food', 'Ask9gag', 'Timely'];
+var gagbrds = ['funny', 'wtf', 'gif', 'gaming', 'anime-manga', 'movie-tv', 'cute', 'girl', 'awesome', 'cosplay', 'sport', 'food', 'ask9gag', 'timely'];
 var gagsubs = ['Hot', 'Fresh'];
 
 bot.start();
@@ -302,6 +302,53 @@ bot.command('gyazo', function(message) {
 		}
 	});
 });
+bot.command('9gag [sec] [subsec]', function(message) {
+	var gagsub = ["hot", "fresh"];
+	if (gagbrds.indexOf(message.args.sec.toLowerCase()) > -1 && gagsub.indexOf(message.args.subsec.toLowerCase()) > -1) {
+		gag.section(message.args.sec, message.args.subsec, function(err, res) {
+			if (err) {
+				var rep = new Message().text("An error occured. Retry?").to(message.chat.id);
+				bot.send(rep);
+			}
+			else {
+				var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id);
+				bot.send(rep);
+			}
+		});
+	}
+	else if (message.args.sec === "trending") {
+		gag.section('Trending', function (err, res) {
+			if (err) {
+				var rep = new Message().text("An error occured. Retry?").to(message.chat.id).keyboard(fun);
+				bot.send(rep);
+			}
+			else {
+				var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id).keyboard(fun);
+				bot.send(rep);
+			}
+		});
+	}
+	else if (message.args.sec === "search" && message.args.subsec !== undefined) {
+		gag.find(message.args.subsec, function(err, res) {
+			if (err) {
+				var rep = new Message().text("An error occured. Retry?").to(message.chat.id);
+				bot.send(rep);
+			}
+			else if (res.result.length === 0) {
+				var rep = new Message().text("No results.").to(message.chat.id);
+				bot.send(rep);
+			}
+			else {
+				var rep = new Message().text(res.result[Math.floor(Math.random() * res.result.length)].url).to(message.chat.id);
+				bot.send(rep);
+			}
+		});
+	}
+	else {
+		var rep = new Message().text("/9gag trending\n/9gag <Board> <Hot/Fresh>\n/9gag search <Query>").to(message.chat.id);
+		bot.send(rep);
+	}
+});
 
 const image = new Keyboard()
 					.keys([['Cat', 'Penguin'], ['Snake', 'Anime'], ['Back to Main Menu']])
@@ -427,15 +474,16 @@ bot.get(/Fun/i, function(message) {
 	});
 	bot.get(/9gag/i, function(message) {
 		if (message.text !== "9gag") {return;}
+		var gagbrd = [['Search', 'Back to Main Menu'], ['Funny', 'WTF', 'GIF'], ['Trending', 'Gaming', 'Anime-Manga'], ['Movie-TV', 'Cute', 'Girl'], ['Awesome', 'Cosplay', 'Sport'], ['Food', 'Ask9gag', 'Timely']];
 		const gagkb = new Keyboard()
-							.keys([['Search', 'Back to Main Menu'], ['Funny', 'WTF', 'GIF'], ['Trending', 'Gaming', 'Anime-Manga'], ['Movie-TV', 'Cute', 'Girl'], ['Awesome', 'Cosplay', 'Sport'], ['Food', 'Ask9gag', 'Timely']])
+							.keys(gagbrd)
 							.force(true)
 							.oneTime(true)
 							.resize(true)
 							.selective(true);
 		var rep = new Message().text('If you want to search using a specific query, click "Search".\nIf you want to get a random gag in a specific category, click your prefered category.\nYou can also click "Back to Main Menu".').to(message.chat.id).keyboard(gagkb);
 		bot.send(rep).then(answer => {
-			if (gagbrds.indexOf(answer.text) > -1) {
+			if (gagbrd.indexOf(answer.text) > -1) {
 				const subs = new Keyboard()
 									.keys([['Hot', 'Fresh'], ['Back to Main Menu']])
 									.force(true)
