@@ -304,50 +304,76 @@ bot.command('gyazo', function(message) {
 });
 bot.command('9gag [sec] [subsec]', function(message) {
 	var gagsub = ["hot", "fresh"];
-	if (gagbrds.indexOf(message.args.sec.toLowerCase()) > -1 && gagsub.indexOf(message.args.subsec.toLowerCase()) > -1) {
-		gag.section(message.args.sec, message.args.subsec, function(err, res) {
-			if (err) {
-				var rep = new Message().text("An error occured. Retry?").to(message.chat.id);
-				bot.send(rep);
-			}
-			else {
-				var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id);
-				bot.send(rep);
-			}
-		});
-	}
-	else if (message.args.sec === "trending") {
-		gag.section('Trending', function (err, res) {
-			if (err) {
-				var rep = new Message().text("An error occured. Retry?").to(message.chat.id).keyboard(fun);
-				bot.send(rep);
-			}
-			else {
-				var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id).keyboard(fun);
-				bot.send(rep);
-			}
-		});
-	}
-	else if (message.args.sec === "search" && message.args.subsec !== undefined) {
-		gag.find(message.args.subsec, function(err, res) {
-			if (err) {
-				var rep = new Message().text("An error occured. Retry?").to(message.chat.id);
-				bot.send(rep);
-			}
-			else if (res.result.length === 0) {
-				var rep = new Message().text("No results.").to(message.chat.id);
-				bot.send(rep);
-			}
-			else {
-				var rep = new Message().text(res.result[Math.floor(Math.random() * res.result.length)].url).to(message.chat.id);
-				bot.send(rep);
-			}
-		});
+	if (message.args.sec !== undefined) {
+		if (gagbrds.indexOf(message.args.sec.toLowerCase()) > -1 && gagsub.indexOf(message.args.subsec.toLowerCase()) > -1) {
+			gag.section(message.args.sec, message.args.subsec, function(err, res) {
+				if (err) {
+					var rep = new Message().text("An error occured. Retry?").to(message.chat.id);
+					bot.send(rep);
+				}
+				else {
+					var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id);
+					bot.send(rep);
+				}
+			});
+		}
+		else if (message.args.sec === "trending") {
+			gag.section('Trending', function (err, res) {
+				if (err) {
+					var rep = new Message().text("An error occured. Retry?").to(message.chat.id).keyboard(fun);
+					bot.send(rep);
+				}
+				else {
+					var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id).keyboard(fun);
+					bot.send(rep);
+				}
+			});
+		}
+		else if (message.args.sec === "list") {
+			var rep = new Message().text("Accepted sections: "+gagbrds).to(message.chat.id);
+			bot.send(rep);
+		}
+		else if (message.args.sec === "search" && message.args.subsec !== undefined) {
+			gag.find(message.args.subsec, function(err, res) {
+				if (err) {
+					var rep = new Message().text("An error occured. Retry?").to(message.chat.id);
+					bot.send(rep);
+				}
+				else if (res.result.length === 0) {
+					var rep = new Message().text("No results.").to(message.chat.id);
+					bot.send(rep);
+				}
+				else {
+					var rep = new Message().text(res.result[Math.floor(Math.random() * res.result.length)].url).to(message.chat.id);
+					bot.send(rep);
+				}
+			});
+		}
 	}
 	else {
-		var rep = new Message().text("/9gag trending\n/9gag <Board> <Hot/Fresh>\n/9gag search <Query>").to(message.chat.id);
+		var rep = new Message().text("/9gag trending\n/9gag <Section> <Hot/Fresh> (Get a list of <Section>s using \"/9gag list\")\n/9gag search <Query>").to(message.chat.id);
 		bot.send(rep);
 	}
+});
+bot.command('joke [opt]', function(message) {
+	var opt = "exclude=[nerdy,explicit]";
+	if (message.args.opt === "-n") {opt = "exclude=[nerdy]";}
+	else if (message.args.opt === "-e") {opt = "exclude=[explicit]";}
+	else if (message.args.opt === "en") {opt = "limitTo=[nerdy,explicit]";}
+	else if (message.args.opt === "+e") {opt = "limitTo=[explicit]";}
+	else if (message.args.opt === "+n") {opt = "limitTo=[nerdy]";}
+	var url = "http://api.icndb.com/jokes/random?escape=javascript&" + opt;
+	request(url, function(error, response, body) {
+		if (!error && response.statusCode === 200) {
+			body = JSON.parse(body);
+			var res = new Message().text(body.value.joke).to(message.chat.id);
+			bot.send(res);
+		}
+		else {
+			var res = new Message().text("An error occured. Please check whether http://www.icndb.com/api/ is online or not, and retry.").to(message.chat.id);
+			bot.send(res);
+		}
+	});
 });
 
 const image = new Keyboard()
