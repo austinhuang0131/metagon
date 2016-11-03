@@ -359,7 +359,7 @@ bot.command('joke [opt]', function(message) {
 	var opt = "exclude=[nerdy,explicit]";
 	if (message.args.opt === "-n") {opt = "exclude=[nerdy]";}
 	else if (message.args.opt === "-e") {opt = "exclude=[explicit]";}
-	else if (message.args.opt === "en") {opt = "limitTo=[nerdy,explicit]";}
+	else if (message.args.opt === "+e+n") {opt = "limitTo=[nerdy,explicit]";}
 	else if (message.args.opt === "+e") {opt = "limitTo=[explicit]";}
 	else if (message.args.opt === "+n") {opt = "limitTo=[nerdy]";}
 	var url = "http://api.icndb.com/jokes/random?escape=javascript&" + opt;
