@@ -4,11 +4,12 @@ var Message = require('telegram-api/types/Message');
 var File = require('telegram-api/types/File'); 
 var Keyboard = require('telegram-api/types/Keyboard');
 var fs = require('fs'); // Config
-var setup = JSON.parse(fs.readFileSync("./setup.json", "utf8"));
-var config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+var setup = JSON.parse(fs.readFileSync("setup.json", "utf8"));
+var config = JSON.parse(fs.readFileSync("config.json", "utf8"));
 var bot = new Bot({
   token: setup.bot_token
 });
+var bitlytoken = setup.bitly_token;
 var request = require('request');
 var yoda_said = [
   '"Fear is the path to the dark side. Fear leads to anger, anger leads to hate, hate leads to suffering." -- Yoda \n',
@@ -216,58 +217,45 @@ bot.command('mcserver [ip]', function(message) {
 	}
 });
 bot.command('settings', function(message) {
-	var config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
-	var output = "Your current settings:\n* NSFW Images in Booru commands: ";
-	if (config.nsfw.indexOf(message.chat.id) > -1) {output += "Enabled\n* Notify me about updates: ";} else {output += "Disabled\n* Notify me about updates: ";}
+	var config = JSON.parse(fs.readFileSync("config.json", "utf8"));
+	var output = "Your current settings:\n* NSFW Images in Booru commands (/nsfw): ";
+	if (config.nsfw.indexOf(message.chat.id) > -1) {output += "Enabled\n* Notify me about updates (/notif): ";} else {output += "Disabled\n* Notify me about updates (/notif): ";}
 	if (config.notif.indexOf(message.chat.id) > -1) {output += "Enabled";} else {output += "Disabled";}
-	output += "\nTo change the config, use the buttons below. Replying anything other than the keyboard choices will exit this menu.";
-	var kb = new Keyboard()
-                .keys([['Toggle SFW/NSFW'], ['Toggle Updates Notification'], ['Back to Main Menu']])
-                .force(true)
-                .oneTime(true);
-	var rep = new Message().text(output).to(message.chat.id).keyboard(kb);
-	bot.send(rep).then(answer => {
-		if (answer.text === "Toggle SFW/NSFW") {
-			var index = config.nsfw.indexOf(message.chat.id);
-			if (index > -1) {
-				
-				config.nsfw.splice(index, 1);
-				var rep = new Message().text("Done! To adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
-				bot.send(rep);
-				fs.writeFile('./config.json', JSON.stringify(config), 'utf8');
-			}
-			else if (index === -1) {
-				
-				config.nsfw.push(message.chat.id);
-				var rep = new Message().text("Done! To adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
-				bot.send(rep);
-				fs.writeFile('./config.json', JSON.stringify(config), 'utf8');
-			}
-		}
-		else if (answer.text === "Toggle Updates Notification") {
-			var index = config.notif.indexOf(message.chat.id);
-			if (index> -1) {
-				
-				config.notif.splice(index, 1);
-				var rep = new Message().text("Done! You will no longer receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
-				bot.send(rep);
-				fs.writeFile('./config.json', JSON.stringify(config), 'utf8');
-			}
-			else if (index === -1) {
-				
-				config.notif.push(message.chat.id);
-				var rep = new Message().text("Done! You will now receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
-				bot.send(rep);
-				fs.writeFile('./config.json', JSON.stringify(config), 'utf8');
-			}
-		}
-		else if (answer.text !== "Back to Main Menu"){
-			
-			var rep = new Message().text("Not a valid entry. I have bought you back to the menu.").to(message.chat.id).keyboard(menu);
+	output += "\nTo change the config, use the links above.";
+	var rep = new Message().text(output).to(message.chat.id);
+	bot.send(rep);
+});
+	bot.command('nsfw', function(message) {
+		config = JSON.parse(fs.readFileSync("config.json", "utf8"));
+		var index = config.nsfw.indexOf(message.chat.id);
+		if (index > -1) {
+			config.nsfw.splice(index, 1);
+			var rep = new Message().text("NSFW has been disabled. To adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id);
 			bot.send(rep);
+			fs.writeFile('config.json', JSON.stringify(config), 'utf8');
+		}
+		else if (index === -1) {
+			config.nsfw.push(message.chat.id);
+			var rep = new Message().text("NSFW has been enabled. Please make sure you are LEGAL to see NSFW content in your country. To adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id);
+			bot.send(rep);
+			fs.writeFile('config.json', JSON.stringify(config), 'utf8');
 		}
 	});
-});
+	bot.command('notif', function(message) {
+		var index = config.notif.indexOf(message.chat.id);
+		if (index> -1) {
+			config.notif.splice(index, 1);
+			var rep = new Message().text("You will no longer receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id);
+			bot.send(rep);
+			fs.writeFile('config.json', JSON.stringify(config), 'utf8');
+		}
+		else if (index === -1) {
+			config.notif.push(message.chat.id);
+			var rep = new Message().text("You will now receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id);
+			bot.send(rep);
+			fs.writeFile('config.json', JSON.stringify(config), 'utf8');
+		}
+	});
 bot.command('yoda', function(message) {
 	var rep = new Message().text(yoda_said[Math.floor(Math.random() * yoda_said.length)]).to(message.chat.id);
 	bot.send(rep);
@@ -303,8 +291,9 @@ bot.command('gyazo', function(message) {
 	});
 });
 bot.command('9gag [sec] [subsec]', function(message) {
+	config = JSON.parse(fs.readFileSync("config.json", "utf8"));
 	var gagsub = ["hot", "fresh"];
-	if (message.args.sec !== undefined) {
+	if (message.args.sec !== undefined && message.args.subsec !== undefined) {
 		if (gagbrds.indexOf(message.args.sec.toLowerCase()) > -1 && gagsub.indexOf(message.args.subsec.toLowerCase()) > -1) {
 			gag.section(message.args.sec, message.args.subsec, function(err, res) {
 				if (err) {
@@ -317,21 +306,23 @@ bot.command('9gag [sec] [subsec]', function(message) {
 				}
 			});
 		}
-		else if (message.args.sec === "trending") {
-			gag.section('Trending', function (err, res) {
-				if (err) {
-					var rep = new Message().text("An error occured. Retry?").to(message.chat.id).keyboard(fun);
-					bot.send(rep);
-				}
-				else {
-					var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id).keyboard(fun);
-					bot.send(rep);
-				}
-			});
-		}
-		else if (message.args.sec === "list") {
-			var rep = new Message().text("Accepted sections: "+gagbrds).to(message.chat.id);
-			bot.send(rep);
+		else if (message.args.sec.toLowerCase() === "nsfw" && gagsub.indexOf(message.args.subsec.toLowerCase()) > -1) {
+			if (config.nsfw.indexOf(message.chat.id) > -1) {
+				gag.section("nsfw", message.args.subsec, function(err, res) {
+					if (err) {
+						var rep = new Message().text("An error occured. Retry?").to(message.chat.id);
+						bot.send(rep);
+					}
+					else {
+						var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id);
+						bot.send(rep);
+					}
+				});
+			}
+			else {
+				var rep = new Message().text("Hmm...You didn't enable your NSFW config. Go to /settings to enable it. (Or you actually enabled it? Then retry.)").to(message.chat.id);
+				bot.send(rep);
+			}
 		}
 		else if (message.args.sec === "search" && message.args.subsec !== undefined) {
 			gag.find(message.args.subsec, function(err, res) {
@@ -349,6 +340,26 @@ bot.command('9gag [sec] [subsec]', function(message) {
 				}
 			});
 		}
+		else {
+			var rep = new Message().text("/9gag trending\n/9gag <Section> <Hot/Fresh> (Get a list of <Section>s using \"/9gag list\")\n/9gag search <Query>").to(message.chat.id);
+			bot.send(rep);
+		}
+	}
+	else if (message.args.sec === "trending") {
+		gag.section('Trending', function (err, res) {
+			if (err) {
+				var rep = new Message().text("An error occured. Retry?").to(message.chat.id).keyboard(fun);
+				bot.send(rep);
+			}
+			else {
+				var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id).keyboard(fun);
+				bot.send(rep);
+			}
+		});
+	}
+	else if (message.args.sec === "list") {
+	var rep = new Message().text("Accepted sections: "+gagbrds+",nsfw\nNSFW section require /nsfw config.").to(message.chat.id);
+	bot.send(rep);
 	}
 	else {
 		var rep = new Message().text("/9gag trending\n/9gag <Section> <Hot/Fresh> (Get a list of <Section>s using \"/9gag list\")\n/9gag search <Query>").to(message.chat.id);
@@ -374,6 +385,27 @@ bot.command('joke [opt]', function(message) {
 			bot.send(res);
 		}
 	});
+});
+bot.command('bitly [opt] [site]', function(message) {
+	if(message.args.opt === "shorten" && message.args.site !== undefined) {
+		request('https://api-ssl.bitly.com/v3/shorten?access_token='+bitlytoken+'&longUrl='+message.args.site+'&format=txt', function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				bot.send(new Message().text(body).to(message.chat.id));
+			} else {
+				bot.send(new Message().text("An error occured. Invalid address, or retry?").to(message.chat.id));
+			}
+		});
+	}
+	else if(message.args.opt === "expand" && message.args.site !== undefined) {
+		request('https://api-ssl.bitly.com/v3/expand?access_token='+bitlytoken+'&shortUrl='+message.args.site+'&format=txt', function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				bot.send(new Message().text(body).to(message.chat.id));
+			} else {
+				bot.send(new Message().text("An error occured. Invalid address, or retry?").to(message.chat.id));
+			}
+		});
+	}
+	else {bot.send(new Message().text("/bitly <shorten/expand> <Link>").to(message.chat.id));}
 });
 
 const image = new Keyboard()
@@ -502,7 +534,7 @@ bot.get(/Fun/i, function(message) {
 		if (message.text !== "9gag") {return;}
 		var gagbrd = ['Funny', 'WTF', 'GIF', 'Trending', 'Gaming', 'Anime-Manga', 'Movie-TV', 'Cute', 'Girl', 'Awesome', 'Cosplay', 'Sport', 'Food', 'Ask9gag', 'Timely'];
 		const gagkb = new Keyboard()
-							.keys([['Search', 'Back to Main Menu'], ['Funny', 'WTF', 'GIF'], ['Trending', 'Gaming', 'Anime-Manga'], ['Movie-TV', 'Cute', 'Girl'], ['Awesome', 'Cosplay', 'Sport'], ['Food', 'Ask9gag', 'Timely']])
+							.keys([['Search', 'Back to Main Menu', 'Trending'], ['Funny', 'WTF', 'GIF'], ['NSFW', 'Gaming', 'Anime-Manga'], ['Movie-TV', 'Cute', 'Girl'], ['Awesome', 'Cosplay', 'Sport'], ['Food', 'Ask9gag', 'Timely']])
 							.force(true)
 							.oneTime(true)
 							.resize(true)
@@ -531,6 +563,35 @@ bot.get(/Fun/i, function(message) {
 						});
 					}
 				});
+			}
+			else if (answer.text === "NSFW") {
+				config = JSON.parse(fs.readFileSync("config.json", "utf8"));
+				if (config.nsfw.indexOf(message.chat.id) === -1) {
+					bot.send(new Message().text("Hmm...You didn't enable your NSFW config. Go to /settings to enable it. (Or you actually enabled it? Then retry.)").to(message.chat.id).keyboard(fun));
+				}
+				else {
+					const subs = new Keyboard()
+										.keys([['Hot', 'Fresh'], ['Back to Main Menu']])
+										.force(true)
+										.oneTime(true)
+										.resize(true)
+										.selective(true);
+					var rep = new Message().text("Choose a subsection.").to(message.chat.id).keyboard(subs);
+					bot.send(rep).then(subanswer => {
+						if (gagsubs.indexOf(subanswer.text) > -1) {
+							gag.section("nsfw", subanswer.text, function(err, res) {
+								if (err) {
+									var rep = new Message().text("An error occured. Retry?").to(message.chat.id).keyboard(fun);
+									bot.send(rep);
+								}
+								else {
+									var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id).keyboard(fun);
+									bot.send(rep);
+								}
+							});
+						}
+					});
+				}
 			}
 			else if (answer.text === "Search") {
 				var rep = new Message().text("Enter your query.").to(message.chat.id).keyboard(BMM);
@@ -582,35 +643,31 @@ bot.get(/Settings/i, function(message) {
 		if (answer.text === "Toggle SFW/NSFW") {
 			var index = config.nsfw.indexOf(message.chat.id);
 			if (index > -1) {
-				
 				config.nsfw.splice(index, 1);
 				var rep = new Message().text("Done! To adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
 				bot.send(rep);
-				fs.writeFile('./config.json', JSON.stringify(config), 'utf8');
+				fs.writeFile('config.json', JSON.stringify(config), 'utf8');
 			}
 			else if (index === -1) {
-				
 				config.nsfw.push(message.chat.id);
 				var rep = new Message().text("Done! To adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
 				bot.send(rep);
-				fs.writeFile('./config.json', JSON.stringify(config), 'utf8');
+				fs.writeFile('config.json', JSON.stringify(config), 'utf8');
 			}
 		}
 		else if (answer.text === "Toggle Updates Notification") {
 			var index = config.notif.indexOf(message.chat.id);
 			if (index> -1) {
-				
 				config.notif.splice(index, 1);
 				var rep = new Message().text("Done! You will no longer receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
 				bot.send(rep);
-				fs.writeFile('./config.json', JSON.stringify(config), 'utf8');
+				fs.writeFile('config.json', JSON.stringify(config), 'utf8');
 			}
 			else if (index === -1) {
-				
 				config.notif.push(message.chat.id);
 				var rep = new Message().text("Done! You will now receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
 				bot.send(rep);
-				fs.writeFile('./config.json', JSON.stringify(config), 'utf8');
+				fs.writeFile('config.json', JSON.stringify(config), 'utf8');
 			}
 		}
 		else if (answer.text !== "Back to Main Menu") {
