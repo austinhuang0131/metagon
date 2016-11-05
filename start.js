@@ -685,6 +685,9 @@ bot.get(/About\/Support/i, function(message) {
 
 bot.get(/Feedback/i, function(message) {
 	if (message.text !== "Feedback") {return;}
+	if (setup.myid === undefined) {
+		bot.send(new Message().text('Hmm...I don\'t know who is the owner. Tell the host of the bot to...\n - Go to setup.json and put his ID in the myid OR\n - Just paste 265228448 (@austinhuang) into myid').to(message.chat.id));
+	}
 	var rep = new Message().text('Hello, fellow user. If you\'d like to suggest a new feature, please type it here. Thank you!\n---@austinhuang\n\nWARNING: If you want to report a bug, go to https://github.com/austinhuang0131/metagon-telegram/issues').to(message.chat.id).keyboard(BMM);
 	bot.send(rep).then(answer => {
 		if (answer.text === "Back to Main Menu"){return;}
