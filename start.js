@@ -11,7 +11,7 @@ var bot = new Bot({
 });
 var bitlytoken = setup.bitly_token;
 var request = require('request');
-var yoda_said = [
+var yodasaid = [
   '"Fear is the path to the dark side. Fear leads to anger, anger leads to hate, hate leads to suffering." -- Yoda \n',
   '"Confer on you, the level of Jedi Knight, the Council does. But, agree with your taking this boy as your Padawan Learner, I do not." -- Yoda to Obi-Wan Kenobi\n',
   '"Qui-Gon\'s defiance I sense in you. Need that you do not. Agree with you, the Council does. Your apprentice young Skywalker will be." -- Yoda to Obi-Wan Kenobi\n',
@@ -257,7 +257,7 @@ bot.command('settings', function(message) {
 		}
 	});
 bot.command('yoda', function(message) {
-	var rep = new Message().text(yoda_said[Math.floor(Math.random() * yoda_said.length)]).to(message.chat.id);
+	var rep = new Message().text(yodasaid[Math.floor(Math.random() * yodasaid.length)]).to(message.chat.id);
 	bot.send(rep);
 });
 bot.command('gyazo', function(message) {
@@ -497,7 +497,7 @@ bot.get(/Fun/i, function(message) {
 	});
 	bot.get(/Yoda\sQuote/i, function(message) {
 		if (message.text !== "Yoda Quote") {return;}
-		var rep = new Message().text(yoda_said[Math.floor(Math.random() * yoda_said.length)]).to(message.chat.id).keyboard(fun);
+		var rep = new Message().text(yodasaid[Math.floor(Math.random() * yodasaid.length)]).to(message.chat.id).keyboard(fun);
 		bot.send(rep);
 	});
 	bot.get(/Chuck\sNorris/i, function(message) {
