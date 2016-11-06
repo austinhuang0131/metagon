@@ -3,6 +3,7 @@ var Bot = require("telegram-api").default;
 var Message = require("telegram-api/types/Message");
 var File = require("telegram-api/types/File"); 
 var Keyboard = require("telegram-api/types/Keyboard");
+var BulkMessage = require("telegram-api/types/BulkMessage");
 var fs = require("fs"); // Config
 var setup = JSON.parse(fs.readFileSync("setup.json", "utf8"));
 var config = JSON.parse(fs.readFileSync("config.json", "utf8"));
@@ -400,9 +401,40 @@ bot.command("kill", function(message) {
 		process.exit();
 	}
 });
+bot.command("announce ...text", function(message) {
+	if (message.chat.id === setup.myid) {
+		config = JSON.parse(fs.readFileSync("config.json", "utf8"));
+		bot.send(new BulkMessage().to(config.notif).text(message.args.text));
+	}
+});
+bot.command("mcuser [username]", function(message) {
+	var mcuser = message.args.username;
+	if (mcuser !== undefined) {
+		request('https://mcapi.de/api/user/' + mcuser, function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				var mcapi = JSON.parse(body);
+				if (mcapi.result.status !== "Error") {
+					var mcuserout = "Username: "+mcapi.username+"\nUUID: "+mcapi.uuid+"\n2D Body: http://mcapi.de/api/image/user/body/"+mcapi.username+".png\n2D Head: http://mcapi.de/api/image/user/head/"+mcapi.username+".png\nHelm: http://mcapi.de/api/image/user/helm/"+mcapi.username+".png\n3D Head: http://mcapi.de/api/image/user/isometric/"+mcapi.username+".png";
+					bot.send(new Message().text(mcuserout).to(message.chat.id));
+				} else {
+					bot.send(new Message().text("An error occurred. The requested user may be cracked, or you typed in a wrong username/UUID.").to(message.chat.id));
+				}
+			}
+			else {
+				bot.send(new Message().text("An error occurred! Retry?").to(message.chat.id)); 
+			}
+		});
+	}
+	else {
+		bot.send(new Message().text("Your input is invalid. +mcserver [UUID or Username]").to(message.chat.id));
+	}
+});
+bot.command("help", function(message) {
+	bot.send(new Message().text("https://github.com/austinhuang0131/metagon-telegram/wiki").to(message.chat.id));
+});
 
 const image = new Keyboard()
-					.keys([['Cat', 'Penguin'], ['Snake', 'Anime'], ['Back to Main Menu']])
+					.keys([['Cat', 'Penguin'], ['Snake', 'Anime (Unavailable)'], ['Back to Main Menu']])
 					.force(true)
 					.oneTime(true)
 					.resize(true)
@@ -608,7 +640,7 @@ bot.get(/Fun/i, function(message) {
 	});
 	
 const util = new Keyboard()
-					.keys([['Bitly', 'Gyazo'], ['Minecraft User', 'Minecraft Server'], ['Currency', 'QR Code Utility'], ['Back to Main Menu']])
+					.keys([['Bitly', 'Gyazo'], ['Minecraft User', 'Minecraft Server'], /*['Currency', 'QR Code Utility'],*/ ['Back to Main Menu']])
 					.force(true)
 					.oneTime(true)
 					.resize(true)
@@ -695,6 +727,28 @@ bot.get(/Utility/i, function(message) {
 					} else {
 						var err = new Message().text('An error occured. Please check your input, or retry.').to(message.chat.id).keyboard(util);
 						bot.send(err);
+					}
+				});
+			}
+		});
+	});
+	bot.get(/Minecraft User/i, function(message) {
+		if (message.text !== "Minecraft User") {return;}
+		bot.send(new Message().text("Please enter the username or UUID you want to check.").to(message.chat.id).keyboard(ukb)).then(answer => {
+			if (answer.text !== "Back to Utility Menu") {
+				var mcuser = answer.text;
+				request('https://mcapi.de/api/user/' + mcuser, function(error, response, body) {
+					if (!error && response.statusCode === 200) {
+						var mcapi = JSON.parse(body);
+						if (mcapi.result.status !== "Error") {
+							var mcuserout = "Username: "+mcapi.username+"\nUUID: "+mcapi.uuid+"\n2D Body: http://mcapi.de/api/image/user/body/"+mcapi.username+".png\n2D Head: http://mcapi.de/api/image/user/head/"+mcapi.username+".png\nHelm: http://mcapi.de/api/image/user/helm/"+mcapi.username+".png\n3D Head: http://mcapi.de/api/image/user/isometric/"+mcapi.username+".png";
+							bot.send(new Message().text(mcuserout).to(message.chat.id).keyboard(util));
+						} else {
+							bot.send(new Message().text("An error occurred. The requested user may be cracked, or you typed in a wrong username/UUID.").to(message.chat.id).keyboard(util));
+						}
+					}
+					else {
+						bot.send(new Message().text("An error occurred! Retry?").to(message.chat.id).keyboard(util)); 
 					}
 				});
 			}
