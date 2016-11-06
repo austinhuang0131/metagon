@@ -422,44 +422,37 @@ const image = new Keyboard()
 					.selective(true);
 bot.get(/Images/i, function(message) {
 	if (message.text !== "Images") {return;}
-	var answer = new Message().text('You\'ve chosen the Image category. Choose one of the following options, or click "Back to Main Menu".').to(message.chat.id).keyboard(image);
-	bot.send(answer);
+	bot.send(new Message().text("You've chosen the Image category. Choose one of the following options, or click \"Back to Main Menu\".").to(message.chat.id).keyboard(image));
 });
 	bot.get(/Cat/i, function(message) {
 		if (message.text !== "Cat") {return;}
-		request('http://random.cat/meow', function(error, response, body) {
+		request("http://random.cat/meow", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
-				var rep = new File().file(body.file).caption('').to(message.chat.id).keyboard(image);
-				bot.send(rep);
+				bot.send(new File().file(body.file).caption("").to(message.chat.id).keyboard(image));
 			} else {
-				var err = new Message().text('An error occured. Please check whether http://random.cat is online or not, and retry.').to(message.chat.id).keyboard(image);
-				bot.send(err);
+				bot.send(new Message().text("An error occured. Please check whether http://random.cat is online or not, and retry.").to(message.chat.id).keyboard(image));
 			}
 		});
 	});
 	bot.get(/Penguin/i, function(message) {
 		if (message.text !== "Penguin") {return;}
-		request('http://penguin.wtf/', function(error, response, body) {
+		request("http://penguin.wtf/", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
-				var rep = new File().file(body).caption('').to(message.chat.id).keyboard(image);
-				bot.send(rep);
+				bot.send(new File().file(body).caption("").to(message.chat.id).keyboard(image));
 			} else {
-				var err = new Message().text('An error occured. Please check whether http://penguin.wtf is online or not, and retry.').to(message.chat.id).keyboard(image);
-				bot.send(err);
+				bot.send(new Message().text("An error occured. Please check whether http://penguin.wtf is online or not, and retry.").to(message.chat.id).keyboard(image));
 			}
 		});
 	});
 	bot.get(/Snake/i, function(message) {
 		if (message.text !== "Snake") {return;}
-		request('http://fur.im/snek/snek.php', function(error, response, body) {
+		request("http://fur.im/snek/snek.php", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
-				var rep = new File().file(body.file).caption('').to(message.chat.id).keyboard(image);
-				bot.send(rep);
+				bot.send(new File().file(body.file).caption("").to(message.chat.id).keyboard(image));
 			} else {
-				var err = new Message().text('An error occured. Please check whether http://penguin.wtf is online or not, and retry.').to(message.chat.id).keyboard(image);
-				bot.send(err);
+				bot.send(new Message().text("An error occured. Please check whether http://penguin.wtf is online or not, and retry.").to(message.chat.id).keyboard(image));
 			}
 		});
 	});
@@ -472,54 +465,47 @@ const fun = new Keyboard()
 					.selective(true);
 bot.get(/Fun/i, function(message) {
 	if (message.text !== "Fun") {return;}
-	var answer = new Message().text('You\'ve chosen the Fun category. Choose one of the following options, or click "Back to Main Menu".').to(message.chat.id).keyboard(fun);
-	bot.send(answer);
+	bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(fun));
 });
 	bot.get(/Truth/i, function(message) {
 		if (message.text !== "Truth") {return;}
-		request('http://unknowndeveloper.tk/truths.php', function(error, response, body) {
+		request("http://unknowndeveloper.tk/truths.php", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
-				var rep = new Message().text(body[0].Truth).to(message.chat.id).keyboard(fun);
-				bot.send(rep);
+				bot.send(new Message().text(body[0].Truth).to(message.chat.id).keyboard(fun));
 			} else {
-				var err = new Message().text('An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.').to(message.chat.id).keyboard(fun);
-				bot.send(err);
+				bot.send(new Message().text("An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.").to(message.chat.id).keyboard(fun));
 			}
 		});
 	});
 	bot.get(/Dare/i, function(message) {
 		if (message.text !== "Dare") {return;}
-		request('http://unknowndeveloper.tk/dares.php', function(error, response, body) {
+		request("http://unknowndeveloper.tk/dares.php", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
-				var rep = new Message().text(body[0].Dare).to(message.chat.id).keyboard(fun);
-				bot.send(rep);
+				bot.send(new Message().text(body[0].Dare).to(message.chat.id).keyboard(fun));
 			} else {
-				var err = new Message().text('An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.').to(message.chat.id).keyboard(fun);
-				bot.send(err);
+				bot.send(new Message().text("An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.").to(message.chat.id).keyboard(fun));
 			}
 		});
 	});
 	bot.get(/Yoda\sQuote/i, function(message) {
 		if (message.text !== "Yoda Quote") {return;}
-		var rep = new Message().text(yodasaid[Math.floor(Math.random() * yodasaid.length)]).to(message.chat.id).keyboard(fun);
-		bot.send(rep);
+		bot.send(new Message().text(yodasaid[Math.floor(Math.random() * yodasaid.length)]).to(message.chat.id).keyboard(fun));
 	});
 	bot.get(/Chuck\sNorris/i, function(message) {
 		if (message.text !== "Chuck Norris") {return;}
 		const cn = new Keyboard()
-							.keys([['Nerdy & Explicit Only', 'Exclude Nerdy & Explicit'], ['Nerdy Only', 'Exclude Nerdy'], ['Explicit Only', 'Exclude Explicit'] , ['Nah, any joke is fine.']])
+							.keys([["Nerdy & Explicit Only", "Exclude Nerdy & Explicit"], ["Nerdy Only", "Exclude Nerdy"], ["Explicit Only", "Exclude Explicit"] , ["Nah, any joke is fine."]])
 							.force(true)
 							.oneTime(true)
 							.resize(true)
 							.selective(true);
-		var q = new Message().text('Choose an option for filter.').to(message.chat.id).keyboard(cn);
-		bot.send(q).then(answer => {
+		bot.send(new Message().text("Choose an option for filter.").to(message.chat.id).keyboard(cn)).then(answer => {
 			var url = "http://api.icndb.com/jokes/random?escape=javascript"
-			if (answer.text === 'Nerdy & Explicit Only') {url += "&limitTo=[nerdy,explicit]";}
-			if (answer.text === 'Explicit Only') {url += "&limitTo=[explicit]";}
-			if (answer.text === 'Nerdy Only') {url += "&limitTo=[nerdy]";}
+			if (answer.text === "Nerdy & Explicit Only") {url += "&limitTo=[nerdy,explicit]";}
+			if (answer.text === "Explicit Only") {url += "&limitTo=[explicit]";}
+			if (answer.text === "Nerdy Only") {url += "&limitTo=[nerdy]";}
 			if (answer.text === "Exclude Nerdy & Explicit") {url += "&exclude=[nerdy,explicit]";}
 			if (answer.text === "Exclude Nerdy") {url += "&exclude=[nerdy]";}
 			if (answer.text === "Exclude Explicit") {url += "&exclude=[explicit]";}
@@ -633,6 +619,17 @@ bot.get(/Fun/i, function(message) {
 			}
 		});
 	});
+	
+const util = new Keyboard()
+					.keys([['Bitly', 'Gyazo'], ['Minecraft user', 'Minecraft server'], ['Currency', 'QR Code Utility'], ['Back to Main Menu']])
+					.force(true)
+					.oneTime(true)
+					.resize(true)
+					.selective(true);
+bot.get(/Utility/i, function(message) {
+	if (message.content !== "Utility") {return;}
+	bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).Keyboard(util));
+});
 
 bot.get(/Settings/i, function(message) {
 	if (message.text !== "Settings") {return;}
