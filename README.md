@@ -1,5 +1,5 @@
 # Metagon on Telegram
-[![Add me!](https://img.shields.io/badge/telegram-%40metagon__bot-0088cc.svg)](http://telegram.me/metagon_bot)[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d481eda7342f4258a99cf30122acbc90)](https://www.codacy.com/app/austinhuang0131/metagon-telegram?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=austinhuang0131/metagon-telegram&amp;utm_campaign=Badge_Grade)
+[![Add me!](https://img.shields.io/badge/telegram-%40metagon__bot-0088cc.svg)](http://telegram.me/metagon_bot) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d481eda7342f4258a99cf30122acbc90)](https://www.codacy.com/app/austinhuang0131/metagon-telegram?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=austinhuang0131/metagon-telegram&amp;utm_campaign=Badge_Grade)
 
 An official fork of [Metagon, the Discord bot](http://metagon.tk).
 
