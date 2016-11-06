@@ -1,5 +1,5 @@
 # Metagon on Telegram
-[![Add me!](https://img.shields.io/badge/telegram-%40metagon__bot-0088cc.svg)](http://telegram.me/metagon_bot) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d481eda7342f4258a99cf30122acbc90)](https://www.codacy.com/app/austinhuang0131/metagon-telegram?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=austinhuang0131/metagon-telegram&amp;utm_campaign=Badge_Grade)
+[![Add me!](https://img.shields.io/badge/telegram-%40metagon__bot-0088cc.svg)](http://telegram.me/metagon_bot) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d481eda7342f4258a99cf30122acbc90)](https://www.codacy.com/app/austinhuang0131/metagon-telegram?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=austinhuang0131/metagon-telegram&amp;utm_campaign=Badge_Grade) [![Build Status](https://travis-ci.org/austinhuang0131/metagon-telegram.svg?branch=master)](https://travis-ci.org/austinhuang0131/metagon-telegram)
 
 An official fork of [Metagon, the Discord bot](http://metagon.tk).
 
@@ -21,5 +21,5 @@ An official fork of [Metagon, the Discord bot](http://metagon.tk).
 3. Go to setup.json and input necessary values.
   * [Get a Telegram bot token](https://core.telegram.org/bots#3-how-do-i-create-a-bot) (By the way, you can actually see a token in the setup.json here because I need an example token to make my Travis CI work. That token is linked to my testbot that no one uses.)
   * [Get a bitly token](https://bitly.com/a/oauth_apps)
-4. (Optional) Put your user ID on Myid in the json file. Find out your ID by asking [@userinfobot](https://telegram.me/userinfobot) `/start`.
+  * Put your user ID on Myid in the json file. Find out your ID by asking [@userinfobot](https://telegram.me/userinfobot) `/start`.
 5. Terminal: `npm start`
