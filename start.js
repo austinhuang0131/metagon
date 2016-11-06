@@ -408,6 +408,10 @@ bot.command('bitly [opt] [site]', function(message) {
 	else {bot.send(new Message().text("/bitly <shorten/expand> <Link>").to(message.chat.id));}
 });
 bot.command("kill", function(message) {
+	if (message.chat.id === setup.myid) {
+		bot.send(new Message().text("Exiting...").to(message.chat.id));
+		process.exit();
+	}
 });
 
 const image = new Keyboard()
