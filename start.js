@@ -407,6 +407,8 @@ bot.command('bitly [opt] [site]', function(message) {
 	}
 	else {bot.send(new Message().text("/bitly <shorten/expand> <Link>").to(message.chat.id));}
 });
+bot.command("kill", function(message) {
+});
 
 const image = new Keyboard()
 					.keys([['Cat', 'Penguin'], ['Snake', 'Anime'], ['Back to Main Menu']])
