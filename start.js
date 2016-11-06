@@ -608,7 +608,7 @@ bot.get(/Fun/i, function(message) {
 	});
 	
 const util = new Keyboard()
-					.keys([['Bitly', 'Gyazo'], ['Minecraft user', 'Minecraft server'], ['Currency', 'QR Code Utility'], ['Back to Main Menu']])
+					.keys([['Bitly', 'Gyazo'], ['Minecraft User', 'Minecraft Server'], ['Currency', 'QR Code Utility'], ['Back to Main Menu']])
 					.force(true)
 					.oneTime(true)
 					.resize(true)
@@ -668,6 +668,34 @@ bot.get(/Utility/i, function(message) {
 				gyazo(answer.text).then(function (urls) {
 					var rep = new Message().text(urls[0]).to(message.chat.id).keyboard(util);
 					bot.send(rep);
+				});
+			}
+		});
+	});
+	bot.get(/Minecraft Server/i, function(message) {
+		if (message.text !== "Minecraft Server") {return;}
+		bot.send(new Message().text("Please enter the address of the server you want to check.").to(message.chat.id).keyboard(ukb)).then(answer => {
+			if (answer.text !== "Back to Utility Menu") {
+				request('https://mcapi.ca/query/'+answer.text+'/info', function(error, response, body) {
+					if (!error && response.statusCode === 200) {
+						body = JSON.parse(body);
+						if (body.status === false) {
+							var err = new Message().text('Your input is invalid, or the server you requested is offline, or maybe you just need a retry.\nYour input is '+message.args.ip).to(message.chat.id).keyboard(util);
+							bot.send(err);
+							return;
+						}
+						var mcrep = "Query: "+answer.text+"\nPlayers: "+body.players.online+"/"+body.players.max+"\nPing: "+body.ping+"ms";
+						var rep = new Message().text(mcrep).to(message.chat.id);
+						bot.send(rep);
+						var icon = new Message().text("https://mcapi.ca/query/"+answer.text+"/icon").to(message.chat.id).keyboard(util);
+						setTimeout(function(){
+							bot.send(icon);
+						}, 50);
+						return;
+					} else {
+						var err = new Message().text('An error occured. Please check your input, or retry.').to(message.chat.id).keyboard(util);
+						bot.send(err);
+					}
 				});
 			}
 		});
