@@ -1,16 +1,16 @@
 "use strict";
-var Bot = require('telegram-api').default;
-var Message = require('telegram-api/types/Message');
-var File = require('telegram-api/types/File'); 
-var Keyboard = require('telegram-api/types/Keyboard');
-var fs = require('fs'); // Config
+var Bot = require("telegram-api").default;
+var Message = require("telegram-api/types/Message");
+var File = require("telegram-api/types/File"); 
+var Keyboard = require("telegram-api/types/Keyboard");
+var fs = require("fs"); // Config
 var setup = JSON.parse(fs.readFileSync("setup.json", "utf8"));
 var config = JSON.parse(fs.readFileSync("config.json", "utf8"));
 var bot = new Bot({
   token: setup.bot_token
 });
 var bitlytoken = setup.bitly_token;
-var request = require('request');
+var request = require("request");
 var yodasaid = [
   '"Fear is the path to the dark side. Fear leads to anger, anger leads to hate, hate leads to suffering." -- Yoda \n',
   '"Confer on you, the level of Jedi Knight, the Council does. But, agree with your taking this boy as your Padawan Learner, I do not." -- Yoda to Obi-Wan Kenobi\n',
@@ -105,16 +105,16 @@ var yodasaid = [
   '"Yoda, you seek?" -- Yoda\n', '"My ally is the Force" -- Yoda\n'
 ]; // Yoda said, copied from a npm module
 const menu = new Keyboard()
-                .keys([['Images','Utility'], ['Fun','Settings'], ['About/Support','Feedback']])
+                .keys([["Images","Utility"], ["Fun","Settings"], ["About/Support","Feedback"]])
                 .force(true)
 				.oneTime(true)
                 .resize(true)
                 .selective(true); // Main Menu
-const BMM = new Keyboard().keys([['Back to Main Menu']]).oneTime(true).resize(true).selective(true);
-var gyazo = require('gyazo-upload'); // Gyazo
-var gag = require('node-9gag');
-var gagbrds = ['funny', 'wtf', 'gif', 'gaming', 'anime-manga', 'movie-tv', 'cute', 'girl', 'awesome', 'cosplay', 'sport', 'food', 'ask9gag', 'timely'];
-var gagsubs = ['Hot', 'Fresh'];
+const BMM = new Keyboard().keys([["Back to Main Menu"]]).oneTime(true).resize(true).selective(true);
+var gyazo = require("gyazo-upload"); // Gyazo
+var gag = require("node-9gag");
+var gagbrds = ["funny", "wtf", "gif", "gaming", "anime-manga", "movie-tv", "cute", "girl", "awesome", "cosplay", "sport", "food", "ask9gag", "timely"];
+var gagsubs = ["Hot", "Fresh"];
 
 bot.start();
 console.log("Metagon for Telegram, Beta 0.0.1 by austinhuang.");
@@ -275,7 +275,7 @@ bot.command('gyazo', function(message) {
 			});
 		}
 		else if (answer.document !== undefined) {
-			var rep = new Message().text('I TOLD you to COMPRESS it but you didn\'t!').to(message.chat.id);
+			var rep = new Message().text("I TOLD you to COMPRESS it but you didn't!").to(message.chat.id);
 			bot.send(rep);
 		}
 		else if (answer.text.startsWith("http")) {
@@ -386,9 +386,9 @@ bot.command('joke [opt]', function(message) {
 		}
 	});
 });
-bot.command('bitly [opt] [site]', function(message) {
+bot.command("bitly [opt] [site]", function(message) {
 	if(message.args.opt === "shorten" && message.args.site !== undefined) {
-		request('https://api-ssl.bitly.com/v3/shorten?access_token='+bitlytoken+'&longUrl='+message.args.site+'&format=txt', function(error, response, body) {
+		request("https://api-ssl.bitly.com/v3/shorten?access_token="+bitlytoken+"&longUrl="+message.args.site+"&format=txt", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				bot.send(new Message().text(body).to(message.chat.id));
 			} else {
@@ -397,7 +397,7 @@ bot.command('bitly [opt] [site]', function(message) {
 		});
 	}
 	else if(message.args.opt === "expand" && message.args.site !== undefined) {
-		request('https://api-ssl.bitly.com/v3/expand?access_token='+bitlytoken+'&shortUrl='+message.args.site+'&format=txt', function(error, response, body) {
+		request("https://api-ssl.bitly.com/v3/expand?access_token="+bitlytoken+"&shortUrl="+message.args.site+"&format=txt", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				bot.send(new Message().text(body).to(message.chat.id));
 			} else {
@@ -464,7 +464,7 @@ const fun = new Keyboard()
 					.resize(true)
 					.selective(true);
 bot.get(/Fun/i, function(message) {
-	if (message.text !== "Fun") {return;}
+	if (message.text !== "Fun" && message.text !== "Back to Fun Menu") {return;}
 	bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(fun));
 });
 	bot.get(/Truth/i, function(message) {
@@ -523,19 +523,19 @@ bot.get(/Fun/i, function(message) {
 		});
 	});
 	bot.get(/9gag/i, function(message) {
-		if (message.text !== "9gag") {return;}
+		if (message.text !== "9gag" && message.text !== "Back to 9gag Menu") {return;}
 		var gagbrd = ['Funny', 'WTF', 'GIF', 'Trending', 'Gaming', 'Anime-Manga', 'Movie-TV', 'Cute', 'Girl', 'Awesome', 'Cosplay', 'Sport', 'Food', 'Ask9gag', 'Timely'];
 		const gagkb = new Keyboard()
-							.keys([['Search', 'Back to Main Menu', 'Trending'], ['Funny', 'WTF', 'GIF'], ['NSFW', 'Gaming', 'Anime-Manga'], ['Movie-TV', 'Cute', 'Girl'], ['Awesome', 'Cosplay', 'Sport'], ['Food', 'Ask9gag', 'Timely']])
+							.keys([['Search', 'Back to Fun Menu', 'Trending'], ['Funny', 'WTF', 'GIF'], ['NSFW', 'Gaming', 'Anime-Manga'], ['Movie-TV', 'Cute', 'Girl'], ['Awesome', 'Cosplay', 'Sport'], ['Food', 'Ask9gag', 'Timely']])
 							.force(true)
 							.oneTime(true)
 							.resize(true)
 							.selective(true);
-		var rep = new Message().text('If you want to search using a specific query, click "Search".\nIf you want to get a random gag in a specific category, click your prefered category.\nYou can also click "Back to Main Menu".').to(message.chat.id).keyboard(gagkb);
+		var rep = new Message().text('If you want to search using a specific query, click "Search".\nIf you want to get a random gag in a specific category, click your prefered category.\nYou can also click "Back to Fun Menu".').to(message.chat.id).keyboard(gagkb);
 		bot.send(rep).then(answer => {
 			if (gagbrd.indexOf(answer.text) > -1) {
 				const subs = new Keyboard()
-									.keys([['Hot', 'Fresh'], ['Back to Main Menu']])
+									.keys([['Hot', 'Fresh'], ['Back to 9gag Menu']])
 									.force(true)
 									.oneTime(true)
 									.resize(true)
@@ -563,7 +563,7 @@ bot.get(/Fun/i, function(message) {
 				}
 				else {
 					const subs = new Keyboard()
-										.keys([['Hot', 'Fresh'], ['Back to Main Menu']])
+										.keys([['Hot', 'Fresh'], ['Back to 9gag Menu']])
 										.force(true)
 										.oneTime(true)
 										.resize(true)
@@ -586,7 +586,7 @@ bot.get(/Fun/i, function(message) {
 				}
 			}
 			else if (answer.text === "Search") {
-				var rep = new Message().text("Enter your query.").to(message.chat.id).keyboard(BMM);
+				var rep = new Message().text("Enter your query.").to(message.chat.id).keyboard(new Keyboard().keys([['Back to 9gag Menu']]).oneTime(true).resize(true).selective(true));
 				bot.send(rep).then(answer => {
 					if (answer.text === "Back to Main Menu"){return;}
 					gag.find(answer.text, function(err, res) {
@@ -627,9 +627,37 @@ const util = new Keyboard()
 					.resize(true)
 					.selective(true);
 bot.get(/Utility/i, function(message) {
-	if (message.content !== "Utility") {return;}
-	bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).Keyboard(util));
+	if (message.text !== "Utility" && message.text !== "Back to Utility Menu") {return;}
+	bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(util));
 });
+	bot.get(/Bitly/i, function(message) {
+		if (message.text !== "Bitly") {return;}
+		const bkb = new Keyboard()
+						.keys([["Make a Bitly Link"], ["Expand a Bitly link"], ["Back to Utility Menu"]])
+						.force(true)
+						.oneTime(true)
+						.resize(true)
+						.selective(true);
+		bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(bkb)).then(subanswer => {
+			if (subanswer.text === "Make a Bitly Link" || subanswer.text === "Expand a Bitly link") {
+				var bbkb = new Keyboard().keys([["Back to Utility Menu"]]).oneTime(true).resize(true).selective(true);
+				bot.send(new Message().text("Enter the URL you wish to be processed, or click \"Back to Utility Menu\".").to(message.chat.id).keyboard(bbkb)).then(answer => {
+					if (answer.text.startsWith("http")) {
+						var bopt = ["shorten", "longUrl"];
+						if (subanswer.text === "Expand a Bitly link") {bopt = ["expand", "shortUrl"];}
+						request("https://api-ssl.bitly.com/v3/"+bopt[0]+"?access_token="+bitlytoken+"&"+bopt[1]+"="+answer.text+"&format=txt", function(error, response, body) {
+							if (!error && response.statusCode === 200) {
+								bot.send(new Message().text(body).to(message.chat.id).keyboard(util));
+							} else {
+								bot.send(new Message().text("An error occured. Invalid address, or retry?").to(message.chat.id).keyboard(util));
+							}
+						});
+					}
+					else {bot.send(new Message().text("Invalid URL. Sending back to utility menu...").to(message.chat.id).keyboard(util));}
+				});
+			}
+		});
+	});
 
 bot.get(/Settings/i, function(message) {
 	if (message.text !== "Settings") {return;}
