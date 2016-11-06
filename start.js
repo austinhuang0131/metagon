@@ -297,12 +297,10 @@ bot.command('9gag [sec] [subsec]', function(message) {
 		if (gagbrds.indexOf(message.args.sec.toLowerCase()) > -1 && gagsub.indexOf(message.args.subsec.toLowerCase()) > -1) {
 			gag.section(message.args.sec, message.args.subsec, function(err, res) {
 				if (err) {
-					var rep = new Message().text("An error occured. Retry?").to(message.chat.id);
-					bot.send(rep);
+					bot.send(new Message().text("An error occured. Retry?").to(message.chat.id));
 				}
 				else {
-					var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id);
-					bot.send(rep);
+					bot.send(new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id));
 				}
 			});
 		}
@@ -310,33 +308,27 @@ bot.command('9gag [sec] [subsec]', function(message) {
 			if (config.nsfw.indexOf(message.chat.id) > -1) {
 				gag.section("nsfw", message.args.subsec, function(err, res) {
 					if (err) {
-						var rep = new Message().text("An error occured. Retry?").to(message.chat.id);
-						bot.send(rep);
+						bot.send(new Message().text("An error occured. Retry?").to(message.chat.id));
 					}
 					else {
-						var rep = new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id);
-						bot.send(rep);
+						bot.send(new Message().text(res[Math.floor(Math.random() * res.length)].url).to(message.chat.id));
 					}
 				});
 			}
 			else {
-				var rep = new Message().text("Hmm...You didn't enable your NSFW config. Go to /settings to enable it. (Or you actually enabled it? Then retry.)").to(message.chat.id);
-				bot.send(rep);
+				bot.send(new Message().text("Hmm...You didn't enable your NSFW config. Go to /settings to enable it. (Or you actually enabled it? Then retry.)").to(message.chat.id));
 			}
 		}
 		else if (message.args.sec === "search" && message.args.subsec !== undefined) {
 			gag.find(message.args.subsec, function(err, res) {
 				if (err) {
-					var rep = new Message().text("An error occured. Retry?").to(message.chat.id);
-					bot.send(rep);
+					bot.send(new Message().text("An error occured. Retry?").to(message.chat.id));
 				}
 				else if (res.result.length === 0) {
-					var rep = new Message().text("No results.").to(message.chat.id);
-					bot.send(rep);
+					bot.send(new Message().text("No results.").to(message.chat.id));
 				}
 				else {
-					var rep = new Message().text(res.result[Math.floor(Math.random() * res.result.length)].url).to(message.chat.id);
-					bot.send(rep);
+					bot.send(new Message().text(res.result[Math.floor(Math.random() * res.result.length)].url).to(message.chat.id));
 				}
 			});
 		}
@@ -358,12 +350,10 @@ bot.command('9gag [sec] [subsec]', function(message) {
 		});
 	}
 	else if (message.args.sec === "list") {
-	var rep = new Message().text("Accepted sections: "+gagbrds+",nsfw\nNSFW section require /nsfw config.").to(message.chat.id);
-	bot.send(rep);
+		bot.send(new Message().text("Accepted sections: "+gagbrds+",nsfw\nNSFW section require /nsfw config.").to(message.chat.id));
 	}
 	else {
-		var rep = new Message().text("/9gag trending\n/9gag <Section> <Hot/Fresh> (Get a list of <Section>s using \"/9gag list\")\n/9gag search <Query>").to(message.chat.id);
-		bot.send(rep);
+		bot.send(new Message().text("/9gag trending\n/9gag <Section> <Hot/Fresh> (Get a list of <Section>s using \"/9gag list\")\n/9gag search <Query>").to(message.chat.id));
 	}
 });
 bot.command('joke [opt]', function(message) {
@@ -377,12 +367,10 @@ bot.command('joke [opt]', function(message) {
 	request(url, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
-			var res = new Message().text(body.value.joke).to(message.chat.id);
-			bot.send(res);
+			bot.send(Message().text(body.value.joke).to(message.chat.id));
 		}
 		else {
-			var res = new Message().text("An error occured. Please check whether http://www.icndb.com/api/ is online or not, and retry.").to(message.chat.id);
-			bot.send(res);
+			bot.send(new Message().text("An error occured. Please check whether http://www.icndb.com/api/ is online or not, and retry.").to(message.chat.id));
 		}
 	});
 });
@@ -409,7 +397,6 @@ bot.command("bitly [opt] [site]", function(message) {
 });
 bot.command("kill", function(message) {
 	if (message.chat.id === setup.myid) {
-		bot.send(new Message().text("Exiting...").to(message.chat.id));
 		process.exit();
 	}
 });
@@ -626,6 +613,7 @@ const util = new Keyboard()
 					.oneTime(true)
 					.resize(true)
 					.selective(true);
+const ukb = new Keyboard().keys([["Back to Utility Menu"]]).oneTime(true).resize(true).selective(true);
 bot.get(/Utility/i, function(message) {
 	if (message.text !== "Utility" && message.text !== "Back to Utility Menu") {return;}
 	bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(util));
@@ -640,8 +628,7 @@ bot.get(/Utility/i, function(message) {
 						.selective(true);
 		bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(bkb)).then(subanswer => {
 			if (subanswer.text === "Make a Bitly Link" || subanswer.text === "Expand a Bitly link") {
-				var bbkb = new Keyboard().keys([["Back to Utility Menu"]]).oneTime(true).resize(true).selective(true);
-				bot.send(new Message().text("Enter the URL you wish to be processed, or click \"Back to Utility Menu\".").to(message.chat.id).keyboard(bbkb)).then(answer => {
+				bot.send(new Message().text("Enter the URL you wish to be processed, or click \"Back to Utility Menu\".").to(message.chat.id).keyboard(ukb)).then(answer => {
 					if (answer.text.startsWith("http")) {
 						var bopt = ["shorten", "longUrl"];
 						if (subanswer.text === "Expand a Bitly link") {bopt = ["expand", "shortUrl"];}
@@ -654,6 +641,33 @@ bot.get(/Utility/i, function(message) {
 						});
 					}
 					else {bot.send(new Message().text("Invalid URL. Sending back to utility menu...").to(message.chat.id).keyboard(util));}
+				});
+			}
+		});
+	});
+	bot.get(/Gyazo/i, function(message) {
+		if (message.text !== "Gyazo") {return;}
+		var q = new Message().text('You can use the following methods to upload an image to gyazo...\n* Send me the direct URL to the image\n* Upload it here (PLEASE COMPRESS IT, or it\'ll upload as a document and it just won\'t work)').to(message.chat.id).keyboard(ukb);
+		bot.send(q).then(answer => {
+			if (answer.photo !== undefined) {
+				request("https://api.telegram.org/bot"+setup.bot_token+"/getFile?file_id="+answer.photo[answer.photo.length -1].file_id, function(error, response, body) {
+					if (!error && response.statusCode === 200) {
+						body = JSON.parse(body);
+						gyazo("https://api.telegram.org/file/bot"+setup.bot_token+"/"+body.result.file_path).then(function (urls) {
+							var rep = new Message().text(urls[0]).to(message.chat.id).keyboard(util);
+							bot.send(rep);
+						});
+					}
+				});
+			}
+			else if (answer.document !== undefined) {
+				var rep = new Message().text("I TOLD you to COMPRESS it but you didn't!").to(message.chat.id).keyboard(util);
+				bot.send(rep);
+			}
+			else if (answer.text.startsWith("http")) {
+				gyazo(answer.text).then(function (urls) {
+					var rep = new Message().text(urls[0]).to(message.chat.id).keyboard(util);
+					bot.send(rep);
 				});
 			}
 		});
@@ -733,4 +747,9 @@ bot.get(/Back\sto\sMain\sMenu/i, function(message) {
 	if (message.text !== "Back to Main Menu") {return;}
 	var rep = new Message().text('What do you want to do now?').to(message.chat.id).keyboard(menu);
 	bot.send(rep);
+});
+
+const unhandledRejections = new Map();
+process.on('unhandledRejection', (reason, p) => {
+  console.log("Unhandled:"+p+" Reason: "+reason);
 });
