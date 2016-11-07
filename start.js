@@ -543,7 +543,6 @@ bot.get(/Fun/i, function(message) {
 	});
 	bot.get(/9gag/i, function(message) {
 		if (message.text !== "9gag" && message.text !== "Back to 9gag Menu") {return;}
-		var gagbrd = ['Funny', 'WTF', 'GIF', 'Trending', 'Gaming', 'Anime-Manga', 'Movie-TV', 'Cute', 'Girl', 'Awesome', 'Cosplay', 'Sport', 'Food', 'Ask9gag', 'Timely'];
 		const gagkb = new Keyboard()
 							.keys([['Search', 'Back to Fun Menu', 'Trending'], ['Funny', 'WTF', 'GIF'], ['NSFW', 'Gaming', 'Anime-Manga'], ['Movie-TV', 'Cute', 'Girl'], ['Awesome', 'Cosplay', 'Sport'], ['Food', 'Ask9gag', 'Timely']])
 							.force(true)
@@ -552,7 +551,7 @@ bot.get(/Fun/i, function(message) {
 							.selective(true);
 		var rep = new Message().text('If you want to search using a specific query, click "Search".\nIf you want to get a random gag in a specific category, click your prefered category.\nYou can also click "Back to Fun Menu".').to(message.chat.id).keyboard(gagkb);
 		bot.send(rep).then(answer => {
-			if (gagbrd.indexOf(answer.text) > -1) {
+			if (gagbrds.indexOf(answer.text) > -1) {
 				const subs = new Keyboard()
 									.keys([['Hot', 'Fresh'], ['Back to 9gag Menu']])
 									.force(true)
@@ -831,7 +830,9 @@ bot.get(/Back\sto\sMain\sMenu/i, function(message) {
 	bot.send(rep);
 });
 
-const unhandledRejections = new Map();
 process.on('unhandledRejection', (reason, p) => {
-  console.log("Unhandled:"+p+" Reason: "+reason);
+	console.log("Unhandled:"+p+" Reason: "+reason);
+});
+process.on('uncaughtException', (err) => {
+	console.log(`Caught exception: ${err}`);
 });
