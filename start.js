@@ -8,9 +8,16 @@ var fs = require("fs"); // Config
 var setup = JSON.parse(fs.readFileSync("setup.json", "utf8"));
 var config = JSON.parse(fs.readFileSync("config.json", "utf8"));
 var bot = new Bot({
-  token: setup.bot_token
+  token: setup.telegram
 });
 var bitlytoken = setup.bitly_token;
+var Kik = require('@kikinteractive/kik');
+var kik = new Kik({
+    username: 'lydia_bot',
+    apiKey: '82a36ed6-fb4a-4684-9bbf-d4e905d93e51',
+    baseUrl: 'https://mtgtelegram-austinhuang.rhcloud.com/'
+});
+var restify = require('restify');
 var request = require("request");
 var yodasaid = [
   '"Fear is the path to the dark side. Fear leads to anger, anger leads to hate, hate leads to suffering." -- Yoda \n',
@@ -117,16 +124,27 @@ var gag = require("node-9gag");
 var gagbrds = ["funny", "wtf", "gif", "gaming", "anime-manga", "movie-tv", "cute", "girl", "awesome", "cosplay", "sport", "food", "ask9gag", "timely"];
 var gagsubs = ["Hot", "Fresh"];
 
-bot.start();
-console.log("Metagon for Telegram, Beta 0.0.1 by austinhuang.");
+var server = restify.createServer({
+    name : "Kik bot HTTP server"
+});
+var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+server.listen(port, ipaddress, function () {
+    console.log('%s listening to %s', server.name, server.url); 
+});
+server.post('/incoming', kik.incoming());
+kik.updateBotConfiguration();
+console.log("Lydia for Telegram/Kik, 1.0.1 by austinhuang.");
 
+
+bot.start();
 bot.command('start', function(message) {
 	if (message.chat.id !== message.from.id) {
 		var rep = new Message().text('Keyboard mode is NOT available in group chats.').to(message.chat.id);
 		bot.send(rep);
 		return;
 	}
-	var rep = new Message().text('What do you want to do now?').to(message.chat.id).keyboard(menu);
+	var rep = new Message().text('What do you want to do now?\n\n**IMPORTANT!** Due to some reason we are moving Metagon to @lydia_bot in early December (Exact date will be announced), and will shut down this account in early January 2017. For more information contact @austinhuang.').to(message.chat.id).keyboard(menu);
 	bot.send(rep);
 });
 bot.command('cat', function(message) {
@@ -265,10 +283,10 @@ bot.command('gyazo', function(message) {
 	var q = new Message().text('You can use the following methods to upload an image to gyazo...\n* Send me the direct URL to the image\n* Upload it here (PLEASE COMPRESS IT, or it\'ll upload as a document and it just won\'t work)\nType anything else to exit this menu.').to(message.chat.id);
 	bot.send(q).then(answer => {
 		if (answer.photo !== undefined) {
-			request("https://api.telegram.org/bot"+setup.bot_token+"/getFile?file_id="+answer.photo[answer.photo.length -1].file_id, function(error, response, body) {
+			request("https://api.telegram.org/bot"+setup.telegram+"/getFile?file_id="+answer.photo[answer.photo.length -1].file_id, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
-					gyazo("https://api.telegram.org/file/bot"+setup.bot_token+"/"+body.result.file_path).then(function (urls) {
+					gyazo("https://api.telegram.org/file/bot"+setup.telegram+"/"+body.result.file_path).then(function (urls) {
 						var rep = new Message().text(urls[0]).to(message.chat.id);
 						bot.send(rep);
 					});
@@ -432,13 +450,7 @@ bot.command("mcuser [username]", function(message) {
 bot.command("help", function(message) {
 	bot.send(new Message().text("https://github.com/austinhuang0131/metagon-telegram/wiki").to(message.chat.id));
 });
-
-const image = new Keyboard()
-					.keys([['Cat', 'Penguin'], ['Snake', 'Anime (Unavailable)'], ['Back to Main Menu']])
-					.force(true)
-					.oneTime(true)
-					.resize(true)
-					.selective(true);
+const image = new Keyboard().keys([['Cat', 'Penguin'], ['Snake', 'Anime (Unavailable)'], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
 bot.get(/Images/i, function(message) {
 	if (message.text !== "Images") {return;}
 	bot.send(new Message().text("You've chosen the Image category. Choose one of the following options, or click \"Back to Main Menu\".").to(message.chat.id).keyboard(image));
@@ -475,13 +487,7 @@ bot.get(/Images/i, function(message) {
 			}
 		});
 	});
-	
-const fun = new Keyboard()
-					.keys([['Truth', 'Dare'], ['Yoda Quote', 'Chuck Norris'], ['9gag', 'Back to Main Menu']])
-					.force(true)
-					.oneTime(true)
-					.resize(true)
-					.selective(true);
+const fun = new Keyboard().keys([['Truth', 'Dare'], ['Yoda Quote', 'Chuck Norris'], ['9gag', 'Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
 bot.get(/Fun/i, function(message) {
 	if (message.text !== "Fun" && message.text !== "Back to Fun Menu") {return;}
 	bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(fun));
@@ -637,13 +643,7 @@ bot.get(/Fun/i, function(message) {
 			}
 		});
 	});
-	
-const util = new Keyboard()
-					.keys([['Bitly', 'Gyazo'], ['Minecraft User', 'Minecraft Server'], /*['Currency', 'QR Code Utility'],*/ ['Back to Main Menu']])
-					.force(true)
-					.oneTime(true)
-					.resize(true)
-					.selective(true);
+const util = new Keyboard().keys([['Bitly', 'Gyazo'], ['Minecraft User', 'Minecraft Server'], /*['Currency', 'QR Code Utility'],*/ ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
 const ukb = new Keyboard().keys([["Back to Utility Menu"]]).oneTime(true).resize(true).selective(true);
 bot.get(/Utility/i, function(message) {
 	if (message.text !== "Utility" && message.text !== "Back to Utility Menu") {return;}
@@ -681,10 +681,10 @@ bot.get(/Utility/i, function(message) {
 		var q = new Message().text('You can use the following methods to upload an image to gyazo...\n* Send me the direct URL to the image\n* Upload it here (PLEASE COMPRESS IT, or it\'ll upload as a document and it just won\'t work)').to(message.chat.id).keyboard(ukb);
 		bot.send(q).then(answer => {
 			if (answer.photo !== undefined) {
-				request("https://api.telegram.org/bot"+setup.bot_token+"/getFile?file_id="+answer.photo[answer.photo.length -1].file_id, function(error, response, body) {
+				request("https://api.telegram.org/bot"+setup.telegram+"/getFile?file_id="+answer.photo[answer.photo.length -1].file_id, function(error, response, body) {
 					if (!error && response.statusCode === 200) {
 						body = JSON.parse(body);
-						gyazo("https://api.telegram.org/file/bot"+setup.bot_token+"/"+body.result.file_path).then(function (urls) {
+						gyazo("https://api.telegram.org/file/bot"+setup.telegram+"/"+body.result.file_path).then(function (urls) {
 							var rep = new Message().text(urls[0]).to(message.chat.id).keyboard(util);
 							bot.send(rep);
 						});
@@ -753,7 +753,6 @@ bot.get(/Utility/i, function(message) {
 			}
 		});
 	});
-
 bot.get(/Settings/i, function(message) {
 	if (message.text !== "Settings") {return;}
 	var output = "Your current settings:\n* NSFW Images in Booru commands: ";
@@ -802,13 +801,11 @@ bot.get(/Settings/i, function(message) {
 		}
 	});
 });
-
 bot.get(/About\/Support/i, function(message) {
 	if (message.text !== "About/Support") {return;}
 	var err = new Message().text('Metagon, Confidence in Usability.\n\nOriginally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/metagon-telegram.').to(message.chat.id).keyboard(menu);
 	bot.send(err);
 });
-
 bot.get(/Feedback/i, function(message) {
 	if (message.text !== "Feedback") {return;}
 	if (setup.myid === undefined) {
@@ -823,11 +820,19 @@ bot.get(/Feedback/i, function(message) {
 		bot.send(rep);
 	});
 });
-
 bot.get(/Back\sto\sMain\sMenu/i, function(message) {
 	if (message.text !== "Back to Main Menu") {return;}
-	var rep = new Message().text('What do you want to do now?').to(message.chat.id).keyboard(menu);
+	var rep = new Message().text('What do you want to do now?\n\n**IMPORTANT!** Due to some reason we are moving Metagon to @lydia_bot in early December (Exact date will be announced), and will shut down this account in early January 2017. For more information contact @austinhuang.').to(message.chat.id).keyboard(menu);
 	bot.send(rep);
+});
+
+kik.onTextMessage((message,next) => {
+	if (message.body === "/help") {
+	    message.reply("For help please go to https://github.com/austinhuang0131/lydia-1/wiki#kik-commands");
+	}
+	if (message.body === "/cat") {
+	    message.reply("For help please go to https://github.com/austinhuang0131/lydia-1/wiki#kik-commands");
+	}
 });
 
 process.on('unhandledRejection', (reason, p) => {
