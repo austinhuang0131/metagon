@@ -20,10 +20,4 @@ An official fork of [Metagon, the Discord bot](http://metagon.tk).
 [Here](https://github.com/austinhuang0131/metagon-telegram/wiki).
 
 ## How to run it?
-1. Node.js v6.0.0 or higher
-2. Clone it, then terminal: `npm install`
-3. Go to setup.json and input necessary values.
-  * [Get a Telegram bot token](https://core.telegram.org/bots#3-how-do-i-create-a-bot) (By the way, you can actually see a token in the setup.json here because I need an example token to make my Travis CI work. That token is linked to my testbot that no one uses.)
-  * [Get a bitly token](https://bitly.com/a/oauth_apps)
-  * Put your user ID on Myid in the json file. Find out your ID by asking [@userinfobot](https://telegram.me/userinfobot) `/start`.
-5. Terminal: `npm start`
+[Here](https://github.com/austinhuang0131/lydia-1/wiki/Self-hosting-Guide).
