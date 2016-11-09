@@ -1,22 +1,24 @@
 {
-  "name": "metagon-on-telegram",
+  "name": "lydia",
   "version": "1.0.0",
-  "description": "Metagon on Telegram",
+  "description": "Lydia on Telegram/Kik",
   "private": false,
   "main": "start.js",
   "scripts": {
     "start": "node start.js"
   },
   "author": "Austin Huang <austinhuang0131@icloud.com>",
-  "license": "SEE LICENSE IN readme.md",
+  "license": "SEE LICENSE IN LICENSE",
   "repository": {
     "type": "git",
     "url": "https://github.com/austinhuang0131/metagon-telegram.git"
   },
   "dependencies": {
+    "@kikinteractive/kik": "^2.0.12",
     "gyazo-upload": "0.0.2",
     "node-9gag": "^0.2.3",
     "request": "^2.76.0",
+    "restify": "^4.2.0",
     "telegram-api": "^0.7.6"
   }
 }
