@@ -7,13 +7,14 @@
 * Without the template (WRITE IN THE TEMPLATE!!!)
 
 ### Template
-```md
+```markdown
 * Category: [Bug/Improvement/Feature Request]
 
 ## Description
 (Please be detailed unless you will describe it in Steps to Reproduce)
 
 ### Steps to Reproduce: (Required for bugs, optional for improvement)
+Background: (Your chat client & Your settings)
 1. Type in "..."
 2. ...
 Expected Result: ...
