@@ -399,11 +399,6 @@ if (setup.telegram !== "") {
 		}
 		else {bot.send(new Message().text("/bitly <shorten/expand> <Link>").to(message.chat.id));}
 	});
-	bot.command("kill", function(message) {
-		if (message.chat.id === setup.myid) {
-			process.exit();
-		}
-	});
 	bot.command("announce ...text", function(message) {
 		if (message.chat.id === setup.myid) {
 			config = JSON.parse(fs.readFileSync("config.json", "utf8"));
@@ -433,7 +428,7 @@ if (setup.telegram !== "") {
 		}
 	});
 	bot.command("help", function(message) {
-		bot.send(new Message().text("https://github.com/austinhuang0131/metagon-telegram/wiki").to(message.chat.id));
+		bot.send(new Message().text("https://github.com/austinhuang0131/lydia-1/wiki").to(message.chat.id));
 	});
 	const image = new Keyboard().keys([['Cat', 'Penguin'], ['Snake', 'Anime (Unavailable)'], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
 	bot.get(/Images/i, function(message) {
@@ -788,7 +783,7 @@ if (setup.telegram !== "") {
 	});
 	bot.get(/About\/Support/i, function(message) {
 		if (message.text !== "About/Support") {return;}
-		var err = new Message().text('Metagon, Confidence in Usability.\n\nOriginally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/metagon-telegram.').to(message.chat.id).keyboard(menu);
+		var err = new Message().text('Metagon, Confidence in Usability.\n\nOriginally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/lydia-1.').to(message.chat.id).keyboard(menu);
 		bot.send(err);
 	});
 	bot.get(/Feedback/i, function(message) {
@@ -796,7 +791,7 @@ if (setup.telegram !== "") {
 		if (setup.myid === undefined) {
 			bot.send(new Message().text('Hmm...I don\'t know who is the owner. Tell the host of the bot to...\n - Go to setup.json and put his ID in the myid OR\n - Just paste 265228448 (@austinhuang) into myid').to(message.chat.id));
 		}
-		var rep = new Message().text('Hello, fellow user. If you\'d like to suggest a new feature, please type it here. Thank you!\n---@austinhuang\n\nWARNING: If you want to report a bug, go to https://github.com/austinhuang0131/metagon-telegram/issues').to(message.chat.id).keyboard(BMM);
+		var rep = new Message().text('Hello, fellow user. If you\'d like to suggest a new feature, please type it here. Thank you!\n---@austinhuang\n\nWARNING: If you want to report a bug, go to https://github.com/austinhuang0131/lydia-1/issues').to(message.chat.id).keyboard(BMM);
 		bot.send(rep).then(answer => {
 			if (answer.text === "Back to Main Menu"){return;}
 			var get = new Message().text('Feedback from @'+message.from.username+': '+answer.text).to(setup.myid);
@@ -816,7 +811,7 @@ if (setup.kik_token !== "") {
 	var kik = new Kik({
 		username: setup.kik_username,
 		apiKey: setup.kik_token,
-		baseUrl: setup.kik_url
+		baseUrl: setup.kik_url,
 	});
 	var server = restify.createServer({
 		name : "Kik bot HTTP server"
@@ -828,10 +823,77 @@ if (setup.kik_token !== "") {
 	});
 	server.post('/incoming', kik.incoming());
 	kik.updateBotConfiguration();
-	
 	kik.onTextMessage((message,next) => {
 		if (message.body === "/help") {
-			message.reply("For help please go to https://github.com/austinhuang0131/lydia-1/wiki");
+			message.reply("https://github.com/austinhuang0131/lydia-1/wiki");
+		}
+		else if (message.body === "/start") {
+			message.reply(Kik.Message.text("What do you want to do now?").addResponseKeyboard(["Images", "Fun", "Utility", "Settings", "About/Support", "Feedback"]));
+		}
+		else if (message.body === "/cat" || message.body.toLowerCase() === "cat") {
+			request("http://random.cat/meow", function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					body = JSON.parse(body);
+					message.reply(Kik.Message.picture(body.file));
+				} else {
+					message.reply("An error occured. Please check whether http://random.cat is online or not, and retry.");
+				}
+			});
+		}
+		else if (message.body === "/snake") {
+			request("http://fur.im/snek/snek.php", function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					body = JSON.parse(body);
+					message.reply(Kik.Message.picture(body.file));
+				} else {
+					message.reply("An error occured. Please check whether http://random.cat is online or not, and retry.");
+				}
+			});
+		}
+		else if (message.body === "/penguin") {
+			request("http://penguin.wtf", function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					message.reply(Kik.Message.picture(body));
+				} else {
+					message.reply("An error occured. Please check whether http://random.cat is online or not, and retry.");
+				}
+			});
+		}
+		else if (message.body === "/truth") {
+			request('http://unknowndeveloper.tk/truths.php', function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					body = JSON.parse(body);
+					message.reply(body[0].Truth);
+				} else {
+					message.reply('An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.');
+				}
+			});
+		}
+		else if (message.body === "/dare") {
+			request('http://unknowndeveloper.tk/dares.php', function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					body = JSON.parse(body);
+					message.reply(body[0].Dare);
+				} else {
+					message.reply('An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.');
+				}
+			});
+		}
+		else if (message.body === "/gyazo") {
+			message.reply("Please upload an image here. (Unlike Telegram/Discord version, using direct URL does not work here.)");
+			kik.onPictureMessage((answer) => {
+				gyazo(answer.picUrl).then((urls) => {
+					answer.reply(urls[0]);
+				});
+			});
+			kik.onLinkMessage((answer) => {
+				gyazo(answer.url).then((urls) => {
+					answer.reply(urls[0]);
+				});
+			});
+		}
+		else if (message.body === "/yoda") {
+			message.reply(yodasaid[Math.floor(Math.random() * yodasaid.length)]);
 		}
 	});
 }
