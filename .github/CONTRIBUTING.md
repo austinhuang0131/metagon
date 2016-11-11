@@ -8,6 +8,7 @@
 
 ### Template
 ```markdown
+* Platform: [Telegram/Kik]
 * Category: [Bug/Improvement/Feature Request]
 
 ## Description
