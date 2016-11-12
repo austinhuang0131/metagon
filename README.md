@@ -21,3 +21,9 @@ An official fork of the abandoned [Metagon, the Discord bot](http://metagon.tk) 
 
 ## How to run it?
 [Here](https://github.com/austinhuang0131/lydia-1/wiki/Self-hosting-Guide).
+
+## Contact
+Telegram: [@austinhuang](http://telegram.me/austinhuang)
+Kik: [@austinhuang0131](http://kik.me/austinhuang0131)
+Discord: austinhuang#1076
+Call: +1 (289) 799-6618 (Internet-Phone)
