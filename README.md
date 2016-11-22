@@ -1,4 +1,4 @@
-**DOWNTIME: Due to some unsolveable bugs that is making the bot unstartable, the bot will be down for around 24 hours from now (to let that bug-making message disappear). If it starts up earlier than that, I'll notify you guys.**
+**DOWNTIME: Due to Telegram updated its API yesterday which allows bots to listen to channel posts, Lydia is a bit unsuited to it and then she felt sick. Maybe wait an hour or two?**
 
 **IMPORTANT!** As a result of abandoning the original Metagon brand and creation of the new Lydia brand, the Telegram bot will be moved to `@lydia_bot` in late November, along with the creation of Lydia for Kik.
 
