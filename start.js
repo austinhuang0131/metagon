@@ -9,6 +9,7 @@ var setup = JSON.parse(fs.readFileSync("setup.json", "utf8"));
 var config = JSON.parse(fs.readFileSync("config.json", "utf8"));
 var Kik = require('@kikinteractive/kik');
 var bitlytoken = setup.bitly_token;
+var chalk = require("chalk");
 var restify = require('restify');
 var request = require("request");
 var yodasaid = [
@@ -122,7 +123,19 @@ if (setup.telegram !== "") {
 	var bot = new Bot({
 		token: setup.telegram
 	});
-	bot.start();
+	bot.start().catch(err => {
+		console.error(err);
+	});
+	bot.on('update', update => {
+		if (update[0].message !== undefined) {
+			if (update[0].message.chat.title === undefined) {
+				console.log("TGM "+chalk.cyan("@"+update[0].message.from.username)+" "+update[0].message.text);
+			}
+			else {
+				console.log("TGM "+chalk.bgCyan(update[0].message.chat.title)+" "+chalk.cyan("@"+update[0].message.from.username)+" "+update[0].message.text);
+			}
+		}
+	});
 	bot.command('start', function(message) {
 		if (message.chat.id !== message.from.id) {
 			var rep = new Message().text('Keyboard mode is NOT available in group chats.').to(message.chat.id);
@@ -143,7 +156,7 @@ if (setup.telegram !== "") {
 				bot.send(err);
 			}
 		});
-	});
+	})
 	bot.command('penguin', function(message) {
 		request('http://penguin.wtf/', function(error, response, body) {
 			if (!error && response.statusCode === 200) {
@@ -154,7 +167,7 @@ if (setup.telegram !== "") {
 				bot.send(err);
 			}
 		});
-	});
+	})
 	bot.command('snake', function(message) {
 		request('http://fur.im/snek/snek.php', function(error, response, body) {
 			if (!error && response.statusCode === 200) {
@@ -166,7 +179,7 @@ if (setup.telegram !== "") {
 				bot.send(err);
 			}
 		});
-	});
+	})
 	bot.command('truth', function(message) {
 		request('http://unknowndeveloper.tk/truths.php', function(error, response, body) {
 			if (!error && response.statusCode === 200) {
@@ -178,7 +191,7 @@ if (setup.telegram !== "") {
 				bot.send(err);
 			}
 		});
-	});
+	})
 	bot.command('dare', function(message) {
 		request('http://unknowndeveloper.tk/dares.php', function(error, response, body) {
 			if (!error && response.statusCode === 200) {
@@ -190,7 +203,7 @@ if (setup.telegram !== "") {
 				bot.send(err);
 			}
 		});
-	});
+	})
 	bot.command('mcserver [ip]', function(message) {
 		if (message.args.ip !== undefined) {
 			request('https://mcapi.ca/query/'+message.args.ip+'/info', function(error, response, body) {
@@ -219,42 +232,42 @@ if (setup.telegram !== "") {
 			var err = new Message().text('/mcserver <Address>').to(message.chat.id);
 			bot.send(err);
 		}
-	});
+	})
 	bot.command('settings', function(message) {
 		var config = JSON.parse(fs.readFileSync("config.json", "utf8"));
-		var output = "Your current settings:\n* NSFW Images in Booru commands (/nsfw): ";
-		if (config.nsfw.indexOf(message.chat.id) > -1) {output += "Enabled\n* Notify me about updates (/notif): ";} else {output += "Disabled\n* Notify me about updates (/notif): ";}
-		if (config.notif.indexOf(message.chat.id) > -1) {output += "Enabled";} else {output += "Disabled";}
+		var output = "Your current settings:\n* Not-Suitable-For-Work/18+ content (/nsfw): ";
+		if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {output += "Enabled\n* Notify me about updates (/notif): ";} else {output += "Disabled\n* Notify me about updates (/notif): ";}
+		if (config.telegram.notif.indexOf(message.chat.id) > -1) {output += "Enabled";} else {output += "Disabled";}
 		output += "\nTo change the config, use the links above.";
 		var rep = new Message().text(output).to(message.chat.id);
 		bot.send(rep);
 	});
 		bot.command('nsfw', function(message) {
 			config = JSON.parse(fs.readFileSync("config.json", "utf8"));
-			var index = config.nsfw.indexOf(message.chat.id);
+			var index = config.telegram.nsfw.indexOf(message.chat.id);
 			if (index > -1) {
-				config.nsfw.splice(index, 1);
+				config.telegram.nsfw.splice(index, 1);
 				var rep = new Message().text("NSFW has been disabled. To adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id);
 				bot.send(rep);
 				fs.writeFile('config.json', JSON.stringify(config), 'utf8');
 			}
 			else if (index === -1) {
-				config.nsfw.push(message.chat.id);
+				config.telegram.nsfw.push(message.chat.id);
 				var rep = new Message().text("NSFW has been enabled. Please make sure you are LEGAL to see NSFW content in your country. To adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id);
 				bot.send(rep);
 				fs.writeFile('config.json', JSON.stringify(config), 'utf8');
 			}
 		});
 		bot.command('notif', function(message) {
-			var index = config.notif.indexOf(message.chat.id);
+			var index = config.telegram.notif.indexOf(message.chat.id);
 			if (index> -1) {
-				config.notif.splice(index, 1);
+				config.telegram.notif.splice(index, 1);
 				var rep = new Message().text("You will no longer receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id);
 				bot.send(rep);
 				fs.writeFile('config.json', JSON.stringify(config), 'utf8');
 			}
 			else if (index === -1) {
-				config.notif.push(message.chat.id);
+				config.telegram.notif.push(message.chat.id);
 				var rep = new Message().text("You will now receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id);
 				bot.send(rep);
 				fs.writeFile('config.json', JSON.stringify(config), 'utf8');
@@ -265,34 +278,8 @@ if (setup.telegram !== "") {
 		bot.send(rep);
 	});
 	bot.command('gyazo', function(message) {
-		var q = new Message().text('You can use the following methods to upload an image to gyazo...\n* Send me the direct URL to the image\n* Upload it here (PLEASE COMPRESS IT, or it\'ll upload as a document and it just won\'t work)\nType anything else to exit this menu.').to(message.chat.id);
-		bot.send(q).then(answer => {
-			if (answer.photo !== undefined) {
-				request("https://api.telegram.org/bot"+setup.telegram+"/getFile?file_id="+answer.photo[answer.photo.length -1].file_id, function(error, response, body) {
-					if (!error && response.statusCode === 200) {
-						body = JSON.parse(body);
-						gyazo("https://api.telegram.org/file/bot"+setup.telegram+"/"+body.result.file_path).then(function (urls) {
-							var rep = new Message().text(urls[0]).to(message.chat.id);
-							bot.send(rep);
-						});
-					}
-				});
-			}
-			else if (answer.document !== undefined) {
-				var rep = new Message().text("I TOLD you to COMPRESS it but you didn't!").to(message.chat.id);
-				bot.send(rep);
-			}
-			else if (answer.text.startsWith("http")) {
-				gyazo(answer.text).then(function (urls) {
-					var rep = new Message().text(urls[0]).to(message.chat.id);
-					bot.send(rep);
-				});
-			}
-			else {
-				var rep = new Message().text("Exited.").to(message.chat.id);
-				bot.send(rep);
-			}
-		});
+		var q = new Message().text('No longer available in command mode. Please open a private chat and use keyboard mode.').to(message.chat.id);
+		bot.send(q);
 	});
 	bot.command('9gag [sec] [subsec]', function(message) {
 		config = JSON.parse(fs.readFileSync("config.json", "utf8"));
@@ -300,7 +287,7 @@ if (setup.telegram !== "") {
 		if (message.args.sec !== undefined && message.args.subsec !== undefined) {
 			if (gagbrds.indexOf(message.args.sec.toLowerCase()) > -1 && gagsub.indexOf(message.args.subsec.toLowerCase()) > -1) {
 				gag.section(message.args.sec, message.args.subsec, function(err, res) {
-					if (err) {
+					if (err || res === undefined) {
 						bot.send(new Message().text("An error occured. Retry?").to(message.chat.id));
 					}
 					else {
@@ -309,9 +296,9 @@ if (setup.telegram !== "") {
 				});
 			}
 			else if (message.args.sec.toLowerCase() === "nsfw" && gagsub.indexOf(message.args.subsec.toLowerCase()) > -1) {
-				if (config.nsfw.indexOf(message.chat.id) > -1) {
+				if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {
 					gag.section("nsfw", message.args.subsec, function(err, res) {
-						if (err) {
+						if (err || res === undefined) {
 							bot.send(new Message().text("An error occured. Retry?").to(message.chat.id));
 						}
 						else {
@@ -325,7 +312,7 @@ if (setup.telegram !== "") {
 			}
 			else if (message.args.sec === "search" && message.args.subsec !== undefined) {
 				gag.find(message.args.subsec, function(err, res) {
-					if (err) {
+					if (err || res === undefined) {
 						bot.send(new Message().text("An error occured. Retry?").to(message.chat.id));
 					}
 					else if (res.result.length === 0) {
@@ -343,7 +330,7 @@ if (setup.telegram !== "") {
 		}
 		else if (message.args.sec === "trending") {
 			gag.section('Trending', function (err, res) {
-				if (err) {
+				if (err || res === undefined) {
 					var rep = new Message().text("An error occured. Retry?").to(message.chat.id).keyboard(fun);
 					bot.send(rep);
 				}
@@ -402,7 +389,7 @@ if (setup.telegram !== "") {
 	bot.command("announce ...text", function(message) {
 		if (message.chat.id === setup.myid) {
 			config = JSON.parse(fs.readFileSync("config.json", "utf8"));
-			bot.send(new BulkMessage().to(config.notif).text(message.args.text));
+			bot.send(new BulkMessage().to(config.telegram.notif).text(message.args.text));
 		}
 	});
 	bot.command("mcuser [username]", function(message) {
@@ -430,6 +417,7 @@ if (setup.telegram !== "") {
 	bot.command("help", function(message) {
 		bot.send(new Message().text("https://github.com/austinhuang0131/lydia-1/wiki").to(message.chat.id));
 	});
+
 	const image = new Keyboard().keys([['Cat', 'Penguin'], ['Snake', 'Anime (Unavailable)'], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
 	bot.get(/Images/i, function(message) {
 		if (message.text !== "Images") {return;}
@@ -562,7 +550,7 @@ if (setup.telegram !== "") {
 				}
 				else if (answer.text === "NSFW") {
 					config = JSON.parse(fs.readFileSync("config.json", "utf8"));
-					if (config.nsfw.indexOf(message.chat.id) === -1) {
+					if (config.telegram.nsfw.indexOf(message.chat.id) === -1) {
 						bot.send(new Message().text("Hmm...You didn't enable your NSFW config. Go to /settings to enable it. (Or you actually enabled it? Then retry.)").to(message.chat.id).keyboard(fun));
 					}
 					else {
@@ -623,7 +611,7 @@ if (setup.telegram !== "") {
 				}
 			});
 		});
-	const util = new Keyboard().keys([['Bitly', 'Gyazo'], ['Minecraft User', 'Minecraft Server'], /*['Currency', 'QR Code Utility'],*/ ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
+	const util = new Keyboard().keys([['Bitly', 'Gyazo'], ['Minecraft User', 'Minecraft Server'], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
 	const ukb = new Keyboard().keys([["Back to Utility Menu"]]).oneTime(true).resize(true).selective(true);
 	bot.get(/Utility/i, function(message) {
 		if (message.text !== "Utility" && message.text !== "Back to Utility Menu") {return;}
@@ -657,32 +645,31 @@ if (setup.telegram !== "") {
 			});
 		});
 		bot.get(/Gyazo/i, function(message) {
-			if (message.text !== "Gyazo") {return;}
-			var q = new Message().text('You can use the following methods to upload an image to gyazo...\n* Send me the direct URL to the image\n* Upload it here (PLEASE COMPRESS IT, or it\'ll upload as a document and it just won\'t work)').to(message.chat.id).keyboard(ukb);
-			bot.send(q).then(answer => {
-				if (answer.photo !== undefined) {
-					request("https://api.telegram.org/bot"+setup.telegram+"/getFile?file_id="+answer.photo[answer.photo.length -1].file_id, function(error, response, body) {
-						if (!error && response.statusCode === 200) {
-							body = JSON.parse(body);
-							gyazo("https://api.telegram.org/file/bot"+setup.telegram+"/"+body.result.file_path).then(function (urls) {
-								var rep = new Message().text(urls[0]).to(message.chat.id).keyboard(util);
-								bot.send(rep);
-							});
-						}
-					});
-				}
-				else if (answer.document !== undefined) {
-					var rep = new Message().text("I TOLD you to COMPRESS it but you didn't!").to(message.chat.id).keyboard(util);
+		var q = new Message().text('You can use the following methods to upload an image to gyazo...\n* Send me the direct URL to the image\n* Upload it here (PLEASE COMPRESS IT, or it\'ll upload as a document and it just won\'t work)').to(message.chat.id);
+		bot.send(q).then(answer => {
+			if (answer.photo !== undefined) {
+				request("https://api.telegram.org/bot"+setup.telegram+"/getFile?file_id="+answer.photo[answer.photo.length -1].file_id, function(error, response, body) {
+					if (!error && response.statusCode === 200) {
+						body = JSON.parse(body);
+						gyazo("https://api.telegram.org/file/bot"+setup.telegram+"/"+body.result.file_path).then(function (urls) {
+							var rep = new Message().text(urls[0]).to(message.chat.id);
+							bot.send(rep);
+						});
+					}
+				});
+			}
+			else if (answer.document !== undefined) {
+				var rep = new Message().text("I TOLD you to COMPRESS it but you didn't!").to(message.chat.id);
+				bot.send(rep);
+			}
+			else if (answer.text.startsWith("http")) {
+				gyazo(answer.text).then(function (urls) {
+					var rep = new Message().text(urls[0]).to(message.chat.id);
 					bot.send(rep);
-				}
-				else if (answer.text.startsWith("http")) {
-					gyazo(answer.text).then(function (urls) {
-						var rep = new Message().text(urls[0]).to(message.chat.id).keyboard(util);
-						bot.send(rep);
-					});
-				}
-			});
+				});
+			}
 		});
+	});
 		bot.get(/Minecraft Server/i, function(message) {
 			if (message.text !== "Minecraft Server") {return;}
 			bot.send(new Message().text("Please enter the address of the server you want to check.").to(message.chat.id).keyboard(ukb)).then(answer => {
@@ -735,9 +722,9 @@ if (setup.telegram !== "") {
 		});
 	bot.get(/Settings/i, function(message) {
 		if (message.text !== "Settings") {return;}
-		var output = "Your current settings:\n* NSFW Images in Booru commands: ";
-		if (config.nsfw.indexOf(message.chat.id) > -1) {output += "Enabled\n* Notify me about updates: ";} else {output += "Disabled\n* Notify me about updates: ";}
-		if (config.notif.indexOf(message.chat.id) > -1) {output += "Enabled";} else {output += "Disabled";}
+		var output = "Your current settings:\n* Not-Suitable-For-Work/18+ content: ";
+		if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {output += "Enabled\n* Notify me about updates: ";} else {output += "Disabled\n* Notify me about updates: ";}
+		if (config.telegram.notif.indexOf(message.chat.id) > -1) {output += "Enabled";} else {output += "Disabled";}
 		output += "\nTo change the config, use the buttons below. Replying anything other than the keyboard choices will exit this menu.";
 		var kb = new Keyboard()
 					.keys([['Toggle SFW/NSFW'], ['Toggle Updates Notification'], ['Back to Main Menu']])
@@ -746,30 +733,30 @@ if (setup.telegram !== "") {
 		var rep = new Message().text(output).to(message.chat.id).keyboard(kb);
 		bot.send(rep).then(answer => {
 			if (answer.text === "Toggle SFW/NSFW") {
-				var index = config.nsfw.indexOf(message.chat.id);
+				var index = config.telegram.nsfw.indexOf(message.chat.id);
 				if (index > -1) {
-					config.nsfw.splice(index, 1);
+					config.telegram.nsfw.splice(index, 1);
 					var rep = new Message().text("Done! To adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
 					bot.send(rep);
 					fs.writeFile('config.json', JSON.stringify(config), 'utf8');
 				}
 				else if (index === -1) {
-					config.nsfw.push(message.chat.id);
-					var rep = new Message().text("Done! To adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
+					config.telegram.nsfw.push(message.chat.id);
+					var rep = new Message().text("NSFW has been enabled. Please make sure you are LEGAL to see NSFW content in your country. To adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
 					bot.send(rep);
 					fs.writeFile('config.json', JSON.stringify(config), 'utf8');
 				}
 			}
 			else if (answer.text === "Toggle Updates Notification") {
-				var index = config.notif.indexOf(message.chat.id);
+				var index = config.telegram.notif.indexOf(message.chat.id);
 				if (index> -1) {
-					config.notif.splice(index, 1);
+					config.telegram.notif.splice(index, 1);
 					var rep = new Message().text("Done! You will no longer receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
 					bot.send(rep);
 					fs.writeFile('config.json', JSON.stringify(config), 'utf8');
 				}
 				else if (index === -1) {
-					config.notif.push(message.chat.id);
+					config.telegram.notif.push(message.chat.id);
 					var rep = new Message().text("Done! You will now receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
 					bot.send(rep);
 					fs.writeFile('config.json', JSON.stringify(config), 'utf8');
@@ -785,7 +772,7 @@ if (setup.telegram !== "") {
 		if (message.text !== "About/Support") {return;}
 		var err = new Message().text('Metagon, Confidence in Usability.\n\nOriginally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/lydia-1.').to(message.chat.id).keyboard(menu);
 		bot.send(err);
-	});
+	})
 	bot.get(/Feedback/i, function(message) {
 		if (message.text !== "Feedback") {return;}
 		if (setup.myid === undefined) {
@@ -804,7 +791,7 @@ if (setup.telegram !== "") {
 		if (message.text !== "Back to Main Menu") {return;}
 		var rep = new Message().text('What do you want to do now?\n\n**IMPORTANT!** Due to some reason we are moving Metagon to @lydia_bot in early December (Exact date will be announced), and will shut down this account in early January 2017. For more information contact @austinhuang.').to(message.chat.id).keyboard(menu);
 		bot.send(rep);
-	});
+		});
 }
 
 if (setup.kik_token !== "") {
@@ -824,42 +811,85 @@ if (setup.kik_token !== "") {
 	server.post('/incoming', kik.incoming());
 	kik.updateBotConfiguration();
 	kik.onTextMessage((message,next) => {
+		console.log("KIK"+chalk.green("@"+message.from)+" "+message.body);
 		if (message.body === "/help") {
 			message.reply("https://github.com/austinhuang0131/lydia-1/wiki");
 		}
-		else if (message.body === "/start") {
-			message.reply(Kik.Message.text("What do you want to do now?").addResponseKeyboard(["Images", "Fun", "Utility", "Settings", "About/Support", "Feedback"]));
+		else if (message.body === "/start" || message.body === "Back to Main Menu" || message.body === "start") {
+			message.reply(Kik.Message.text("What do you want to do now?").addResponseKeyboard(["Images", "Fun", "Utility", "Settings", "About/Support"]));
+		}
+		else if (message.body === "About/Support") {
+			message.reply('Originally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/lydia-1.');
+		}
+		else if (message.body === "/settings" || message.body.toLowerCase() === "settings") {
+			var output = "Your current settings:\n* Not-Suitable-For-Work/18+ content: ";
+			if (config.kik.nsfw.indexOf(message.chatid) > -1) {output += "Enabled\n* Notify me about updates: ";} else {output += "Disabled\n* Notify me about updates: ";}
+			if (config.kik.notif.indexOf(message.chatid) > -1) {output += "Enabled";} else {output += "Disabled";}
+			output += "\nTo change the config, use the buttons below.";
+			message.reply(Kik.Message.text(output).addResponseKeyboard(['Toggle SFW/NSFW', 'Toggle Updates Notification', 'Back to Main Menu']));
+		}
+		else if (message.body === "/nsfw" || message.body.toLowerCase() === "nsfw" || message.body === "Toggle SFW/NSFW") {
+					var index = config.kik.nsfw.indexOf(message.chatid);
+					if (index > -1) {
+						config.kik.nsfw.splice(index, 1);
+						message.reply(Kik.Message.text("Done! To adjust another setting, or to check the current settings, please click Settings.").addResponseKeyboard(["Images", "Fun", "Utility", "Settings", "About/Support", "Feedback"]));
+						fs.writeFile('config.json', JSON.stringify(config), 'utf8');
+					}
+					else if (index === -1) {
+						config.kik.nsfw.push(message.chatid);
+						message.reply(Kik.Message.text("NSFW has been enabled. Please make sure you are LEGAL to see NSFW content in your country. To adjust another setting, or to check the current settings, please click Settings.").addResponseKeyboard(["Images", "Fun", "Utility", "Settings", "About/Support", "Feedback"]));
+						fs.writeFile('config.json', JSON.stringify(config), 'utf8');
+					}
+				}
+		else if (message.body === "/notif" || message.body.toLowerCase() === "notif" || message.body === "Toggle Updates Notification") {
+					var index = config.kik.notif.indexOf(message.chatid);
+					if (index> -1) {
+						config.kik.notif.splice(index, 1);
+						message.reply(Kik.Message.text("Done! You will no longer receive update notifications.\nTo adjust another setting, or to check the current settings, please click Settings.").addResponseKeyboard(["Images", "Fun", "Utility", "Settings", "About/Support", "Feedback"]));
+						fs.writeFile('config.json', JSON.stringify(config), 'utf8');
+					}
+					else if (index === -1) {
+						config.kik.notif.push(message.chatid);
+						message.reply(Kik.Message.text("Done! You will now receive update notifications.\nTo adjust another setting, or to check the current settings, please click Settings.").addResponseKeyboard(["Images", "Fun", "Utility", "Settings", "About/Support", "Feedback"]));
+						fs.writeFile('config.json', JSON.stringify(config), 'utf8');
+					}
+				}
+		else if (message.body === "Images") {
+			message.reply(Kik.Message.text("What do you want to do now?").addResponseKeyboard(["Cat", "Penguin", "Snake", "Back to Main Menu"]));
 		}
 		else if (message.body === "/cat" || message.body.toLowerCase() === "cat") {
 			request("http://random.cat/meow", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
-					message.reply(Kik.Message.picture(body.file));
+					message.reply(Kik.Message.picture(body.file).addResponseKeyboard(["Cat", "Penguin", "Snake", "Back to Main Menu"]));
 				} else {
-					message.reply("An error occured. Please check whether http://random.cat is online or not, and retry.");
+					message.reply(Kik.Message.text("An error occured. Please check whether http://random.cat is online or not, and retry.").addResponseKeyboard(["Cat", "Penguin", "Snake", "Back to Main Menu"]));
 				}
 			});
 		}
-		else if (message.body === "/snake") {
+		else if (message.body === "/snake" || message.body.toLowerCase() === "snake") {
 			request("http://fur.im/snek/snek.php", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
-					message.reply(Kik.Message.picture(body.file));
+					message.reply(Kik.Message.picture(body.file).addResponseKeyboard(["Cat", "Penguin", "Snake", "Back to Main Menu"]));
 				} else {
-					message.reply("An error occured. Please check whether http://random.cat is online or not, and retry.");
+					message.reply(Kik.Message.text("An error occured. Please check whether http://random.cat is online or not, and retry.").addResponseKeyboard(["Cat", "Penguin", "Snake", "Back to Main Menu"]));
 				}
 			});
 		}
-		else if (message.body === "/penguin") {
+		else if (message.body === "/penguin" || message.body.toLowerCase() === "penguin") {
 			request("http://penguin.wtf", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
-					message.reply(Kik.Message.picture(body));
+					message.reply(Kik.Message.picture(body).addResponseKeyboard(["Cat", "Penguin", "Snake", "Back to Main Menu"]));
 				} else {
-					message.reply("An error occured. Please check whether http://random.cat is online or not, and retry.");
+					message.reply(Kik.Message.text("An error occured. Please check whether http://random.cat is online or not, and retry.").addResponseKeyboard(["Cat", "Penguin", "Snake", "Back to Main Menu"]));
 				}
 			});
 		}
-		else if (message.body === "/truth") {
+		else if (message.body === "Fun") {
+			message.reply(Kik.Message.text("What do you want to do now?").addResponseKeyboard(["Truth", "Dare", "Yoda Quote", "Chuck Norris", "9gag", "Back to Main Menu"]));
+		}
+		else if (message.body === "/truth" || message.body.toLowerCase() === "truth") {
 			request('http://unknowndeveloper.tk/truths.php', function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
@@ -869,7 +899,7 @@ if (setup.kik_token !== "") {
 				}
 			});
 		}
-		else if (message.body === "/dare") {
+		else if (message.body === "/dare" || message.body.toLowerCase() === "dare") {
 			request('http://unknowndeveloper.tk/dares.php', function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
@@ -879,7 +909,10 @@ if (setup.kik_token !== "") {
 				}
 			});
 		}
-		else if (message.body === "/gyazo") {
+		else if (message.body === "/yoda" || message.body.toLowerCase() === "yoda quote" || message.body.toLowerCase() === "yoda") {
+			message.reply(yodasaid[Math.floor(Math.random() * yodasaid.length)]);
+		}
+		else if (message.body === "/gyazo" || message.body.toLowerCase() === "gyazo") {
 			message.reply("Please upload an image here. (Unlike Telegram/Discord version, using direct URL does not work here.)");
 			kik.onPictureMessage((answer) => {
 				gyazo(answer.picUrl).then((urls) => {
@@ -892,9 +925,21 @@ if (setup.kik_token !== "") {
 				});
 			});
 		}
-		else if (message.body === "/yoda") {
-			message.reply(yodasaid[Math.floor(Math.random() * yodasaid.length)]);
+		/*
+		else if (message.body.startsWith === "/9gag" || message.body.toLowerCase().startsWith === "9gag") {
+			if (message.body.split(" ")[1] !== undefined) {
+				if (message.body.split(" ")[1] === "trending") {
+					gag.section("trending", function(err, res) {
+						if (err) {message.reply();}
+					});
+				}
+				else if (gagbrds.indexOf(message.body.split(" ")[1]) > -1 ) {
+				}
+				else if (message.body.split(" ")[1] === "nsfw") {
+				}
+			}
 		}
+		*/
 	});
 }
 
