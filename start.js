@@ -128,11 +128,11 @@ if (setup.telegram !== "") {
 	});
 	bot.on('update', update => {
 		if (update[0].message !== undefined) {
-			if (update[0].message.chat.title === undefined) {
-				console.log("TGM "+chalk.cyan("@"+update[0].message.from.username)+" "+update[0].message.text);
+			if (update[0].message.chat.title !== undefined) {
+				console.log("TGM"+chalk.bgCyan(update[0].message.chat.title)+" "+chalk.cyan("@"+update[0].message.from.username)+" "+update[0].message.text);
 			}
-			else {
-				console.log("TGM "+chalk.bgCyan(update[0].message.chat.title)+" "+chalk.cyan("@"+update[0].message.from.username)+" "+update[0].message.text);
+			else if (update[0].message.from.username !== "" && update[0].message.from.username !== undefined) {
+				console.log("TGM"+chalk.cyan("@"+update[0].message.from.username)+" "+update[0].message.text);
 			}
 		}
 	});
