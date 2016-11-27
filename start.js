@@ -119,7 +119,7 @@ var gag = require("node-9gag");
 var gagbrds = ["funny", "wtf", "gif", "gaming", "anime-manga", "movie-tv", "cute", "girl", "awesome", "cosplay", "sport", "food", "ask9gag", "timely"];
 var gagsubs = ["Hot", "Fresh"];
 
-console.log("Lydia for Telegram/Kik, 1.0.6 by austinhuang.");
+console.log("Lydia for Telegram/Kik, 1.0.7 by austinhuang.");
 
 if (setup.telegram !== "") {
 	var bot = new Bot({
@@ -183,7 +183,13 @@ if (setup.telegram !== "") {
 		});
 	})
 	bot.command('truth', function(message) {
-		request('http://unknowndeveloper.tk/truths.php', function(error, response, body) {
+		request({
+				url: "http://unknowndeveloper.tk/truths.php",
+				auth: {
+					username: "username",
+					password: setup.truthanddare
+				}
+			}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
 				var rep = new Message().text(body[0].Truth).to(message.chat.id);
@@ -195,7 +201,13 @@ if (setup.telegram !== "") {
 		});
 	})
 	bot.command('dare', function(message) {
-		request('http://unknowndeveloper.tk/dares.php', function(error, response, body) {
+		request({
+				url: "http://unknowndeveloper.tk/dares.php",
+				auth: {
+					username: "username",
+					password: setup.truthanddare
+				}
+			}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
 				var rep = new Message().text(body[0].Dare).to(message.chat.id);
@@ -238,8 +250,7 @@ if (setup.telegram !== "") {
 	bot.command('settings', function(message) {
 		var config = JSON.parse(fs.readFileSync("config.json", "utf8"));
 		var output = "Your current settings:\n* Not-Suitable-For-Work/18+ content (/nsfw): ";
-		if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {output += "Enabled\n* Notify me about updates (/notif): ";} else {output += "Disabled\n* Notify me about updates (/notif): ";}
-		if (config.telegram.notif.indexOf(message.chat.id) > -1) {output += "Enabled";} else {output += "Disabled";}
+		if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {output += "Enabled\n";} else {output += "Disabled\n";}
 		output += "\nTo change the config, use the links above.";
 		var rep = new Message().text(output).to(message.chat.id);
 		bot.send(rep);
@@ -255,21 +266,6 @@ if (setup.telegram !== "") {
 			else if (index === -1) {
 				config.telegram.nsfw.push(message.chat.id);
 				var rep = new Message().text("NSFW has been enabled. Please make sure you are LEGAL to see NSFW content in your country. To adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id);
-				bot.send(rep);
-				fs.writeFile('config.json', JSON.stringify(config), 'utf8');
-			}
-		});
-		bot.command('notif', function(message) {
-			var index = config.telegram.notif.indexOf(message.chat.id);
-			if (index> -1) {
-				config.telegram.notif.splice(index, 1);
-				var rep = new Message().text("You will no longer receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id);
-				bot.send(rep);
-				fs.writeFile('config.json', JSON.stringify(config), 'utf8');
-			}
-			else if (index === -1) {
-				config.telegram.notif.push(message.chat.id);
-				var rep = new Message().text("You will now receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id);
 				bot.send(rep);
 				fs.writeFile('config.json', JSON.stringify(config), 'utf8');
 			}
@@ -386,12 +382,6 @@ if (setup.telegram !== "") {
 			});
 		}
 		else {bot.send(new Message().text("/bitly <shorten/expand> <Link>").to(message.chat.id));}
-	});
-	bot.command("announce ...text", function(message) {
-		if (message.chat.id === setup.myid) {
-			config = JSON.parse(fs.readFileSync("config.json", "utf8"));
-			bot.send(new BulkMessage().to(config.telegram.notif).text(message.args.text));
-		}
 	});
 	bot.command("mcuser [username]", function(message) {
 		var mcuser = message.args.username;
@@ -553,7 +543,13 @@ if (setup.telegram !== "") {
 	});
 		bot.get(/Truth/i, function(message) {
 			if (message.text !== "Truth") {return;}
-			request("http://unknowndeveloper.tk/truths.php", function(error, response, body) {
+			request({
+				url: "http://unknowndeveloper.tk/truths.php",
+				auth: {
+					username: "username",
+					password: setup.truthanddare
+				}
+			}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
 					bot.send(new Message().text(body[0].Truth).to(message.chat.id).keyboard(fun));
@@ -564,7 +560,13 @@ if (setup.telegram !== "") {
 		});
 		bot.get(/Dare/i, function(message) {
 			if (message.text !== "Dare") {return;}
-			request("http://unknowndeveloper.tk/dares.php", function(error, response, body) {
+			request({
+				url: "http://unknowndeveloper.tk/dares.php",
+				auth: {
+					username: "username",
+					password: setup.truthanddare
+				}
+			}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
 					bot.send(new Message().text(body[0].Dare).to(message.chat.id).keyboard(fun));
@@ -814,11 +816,10 @@ if (setup.telegram !== "") {
 	bot.get(/Settings/i, function(message) {
 		if (message.text !== "Settings") {return;}
 		var output = "Your current settings:\n* Not-Suitable-For-Work/18+ content: ";
-		if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {output += "Enabled\n* Notify me about updates: ";} else {output += "Disabled\n* Notify me about updates: ";}
-		if (config.telegram.notif.indexOf(message.chat.id) > -1) {output += "Enabled";} else {output += "Disabled";}
+		if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {output += "Enabled";} else {output += "Disabled";}
 		output += "\nTo change the config, use the buttons below. Replying anything other than the keyboard choices will exit this menu.";
 		var kb = new Keyboard()
-					.keys([['Toggle SFW/NSFW'], ['Toggle Updates Notification'], ['Back to Main Menu']])
+					.keys([['Toggle SFW/NSFW'], ['Back to Main Menu']])
 					.force(true)
 					.oneTime(true);
 		var rep = new Message().text(output).to(message.chat.id).keyboard(kb);
@@ -834,21 +835,6 @@ if (setup.telegram !== "") {
 				else if (index === -1) {
 					config.telegram.nsfw.push(message.chat.id);
 					var rep = new Message().text("NSFW has been enabled. Please make sure you are LEGAL to see NSFW content in your country. To adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
-					bot.send(rep);
-					fs.writeFile('config.json', JSON.stringify(config), 'utf8');
-				}
-			}
-			else if (answer.text === "Toggle Updates Notification") {
-				var index = config.telegram.notif.indexOf(message.chat.id);
-				if (index> -1) {
-					config.telegram.notif.splice(index, 1);
-					var rep = new Message().text("Done! You will no longer receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
-					bot.send(rep);
-					fs.writeFile('config.json', JSON.stringify(config), 'utf8');
-				}
-				else if (index === -1) {
-					config.telegram.notif.push(message.chat.id);
-					var rep = new Message().text("Done! You will now receive update notifications.\nTo adjust another setting, or to check the current settings, please click /settings.").to(message.chat.id).keyboard(menu);
 					bot.send(rep);
 					fs.writeFile('config.json', JSON.stringify(config), 'utf8');
 				}
