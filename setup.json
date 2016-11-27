@@ -4,5 +4,8 @@
     "kik_token": "",
     "kik_username": "",
     "kik_url": "",
-    "bitly_token": ""
+    "bitly_token": "",
+    "ibsearch": "",
+    "pixiv_username": "",
+    "pixiv_password": ""
 }
