@@ -1,6 +1,6 @@
 {
   "name": "lydia",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Lydia on Telegram/Kik",
   "private": false,
   "main": "start.js",
