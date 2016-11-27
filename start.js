@@ -967,7 +967,13 @@ if (setup.kik_token !== "") {
 			message.reply(Kik.Message.text("What do you want to do now?").addResponseKeyboard(["Truth", "Dare", "Yoda Quote", "Chuck Norris", "9gag", "Back to Main Menu"]));
 		}
 		else if (message.body === "/truth" || message.body.toLowerCase() === "truth") {
-			request('http://unknowndeveloper.tk/truths.php', function(error, response, body) {
+			request({
+				url: "http://unknowndeveloper.tk/truths.php",
+				auth: {
+					username: "username",
+					password: setup.truthanddare
+				}
+			}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
 					message.reply(body[0].Truth);
@@ -977,7 +983,13 @@ if (setup.kik_token !== "") {
 			});
 		}
 		else if (message.body === "/dare" || message.body.toLowerCase() === "dare") {
-			request('http://unknowndeveloper.tk/dares.php', function(error, response, body) {
+			request({
+				url: "http://unknowndeveloper.tk/dares.php",
+				auth: {
+					username: "username",
+					password: setup.truthanddare
+				}
+			}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
 					message.reply(body[0].Dare);
