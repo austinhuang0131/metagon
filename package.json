@@ -8,15 +8,17 @@
     "start": "node start.js"
   },
   "author": "Austin Huang <austinhuang0131@icloud.com>",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "SEE LICENSE IN readme.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/austinhuang0131/metagon-telegram.git"
+    "url": "ssh://581204327628e191f2000152@mtgtelegram-austinhuang.rhcloud.com/~/git/mtgtelegram.git/"
   },
   "dependencies": {
     "@kikinteractive/kik": "^2.0.12",
+    "chalk": "^1.1.3",
     "gyazo-upload": "0.0.2",
     "node-9gag": "^0.2.3",
+    "pixiv.js": "^0.18.0",
     "request": "^2.76.0",
     "restify": "^4.2.0",
     "telegram-api": "^0.7.6"

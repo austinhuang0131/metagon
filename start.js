@@ -12,6 +12,8 @@ var bitlytoken = setup.bitly_token;
 var chalk = require("chalk");
 var restify = require('restify');
 var request = require("request");
+const Pixiv = require('pixiv.js');
+const pixiv = new Pixiv(setup.pixiv_username, setup.pixiv_password);
 var yodasaid = [
   '"Fear is the path to the dark side. Fear leads to anger, anger leads to hate, hate leads to suffering." -- Yoda \n',
   '"Confer on you, the level of Jedi Knight, the Council does. But, agree with your taking this boy as your Padawan Learner, I do not." -- Yoda to Obi-Wan Kenobi\n',
@@ -243,7 +245,6 @@ if (setup.telegram !== "") {
 		bot.send(rep);
 	});
 		bot.command('nsfw', function(message) {
-			config = JSON.parse(fs.readFileSync("config.json", "utf8"));
 			var index = config.telegram.nsfw.indexOf(message.chat.id);
 			if (index > -1) {
 				config.telegram.nsfw.splice(index, 1);
@@ -417,11 +418,46 @@ if (setup.telegram !== "") {
 	bot.command("help", function(message) {
 		bot.send(new Message().text("https://github.com/austinhuang0131/lydia-1/wiki").to(message.chat.id));
 	});
+	bot.command("ibsearch ...query", function(message) {
+		if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {
+			request("https://ibsearch.xxx/api/v1/images.json?key="+setup.ibsearch+"&limit=1&q=random:+"+message.args.query, function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					if (body !== "[]") {
+						body = JSON.parse(body);
+						bot.send(new File().file("https://"+body[0].server+".ibsearch.xxx/"+body[0].path).caption("https://ibsearch.xxx/images/"+body[0].id).to(message.chat.id));
+					}
+					else {
+						bot.send(new Message().text("No result. Change your query?").to(message.chat.id));
+					}
+				}
+				else {
+					bot.send(new Message().text("Failed to connect to http://ibsearch.xxx").to(message.chat.id));
+				}
+			});
+		}
+		else {
+			bot.send(new Message().text("You don't have /nsfw config enabled. Please enable it before using this function.").to(message.chat.id));
+		}
+	});
+	bot.command("pixiv ...query", function(message) {
+		var q = message.args.query;
+		if (q === undefined) {
+			bot.send(new Message().text("Please input a query. /pixiv <Query>").to(message.chat.id));
+			return;
+		}
+		if (config.telegram.nsfw.indexOf(message.chat.id) === -1) {q += "-R-18 -R-18G";}
+		pixiv.search(q, {per_page: 100, mode: "tag"}).then(json => {
+			var illust = json.response[Math.floor(Math.random() * json.response.length)];
+			var msg = illust.image_urls.large;
+			if (illust.is_manga === true) {msg += "\nThis is a multiple-page illustration, so only the first page is shown. View the full content at http://www.pixiv.net/member_illust.php?mode=medium&illust_id="+illust.id;}
+			bot.send(new Message().text(msg).to(message.chat.id));
+		});
+	});
 
-	const image = new Keyboard().keys([['Cat', 'Penguin'], ['Snake', 'Anime (Unavailable)'], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
+	const image = new Keyboard().keys([['Cat', 'Penguin'], ['Snake', 'Anime'], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
 	bot.get(/Images/i, function(message) {
-		if (message.text !== "Images") {return;}
-		bot.send(new Message().text("You've chosen the Image category. Choose one of the following options, or click \"Back to Main Menu\".").to(message.chat.id).keyboard(image));
+		if (message.text !== "Images" && message.text !== "Back to Image Menu") {return;}
+		bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(image));
 	});
 		bot.get(/Cat/i, function(message) {
 			if (message.text !== "Cat") {return;}
@@ -455,6 +491,52 @@ if (setup.telegram !== "") {
 				}
 			});
 		});
+		const akb = new Keyboard().keys([["IbSearch", "Pixiv"],["Back to Image Menu"]]).oneTime(true).resize(true).selective(true);
+		bot.get(/Anime/i, function(message) {
+			if (message.text !== "Anime") {return;}
+			bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(akb));
+		});
+			bot.get(/IbSearch/i, function(message) {
+				if (message.text !== "IbSearch") {return;}
+				if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {
+					bot.send(new Message().text("Input a query.").to(message.chat.id).keyboard(BMM)).then(answer => {
+						if (answer.text !== "Back to Main Menu") {
+							request("https://ibsearch.xxx/api/v1/images.json?key="+setup.ibsearch+"&limit=1&q=random:+"+answer.text, function(error, response, body) {
+								if (!error && response.statusCode === 200) {
+									if (body !== "[]") {
+										body = JSON.parse(body);
+										bot.send(new File().file("https://"+body[0].server+".ibsearch.xxx/"+body[0].path).caption("https://ibsearch.xxx/images/"+body[0].id).to(message.chat.id).keyboard(akb));
+									}
+									else {
+										bot.send(new Message().text("No result. Change your query?").to(message.chat.id).keyboard(akb));
+									}
+								}
+								else {
+									bot.send(new Message().text("Failed to connect to http://ibsearch.xxx").to(message.chat.id).keyboard(akb));
+								}
+							});
+						}
+					});
+				}
+				else {
+					bot.send(new Message().text("You don't have /nsfw config enabled. Please enable it before using this function.").to(message.chat.id));
+				}
+			});
+			bot.get(/Pixiv/i, function(message) {
+				if (message.text !== "Pixiv") {return;}
+				bot.send(new Message().text("Input a query.").to(message.chat.id).keyboard(BMM)).then(answer => {
+					if (answer.text !== "Back to Main Menu") {
+						var q = answer.text;
+						if (config.telegram.nsfw.indexOf(message.chat.id) === -1) {q += "-R-18 -R-18G";}
+						pixiv.search(q, {per_page: 100, mode: "tag"}).then(json => {
+							var illust = json.response[Math.floor(Math.random() * json.response.length)];
+							var msg = illust.image_urls.large;
+							if (illust.is_manga === true) {msg += "\nThis is a multiple-page illustration, so only the first page is shown. View the full content at http://www.pixiv.net/member_illust.php?mode=medium&illust_id="+illust.id;}
+							bot.send(new Message().text(msg).to(message.chat.id).keyboard(akb));
+						});
+					}
+				});
+			});
 	const fun = new Keyboard().keys([['Truth', 'Dare'], ['Yoda Quote', 'Chuck Norris'], ['9gag', 'Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
 	bot.get(/Fun/i, function(message) {
 		if (message.text !== "Fun" && message.text !== "Back to Fun Menu") {return;}
