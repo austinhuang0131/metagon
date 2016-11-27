@@ -440,6 +440,7 @@ if (setup.telegram !== "") {
 		}
 	});
 	bot.command("pixiv ...query", function(message) {
+		if (setup.pixiv_username === undefined || setup.pixiv_password === undefined) {return;}
 		var q = message.args.query;
 		if (q === undefined) {
 			bot.send(new Message().text("Please input a query. /pixiv <Query>").to(message.chat.id));
@@ -455,7 +456,8 @@ if (setup.telegram !== "") {
 	});
 
 	const image = new Keyboard().keys([['Cat', 'Penguin'], ['Snake', 'Anime'], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
-	bot.get(/Images/i, function(message) {
+	const BIM = new Keyboard().keys([["Back to Image Menu"]]).oneTime(true).resize(true).selective(true);
+	bot.get(/Image/i, function(message) {
 		if (message.text !== "Images" && message.text !== "Back to Image Menu") {return;}
 		bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(image));
 	});
@@ -499,8 +501,8 @@ if (setup.telegram !== "") {
 			bot.get(/IbSearch/i, function(message) {
 				if (message.text !== "IbSearch") {return;}
 				if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {
-					bot.send(new Message().text("Input a query.").to(message.chat.id).keyboard(BMM)).then(answer => {
-						if (answer.text !== "Back to Main Menu") {
+					bot.send(new Message().text("Input a query.").to(message.chat.id).keyboard(BIM)).then(answer => {
+						if (answer.text !== "Back to Image Menu") {
 							request("https://ibsearch.xxx/api/v1/images.json?key="+setup.ibsearch+"&limit=1&q=random:+"+answer.text, function(error, response, body) {
 								if (!error && response.statusCode === 200) {
 									if (body !== "[]") {
@@ -519,16 +521,20 @@ if (setup.telegram !== "") {
 					});
 				}
 				else {
-					bot.send(new Message().text("You don't have /nsfw config enabled. Please enable it before using this function.").to(message.chat.id));
+					bot.send(new Message().text("You don't have /nsfw config enabled. Please enable it before using this function.").to(message.chat.id).keyboard(akb));
 				}
 			});
 			bot.get(/Pixiv/i, function(message) {
-				if (message.text !== "Pixiv") {return;}
-				bot.send(new Message().text("Input a query.").to(message.chat.id).keyboard(BMM)).then(answer => {
-					if (answer.text !== "Back to Main Menu") {
+				if (message.text !== "Pixiv" || setup.pixiv_username === undefined || setup.pixiv_password === undefined) {return;}
+				bot.send(new Message().text("Input a query.").to(message.chat.id).keyboard(BIM)).then(answer => {
+					if (answer.text !== "Back to Image Menu") {
 						var q = answer.text;
-						if (config.telegram.nsfw.indexOf(message.chat.id) === -1) {q += "-R-18 -R-18G";}
+						if (config.telegram.nsfw.indexOf(message.chat.id) === -1) {q += " -R-18 -R-18G";}
 						pixiv.search(q, {per_page: 100, mode: "tag"}).then(json => {
+							if (json.response.length === 0) {
+								bot.send(new Message().text("No results.").to(message.chat.id).keyboard(akb));
+								return;
+							}
 							var illust = json.response[Math.floor(Math.random() * json.response.length)];
 							var msg = illust.image_urls.large;
 							if (illust.is_manga === true) {msg += "\nThis is a multiple-page illustration, so only the first page is shown. View the full content at http://www.pixiv.net/member_illust.php?mode=medium&illust_id="+illust.id;}
