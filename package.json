@@ -1,6 +1,6 @@
 {
   "name": "lydia",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "Lydia on Telegram/Kik",
   "private": false,
   "main": "start.js",
@@ -11,7 +11,7 @@
   "license": "SEE LICENSE IN readme.md",
   "repository": {
     "type": "git",
-    "url": "ssh://581204327628e191f2000152@mtgtelegram-austinhuang.rhcloud.com/~/git/mtgtelegram.git/"
+    "url": "https://github.com/austinhuang0131/lydia.git"
   },
   "dependencies": {
     "@kikinteractive/kik": "^2.0.12",
