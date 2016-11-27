@@ -119,7 +119,7 @@ var gag = require("node-9gag");
 var gagbrds = ["funny", "wtf", "gif", "gaming", "anime-manga", "movie-tv", "cute", "girl", "awesome", "cosplay", "sport", "food", "ask9gag", "timely"];
 var gagsubs = ["Hot", "Fresh"];
 
-console.log("Lydia for Telegram/Kik, 1.0.1 by austinhuang.");
+console.log("Lydia for Telegram/Kik, 1.0.6 by austinhuang.");
 
 if (setup.telegram !== "") {
 	var bot = new Bot({
@@ -131,7 +131,7 @@ if (setup.telegram !== "") {
 	bot.on('update', update => {
 		if (update[0].message !== undefined) {
 			if (update[0].message.chat.title !== undefined) {
-				console.log("TGM"+chalk.bgCyan(update[0].message.chat.title)+" "+chalk.cyan("@"+update[0].message.from.username)+" "+update[0].message.text);
+				console.log("TGM ["+chalk.bgCyan(update[0].message.chat.title)+"] "+chalk.cyan("@"+update[0].message.from.username)+" "+update[0].message.text);
 			}
 			else if (update[0].message.from.username !== "" && update[0].message.from.username !== undefined) {
 				console.log("TGM"+chalk.cyan("@"+update[0].message.from.username)+" "+update[0].message.text);
@@ -139,7 +139,7 @@ if (setup.telegram !== "") {
 		}
 	});
 	bot.command('start', function(message) {
-		if (message.chat.id !== message.from.id) {
+		if (message.chat.id < 0) {
 			var rep = new Message().text('Keyboard mode is NOT available in group chats.').to(message.chat.id);
 			bot.send(rep);
 			return;
@@ -416,10 +416,11 @@ if (setup.telegram !== "") {
 		}
 	});
 	bot.command("help", function(message) {
-		bot.send(new Message().text("https://github.com/austinhuang0131/lydia-1/wiki").to(message.chat.id));
+		bot.send(new Message().text("https://github.com/austinhuang0131/lydia/wiki").to(message.chat.id));
 	});
 	bot.command("ibsearch ...query", function(message) {
 		if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {
+			if (message.args.query === undefined) {message.args.query = "";}
 			request("https://ibsearch.xxx/api/v1/images.json?key="+setup.ibsearch+"&limit=1&q=random:+"+message.args.query, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					if (body !== "[]") {
@@ -501,9 +502,11 @@ if (setup.telegram !== "") {
 			bot.get(/IbSearch/i, function(message) {
 				if (message.text !== "IbSearch") {return;}
 				if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {
-					bot.send(new Message().text("Input a query.").to(message.chat.id).keyboard(BIM)).then(answer => {
+					bot.send(new Message().text("Input a query.").to(message.chat.id).keyboard(new Keyboard().keys([["Skip"],["Back to Image Menu"]]).oneTime(true).resize(true).selective(true))).then(answer => {
 						if (answer.text !== "Back to Image Menu") {
-							request("https://ibsearch.xxx/api/v1/images.json?key="+setup.ibsearch+"&limit=1&q=random:+"+answer.text, function(error, response, body) {
+							var q = "";
+							if (answer.text !== "Skip") {q = answer.text;}
+							request("https://ibsearch.xxx/api/v1/images.json?key="+setup.ibsearch+"&limit=1&q=random:+"+q, function(error, response, body) {
 								if (!error && response.statusCode === 200) {
 									if (body !== "[]") {
 										body = JSON.parse(body);
@@ -858,7 +861,7 @@ if (setup.telegram !== "") {
 	});
 	bot.get(/About\/Support/i, function(message) {
 		if (message.text !== "About/Support") {return;}
-		var err = new Message().text('Metagon, Confidence in Usability.\n\nOriginally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/lydia-1.').to(message.chat.id).keyboard(menu);
+		var err = new Message().text('Metagon, Confidence in Usability.\n\nOriginally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/lydia.').to(message.chat.id).keyboard(menu);
 		bot.send(err);
 	})
 	bot.get(/Feedback/i, function(message) {
@@ -866,7 +869,7 @@ if (setup.telegram !== "") {
 		if (setup.myid === undefined) {
 			bot.send(new Message().text('Hmm...I don\'t know who is the owner. Tell the host of the bot to...\n - Go to setup.json and put his ID in the myid OR\n - Just paste 265228448 (@austinhuang) into myid').to(message.chat.id));
 		}
-		var rep = new Message().text('Hello, fellow user. If you\'d like to suggest a new feature, please type it here. Thank you!\n---@austinhuang\n\nWARNING: If you want to report a bug, go to https://github.com/austinhuang0131/lydia-1/issues').to(message.chat.id).keyboard(BMM);
+		var rep = new Message().text('Hello, fellow user. If you\'d like to suggest a new feature, please type it here. Thank you!\n---@austinhuang\n\nWARNING: If you want to report a bug, go to https://github.com/austinhuang0131/lydia/issues').to(message.chat.id).keyboard(BMM);
 		bot.send(rep).then(answer => {
 			if (answer.text === "Back to Main Menu"){return;}
 			var get = new Message().text('Feedback from @'+message.from.username+': '+answer.text).to(setup.myid);
@@ -901,13 +904,13 @@ if (setup.kik_token !== "") {
 	kik.onTextMessage((message,next) => {
 		console.log("KIK"+chalk.green("@"+message.from)+" "+message.body);
 		if (message.body === "/help") {
-			message.reply("https://github.com/austinhuang0131/lydia-1/wiki");
+			message.reply("https://github.com/austinhuang0131/lydia/wiki");
 		}
 		else if (message.body === "/start" || message.body === "Back to Main Menu" || message.body === "start") {
 			message.reply(Kik.Message.text("What do you want to do now?").addResponseKeyboard(["Images", "Fun", "Utility", "Settings", "About/Support"]));
 		}
 		else if (message.body === "About/Support") {
-			message.reply('Originally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/lydia-1.');
+			message.reply('Originally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/lydia.');
 		}
 		else if (message.body === "/settings" || message.body.toLowerCase() === "settings") {
 			var output = "Your current settings:\n* Not-Suitable-For-Work/18+ content: ";
@@ -1013,21 +1016,7 @@ if (setup.kik_token !== "") {
 				});
 			});
 		}
-		/*
-		else if (message.body.startsWith === "/9gag" || message.body.toLowerCase().startsWith === "9gag") {
-			if (message.body.split(" ")[1] !== undefined) {
-				if (message.body.split(" ")[1] === "trending") {
-					gag.section("trending", function(err, res) {
-						if (err) {message.reply();}
-					});
-				}
-				else if (gagbrds.indexOf(message.body.split(" ")[1]) > -1 ) {
-				}
-				else if (message.body.split(" ")[1] === "nsfw") {
-				}
-			}
-		}
-		*/
+		
 	});
 }
 
