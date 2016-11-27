@@ -440,7 +440,7 @@ if (setup.telegram !== "") {
 		}
 	});
 	bot.command("pixiv ...query", function(message) {
-		if (setup.pixiv_username === undefined || setup.pixiv_password === undefined) {return;}
+		if (setup.pixiv_username === "" || setup.pixiv_password === "") {return;}
 		var q = message.args.query;
 		if (q === undefined) {
 			bot.send(new Message().text("Please input a query. /pixiv <Query>").to(message.chat.id));
@@ -525,7 +525,7 @@ if (setup.telegram !== "") {
 				}
 			});
 			bot.get(/Pixiv/i, function(message) {
-				if (message.text !== "Pixiv" || setup.pixiv_username === undefined || setup.pixiv_password === undefined) {return;}
+				if (message.text !== "Pixiv" || setup.pixiv_username === "" || setup.pixiv_password === "") {return;}
 				bot.send(new Message().text("Input a query.").to(message.chat.id).keyboard(BIM)).then(answer => {
 					if (answer.text !== "Back to Image Menu") {
 						var q = answer.text;
