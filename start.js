@@ -121,6 +121,16 @@ var gagsubs = ["Hot", "Fresh"];
 
 console.log("Metagon for Telegram/Kik, 1.0.7 by austinhuang.");
 
+var cluster = require('cluster');
+if (cluster.isMaster) {
+	cluster.fork();
+	cluster.on('exit', function(worker, code, signal) {
+		console.log("Restarted due to a bug. Read above.");
+		cluster.fork();
+	});
+}
+
+if (cluster.isWorker) {
 if (setup.telegram !== "") {
 	var bot = new Bot({
 		token: setup.telegram
@@ -1019,8 +1029,9 @@ if (setup.kik_token !== "") {
 }
 
 process.on('unhandledRejection', (reason, p) => {
-	console.log("Unhandled:"+p+" Reason: "+reason);
+	console.error("Unhandled:"+p+" Reason: "+reason);
 });
 process.on('uncaughtException', (err) => {
-	console.log(`Caught exception: ${err}`);
+	console.error(`Caught exception: ${err}`);
 });
+}
