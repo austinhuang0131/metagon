@@ -118,6 +118,7 @@ var gyazo = require("gyazo-upload"); // Gyazo
 var gag = require("node-9gag");
 var gagbrds = ["funny", "wtf", "gif", "gaming", "anime-manga", "movie-tv", "cute", "girl", "awesome", "cosplay", "sport", "food", "ask9gag", "timely"];
 var gagsubs = ["Hot", "Fresh"];
+var state = false; // Travis CI use
 
 console.log("Metagon for Telegram/Kik, 1.0.7 by austinhuang.");
 
@@ -125,11 +126,12 @@ var cluster = require('cluster');
 if (cluster.isMaster) {
 	cluster.fork();
 	cluster.on('exit', function(worker, code, signal) {
-		console.log("Restarted due to a bug. Read above.");
-		cluster.fork();
+		if (state === false) {
+			console.log("Restarted due to a bug. Read above.");
+			cluster.fork();
+		}
 	});
 }
-
 if (cluster.isWorker) {
 if (setup.telegram !== "") {
 	var bot = new Bot({
@@ -455,6 +457,83 @@ if (setup.telegram !== "") {
 			bot.send(new Message().text(msg).to(message.chat.id));
 		});
 	});
+	bot.command("movie [option] ...query", function (message) {
+		if (message.args.option === "search") {
+			request('http://omdbapi.com/?s='+message.args.query, function(error, response, body) {
+				body = JSON.parse(body);
+				if (!error && response.statusCode === 200 && body.Response === "True") {
+					var movie = [];
+					movie.push("**__"+body.Search[0].Title+"__ ("+body.Search[0].Year+")** => /movie imdb "+body.Search[0].imdbID+"");
+					if (body.Search[1].Title !== undefined){movie.push("**__"+body.Search[1].Title+"__ ("+body.Search[1].Year+")** => /movie imdb "+body.Search[1].imdbID);}
+					if (body.Search[2].Title !== undefined){movie.push("**__"+body.Search[2].Title+"__ ("+body.Search[2].Year+")** => /movie imdb "+body.Search[2].imdbID);}
+					if (body.Search[3].Title !== undefined){movie.push("**__"+body.Search[3].Title+"__ ("+body.Search[3].Year+")** => /movie imdb "+body.Search[3].imdbID);}
+					if (body.Search[4].Title !== undefined){movie.push("**__"+body.Search[4].Title+"__ ("+body.Search[4].Year+")** => /movie imdb "+body.Search[4].imdbID);}
+					if (body.Search[5].Title !== undefined){movie.push("**__"+body.Search[5].Title+"__ ("+body.Search[5].Year+")** => /movie imdb "+body.Search[5].imdbID);}
+					if (body.Search[6].Title !== undefined){movie.push("**__"+body.Search[6].Title+"__ ("+body.Search[6].Year+")** => /movie imdb "+body.Search[6].imdbID);}
+					if (body.Search[7].Title !== undefined){movie.push("**__"+body.Search[7].Title+"__ ("+body.Search[7].Year+")** => /movie imdb "+body.Search[7].imdbID);}
+					if (body.Search[8].Title !== undefined){movie.push("**__"+body.Search[8].Title+"__ ("+body.Search[8].Year+")** => /movie imdb "+body.Search[8].imdbID);}
+					if (body.Search[9].Title !== undefined){movie.push("**__"+body.Search[9].Title+"__ ("+body.Search[9].Year+")** => /movie imdb "+body.Search[9].imdbID);}
+					bot.send(new Message().text(movie).to(message.chat.id));
+				}
+				else {bot.send(new Message().text("An error occurred. Check your input, or Retry?").to(message.chat.id));}
+			});
+		}
+		else if (message.args.option === "name") {
+			request('http://www.omdbapi.com/?t='+message.args.query+'&tomatoes=true', function(error, response, body) {
+				body = JSON.parse(body);
+				if (!error && response.statusCode === 200 && body.Response === "True") {
+					movie.push("__**"+body.Title+"** ("+body.Year+")__");
+					movie.push("**Rating:** "+body.Rating+" / **Genre:** "+body.Genre + " / **Released: **"+body.Released+" (DVD: "+body.DVD+")");
+					movie.push("**Length:** "+body.Runtime+" / **Language:** "+body.Language+" / **Country:** "+body.Country);
+					movie.push("<"+body.Website+">");
+					movie.push("**Director(s):** "+body.Director);
+					movie.push("**Writer(s):** "+body.Writer);
+					movie.push("**Actors:** "+body.Actors);
+					movie.push("**Plot:** "+body.Plot);
+					movie.push("**Awards:** "+body.Awards);
+					movie.push("__**IMDb:**__ **Metascore:** "+body.Metascore+" / **Rating:** "+body.imdbRating+" / **Votes: "+body.imdbVotes);
+					movie.push("<www.imdb.com/title/"+body.imdbID+">");
+					movie.push("__**Rotten Tomatoes:**__ **Meter:** "+body.tomatoMeter+" ("+body.tomatoImage+")");
+					movie.push("**Rating:** "+body.tomatoRating+"("+body.tomatoFresh+" fresh + "+body.tomatoRotten+" rotten) among "+body.tomatoReviews+" reviews");
+					movie.push("**Consensus:** "+body.tomatoConsensus);
+					movie.push("**User Meter:** "+body.tomatoUserMeter+" / **User Ratings:** "+body.tomatoUserRating+" / **User Reviews:**"+body.tomatoUserReviews);
+					movie.push(body.tomatoURL);
+					bot.sendMessage(msg, movie);
+					setTimeout(function() {
+						bot.sendFile(msg, body.Poster);
+					}, 100);
+				} else {bot.reply(msg, "An error occurred. Check your input, search for the title (/movie search "+msg.content.split(" ").slice(2)+"), or Retry?");}
+			});
+		}
+		else if (message.args.option === "imdb") {
+			request('http://www.omdbapi.com/?i='+msg.content.split(" ").slice(2).join("%20")+'&tomatoes=true', function(error, response, body) {
+				body = JSON.parse(body);
+				if (!error && response.statusCode === 200 && body.Response === "True") {
+					movie.push("__**"+body.Title+"** ("+body.Year+")__");
+					movie.push("**Rating:** "+body.Rating+" / **Genre:** "+body.Genre + " / **Released: **"+body.Released+" (DVD: "+body.DVD+")");
+					movie.push("**Length:** "+body.Runtime+" / **Language:** "+body.Language+" / **Country:** "+body.Country);
+					movie.push("<"+body.Website+">");
+					movie.push("**Director(s):** "+body.Director);
+					movie.push("**Writer(s):** "+body.Writer);
+					movie.push("**Actors:** "+body.Actors);
+					movie.push("**Plot:** "+body.Plot);
+					movie.push("**Awards:** "+body.Awards);
+					movie.push("__**IMDb:**__ **Metascore:** "+body.Metascore+" / **Rating:** "+body.imdbRating+" / **Votes: "+body.imdbVotes);
+					movie.push("<www.imdb.com/title/"+body.imdbID+">");
+					movie.push("__**Rotten Tomatoes:**__ **Meter:** "+body.tomatoMeter+" ("+body.tomatoImage+")");
+					movie.push("**Rating:** "+body.tomatoRating+"("+body.tomatoFresh+" fresh + "+body.tomatoRotten+" rotten) among "+body.tomatoReviews+" reviews");
+					movie.push("**Consensus:** "+body.tomatoConsensus);
+					movie.push("**User Meter:** "+body.tomatoUserMeter+" / **User Ratings:** "+body.tomatoUserRating+" / **User Reviews:**"+body.tomatoUserReviews);
+					movie.push(body.tomatoURL);
+					bot.sendMessage(msg, movie);
+					setTimeout(function() {
+						bot.sendFile(msg, body.Poster);
+					}, 100);
+				} else {bot.reply(msg, "An error occurred. Check your input (IMDb ID, which is usually tt0000000), or Retry?");}
+			});
+		}
+
+	}
 
 	const image = new Keyboard().keys([['Cat', 'Penguin'], ['Snake', 'Anime'], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
 	const BIM = new Keyboard().keys([["Back to Image Menu"]]).oneTime(true).resize(true).selective(true);
@@ -1024,8 +1103,11 @@ if (setup.kik_token !== "") {
 				});
 			});
 		}
-		
 	});
+if (setup.kik_token === "" && setup.telegram === "") {
+	console.log("No token found...Quiting");
+	state = true;
+}
 }
 
 process.on('unhandledRejection', (reason, p) => {
