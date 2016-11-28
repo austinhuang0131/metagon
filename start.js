@@ -119,7 +119,7 @@ var gag = require("node-9gag");
 var gagbrds = ["funny", "wtf", "gif", "gaming", "anime-manga", "movie-tv", "cute", "girl", "awesome", "cosplay", "sport", "food", "ask9gag", "timely"];
 var gagsubs = ["Hot", "Fresh"];
 
-console.log("Lydia for Telegram/Kik, 1.0.7 by austinhuang.");
+console.log("Metagon for Telegram/Kik, 1.0.7 by austinhuang.");
 
 if (setup.telegram !== "") {
 	var bot = new Bot({
@@ -144,7 +144,7 @@ if (setup.telegram !== "") {
 			bot.send(rep);
 			return;
 		}
-		var rep = new Message().text('What do you want to do now?\n\n**IMPORTANT!** Due to some reason we are moving Metagon to @lydia_bot in early December (Exact date will be announced), and will shut down this account in early January 2017. For more information contact @austinhuang.').to(message.chat.id).keyboard(menu);
+		var rep = new Message().text('What do you want to do now?\n\n**IMPORTANT!** We announced that we were going to move to a new account, but @austinhuang changed his mind and killed the partnership. Now the bot will stay on this account.').to(message.chat.id).keyboard(menu);
 		bot.send(rep);
 	});
 	bot.command('cat', function(message) {
@@ -406,7 +406,7 @@ if (setup.telegram !== "") {
 		}
 	});
 	bot.command("help", function(message) {
-		bot.send(new Message().text("https://github.com/austinhuang0131/lydia/wiki").to(message.chat.id));
+		bot.send(new Message().text("https://github.com/austinhuang0131/metagon/wiki").to(message.chat.id));
 	});
 	bot.command("ibsearch ...query", function(message) {
 		if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {
@@ -847,7 +847,7 @@ if (setup.telegram !== "") {
 	});
 	bot.get(/About\/Support/i, function(message) {
 		if (message.text !== "About/Support") {return;}
-		var err = new Message().text('Metagon, Confidence in Usability.\n\nOriginally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/lydia.').to(message.chat.id).keyboard(menu);
+		var err = new Message().text('Metagon, Confidence in Usability.\n\nOriginally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/metagon.').to(message.chat.id).keyboard(menu);
 		bot.send(err);
 	})
 	bot.get(/Feedback/i, function(message) {
@@ -855,7 +855,7 @@ if (setup.telegram !== "") {
 		if (setup.myid === undefined) {
 			bot.send(new Message().text('Hmm...I don\'t know who is the owner. Tell the host of the bot to...\n - Go to setup.json and put his ID in the myid OR\n - Just paste 265228448 (@austinhuang) into myid').to(message.chat.id));
 		}
-		var rep = new Message().text('Hello, fellow user. If you\'d like to suggest a new feature, please type it here. Thank you!\n---@austinhuang\n\nWARNING: If you want to report a bug, go to https://github.com/austinhuang0131/lydia/issues').to(message.chat.id).keyboard(BMM);
+		var rep = new Message().text('Hello, fellow user. If you\'d like to suggest a new feature, please type it here. Thank you!\n---@austinhuang\n\nWARNING: If you want to report a bug, go to https://github.com/austinhuang0131/metagon/issues').to(message.chat.id).keyboard(BMM);
 		bot.send(rep).then(answer => {
 			if (answer.text === "Back to Main Menu"){return;}
 			var get = new Message().text('Feedback from @'+message.from.username+': '+answer.text).to(setup.myid);
@@ -866,7 +866,7 @@ if (setup.telegram !== "") {
 	});
 	bot.get(/Back\sto\sMain\sMenu/i, function(message) {
 		if (message.text !== "Back to Main Menu") {return;}
-		var rep = new Message().text('What do you want to do now?\n\n**IMPORTANT!** Due to some reason we are moving Metagon to @lydia_bot in early December (Exact date will be announced), and will shut down this account in early January 2017. For more information contact @austinhuang.').to(message.chat.id).keyboard(menu);
+		var rep = new Message().text('What do you want to do now?\n\n**IMPORTANT!** Due to some reason we are moving Metagon to @metagon_bot in early December (Exact date will be announced), and will shut down this account in early January 2017. For more information contact @austinhuang.').to(message.chat.id).keyboard(menu);
 		bot.send(rep);
 		});
 }
@@ -890,13 +890,13 @@ if (setup.kik_token !== "") {
 	kik.onTextMessage((message,next) => {
 		console.log("KIK"+chalk.green("@"+message.from)+" "+message.body);
 		if (message.body === "/help") {
-			message.reply("https://github.com/austinhuang0131/lydia/wiki");
+			message.reply("https://github.com/austinhuang0131/metagon/wiki");
 		}
 		else if (message.body === "/start" || message.body === "Back to Main Menu" || message.body === "start") {
 			message.reply(Kik.Message.text("What do you want to do now?").addResponseKeyboard(["Images", "Fun", "Utility", "Settings", "About/Support"]));
 		}
 		else if (message.body === "About/Support") {
-			message.reply('Originally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/lydia.');
+			message.reply('Originally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/metagon.');
 		}
 		else if (message.body === "/settings" || message.body.toLowerCase() === "settings") {
 			var output = "Your current settings:\n* Not-Suitable-For-Work/18+ content: ";
