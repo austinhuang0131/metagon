@@ -1,7 +1,7 @@
 {
-  "name": "lydia",
+  "name": "metagon",
   "version": "1.0.7",
-  "description": "Lydia on Telegram/Kik",
+  "description": "Metagon on Telegram/Kik",
   "private": false,
   "main": "start.js",
   "scripts": {
@@ -11,7 +11,7 @@
   "license": "SEE LICENSE IN readme.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/austinhuang0131/lydia.git"
+    "url": "https://github.com/austinhuang0131/metagon.git"
   },
   "dependencies": {
     "@kikinteractive/kik": "^2.0.12",
