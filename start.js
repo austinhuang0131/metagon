@@ -532,8 +532,7 @@ if (setup.telegram !== "") {
 				} else {bot.reply(msg, "An error occurred. Check your input (IMDb ID, which is usually tt0000000), or Retry?");}
 			});
 		}
-
-	}
+	});
 
 	const image = new Keyboard().keys([['Cat', 'Penguin'], ['Snake', 'Anime'], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
 	const BIM = new Keyboard().keys([["Back to Image Menu"]]).oneTime(true).resize(true).selective(true);
