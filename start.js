@@ -9,7 +9,6 @@ var setup = JSON.parse(fs.readFileSync("setup.json", "utf8"));
 var config = JSON.parse(fs.readFileSync("config.json", "utf8"));
 var Kik = require('@kikinteractive/kik');
 var bitlytoken = setup.bitly_token;
-var chalk = require("chalk");
 var restify = require('restify');
 var request = require("request");
 const Pixiv = require('pixiv.js');
@@ -118,7 +117,6 @@ var gyazo = require("gyazo-upload"); // Gyazo
 var gag = require("node-9gag");
 var gagbrds = ["funny", "wtf", "gif", "gaming", "anime-manga", "movie-tv", "cute", "girl", "awesome", "cosplay", "sport", "food", "ask9gag", "timely"];
 var gagsubs = ["Hot", "Fresh"];
-var state = false; // Travis CI use
 
 var cluster = require('cluster');
 if (cluster.isMaster) {
@@ -140,10 +138,10 @@ if (setup.telegram !== "") {
 	bot.on('update', update => {
 		if (update[0].message !== undefined) {
 			if (update[0].message.chat.title !== undefined) {
-				console.log("TGM ["+chalk.bgCyan(update[0].message.chat.title)+"] "+chalk.cyan("@"+update[0].message.from.username)+" "+update[0].message.text);
+				console.log("TGM ["+update[0].message.chat.title+"] @"+update[0].message.from.username+": "+update[0].message.text);
 			}
 			else if (update[0].message.from.username !== "" && update[0].message.from.username !== undefined) {
-				console.log("TGM"+chalk.cyan("@"+update[0].message.from.username)+" "+update[0].message.text);
+				console.log("TGM @"+update[0].message.from.username+": "+update[0].message.text);
 			}
 		}
 	});
@@ -897,7 +895,7 @@ if (setup.kik_token !== "") {
 	server.post('/incoming', kik.incoming());
 	kik.updateBotConfiguration();
 	kik.onTextMessage((message,next) => {
-		console.log("KIK"+chalk.green("@"+message.from)+" "+message.body);
+		console.log("KIK @"+message.from+": "+message.body);
 		if (message.body === "/help") {
 			message.reply("https://github.com/austinhuang0131/metagon/wiki");
 		}
