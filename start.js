@@ -368,9 +368,10 @@ if (setup.telegram !== "") {
 		});
 	});
 	bot.command("bitly [opt] [site]", function(message) {
+		var site = "";
 		if(message.args.opt === "shorten" && message.args.site !== undefined) {
-			if (!message.args.site.startsWith("http")) {message.args.site === "http://"+message.args.site;}
-			request("https://api-ssl.bitly.com/v3/shorten?access_token="+bitlytoken+"&longUrl="+message.args.site+"&format=txt", function(error, response, body) {
+			if (!message.args.site.startsWith("http")) {site = "http://"+message.args.site;} else {site = message.args.site;}
+			request("https://api-ssl.bitly.com/v3/shorten?access_token="+bitlytoken+"&longUrl="+site+"&format=txt", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					bot.send(new Message().text(body).to(message.chat.id));
 				} else {
@@ -379,8 +380,8 @@ if (setup.telegram !== "") {
 			});
 		}
 		else if(message.args.opt === "expand" && message.args.site !== undefined) {
-			if (!message.args.site.startsWith("http")) {message.args.site === "http://"+message.args.site;}
-			request("https://api-ssl.bitly.com/v3/expand?access_token="+bitlytoken+"&shortUrl="+message.args.site+"&format=txt", function(error, response, body) {
+			if (!message.args.site.startsWith("http")) {site = "http://"+message.args.site;} else {site = message.args.site;}
+			request("https://api-ssl.bitly.com/v3/expand?access_token="+bitlytoken+"&shortUrl="+site+"&format=txt", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					bot.send(new Message().text(body).to(message.chat.id));
 				} else {
@@ -730,8 +731,9 @@ if (setup.telegram !== "") {
 					bot.send(new Message().text("Enter the URL you wish to be processed, or click \"Back to Utility Menu\".").to(message.chat.id).keyboard(ukb)).then(answer => {
 						var bopt = ["shorten", "longUrl"];
 						if (subanswer.text === "Expand a Bitly link") {bopt = ["expand", "shortUrl"];}
-						if (!answer.text.startsWith("http")) {answer.text === "http://"+answer.text;}
-						request("https://api-ssl.bitly.com/v3/"+bopt[0]+"?access_token="+bitlytoken+"&"+bopt[1]+"="+answer.text+"&format=txt", function(error, response, body) {
+						var site = "";
+						if (!answer.text.startsWith("http")) {site = "http://"+answer.text;} else {site = answer.text}
+						request("https://api-ssl.bitly.com/v3/"+bopt[0]+"?access_token="+bitlytoken+"&"+bopt[1]+"="+site+"&format=txt", function(error, response, body) {
 							if (!error && response.statusCode === 200) {
 								bot.send(new Message().text(body).to(message.chat.id).keyboard(util));
 							} else {
