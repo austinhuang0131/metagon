@@ -118,30 +118,28 @@ var gag = require("node-9gag");
 var gagbrds = ["funny", "wtf", "gif", "gaming", "anime-manga", "movie-tv", "cute", "girl", "awesome", "cosplay", "sport", "food", "ask9gag", "timely"];
 var gagsubs = ["Hot", "Fresh"];
 
-var cluster = require('cluster');
-if (cluster.isMaster) {
-	cluster.fork();
-	cluster.on('exit', function(worker, code, signal) {
-		console.log("Restarted due to a bug. Read above.");
-		cluster.fork();
-	});
-}
-if (cluster.isWorker) {
-	console.log("Metagon for Telegram/Kik, 1.0.7 by austinhuang.");
+console.log("Metagon for Telegram/Kik, 1.0.7 by austinhuang.");
+var server = restify.createServer({
+	name : "Bot HTTP server"
+});
+var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 if (setup.telegram !== "") {
 	var bot = new Bot({
-		token: setup.telegram
+		token: setup.telegram,
 	});
 	bot.start().catch(err => {
 		console.error(err);
 	});
 	bot.on('update', update => {
-		if (update[0].message !== undefined) {
-			if (update[0].message.chat.title !== undefined) {
-				console.log("TGM ["+update[0].message.chat.title+"] @"+update[0].message.from.username+": "+update[0].message.text);
-			}
-			else if (update[0].message.from.username !== "" && update[0].message.from.username !== undefined) {
-				console.log("TGM @"+update[0].message.from.username+": "+update[0].message.text);
+		if (update[0] !== undefined) {
+			if (update[0].message !== undefined) {
+				if (update[0].message.chat.title !== undefined) {
+					console.log("TGM ["+update[0].message.chat.title+"] @"+update[0].message.from.username+": "+update[0].message.text);
+				}
+				else if (update[0].message.from.username !== "" && update[0].message.from.username !== undefined) {
+					console.log("TGM @"+update[0].message.from.username+": "+update[0].message.text);
+				}
 			}
 		}
 	});
@@ -151,7 +149,7 @@ if (setup.telegram !== "") {
 			bot.send(rep);
 			return;
 		}
-		var rep = new Message().text('What do you want to do now?\n\n**IMPORTANT!** We announced that we were going to move to a new account, but @austinhuang changed his mind and killed the partnership. Now the bot will stay on this account.').to(message.chat.id).keyboard(menu);
+		var rep = new Message().text('What do you want to do now?\n\nWish you a Happy New Year.').to(message.chat.id).keyboard(menu);
 		bot.send(rep);
 	});
 	bot.command('cat', function(message) {
@@ -371,6 +369,7 @@ if (setup.telegram !== "") {
 	});
 	bot.command("bitly [opt] [site]", function(message) {
 		if(message.args.opt === "shorten" && message.args.site !== undefined) {
+			if (!message.args.site.startsWith("http")) {message.args.site === "http://"+message.args.site;}
 			request("https://api-ssl.bitly.com/v3/shorten?access_token="+bitlytoken+"&longUrl="+message.args.site+"&format=txt", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					bot.send(new Message().text(body).to(message.chat.id));
@@ -380,6 +379,7 @@ if (setup.telegram !== "") {
 			});
 		}
 		else if(message.args.opt === "expand" && message.args.site !== undefined) {
+			if (!message.args.site.startsWith("http")) {message.args.site === "http://"+message.args.site;}
 			request("https://api-ssl.bitly.com/v3/expand?access_token="+bitlytoken+"&shortUrl="+message.args.site+"&format=txt", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					bot.send(new Message().text(body).to(message.chat.id));
@@ -728,18 +728,16 @@ if (setup.telegram !== "") {
 			bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(bkb)).then(subanswer => {
 				if (subanswer.text === "Make a Bitly Link" || subanswer.text === "Expand a Bitly link") {
 					bot.send(new Message().text("Enter the URL you wish to be processed, or click \"Back to Utility Menu\".").to(message.chat.id).keyboard(ukb)).then(answer => {
-						if (answer.text.startsWith("http")) {
-							var bopt = ["shorten", "longUrl"];
-							if (subanswer.text === "Expand a Bitly link") {bopt = ["expand", "shortUrl"];}
-							request("https://api-ssl.bitly.com/v3/"+bopt[0]+"?access_token="+bitlytoken+"&"+bopt[1]+"="+answer.text+"&format=txt", function(error, response, body) {
-								if (!error && response.statusCode === 200) {
-									bot.send(new Message().text(body).to(message.chat.id).keyboard(util));
-								} else {
-									bot.send(new Message().text("An error occured. Invalid address, or retry?").to(message.chat.id).keyboard(util));
-								}
-							});
-						}
-						else {bot.send(new Message().text("Invalid URL. Sending back to utility menu...").to(message.chat.id).keyboard(util));}
+						var bopt = ["shorten", "longUrl"];
+						if (subanswer.text === "Expand a Bitly link") {bopt = ["expand", "shortUrl"];}
+						if (!answer.text.startsWith("http")) {answer.text === "http://"+answer.text;}
+						request("https://api-ssl.bitly.com/v3/"+bopt[0]+"?access_token="+bitlytoken+"&"+bopt[1]+"="+answer.text+"&format=txt", function(error, response, body) {
+							if (!error && response.statusCode === 200) {
+								bot.send(new Message().text(body).to(message.chat.id).keyboard(util));
+							} else {
+								bot.send(new Message().text("An error occured. Invalid address, or retry?").to(message.chat.id).keyboard(util));
+							}
+						});
 					});
 				}
 			});
@@ -873,9 +871,9 @@ if (setup.telegram !== "") {
 	});
 	bot.get(/Back\sto\sMain\sMenu/i, function(message) {
 		if (message.text !== "Back to Main Menu") {return;}
-		var rep = new Message().text('What do you want to do now?\n\n**IMPORTANT!** Due to some reason we are moving Metagon to @metagon_bot in early December (Exact date will be announced), and will shut down this account in early January 2017. For more information contact @austinhuang.').to(message.chat.id).keyboard(menu);
+		var rep = new Message().text('What do you want to do now?\n\nWish you a Happy New Year').to(message.chat.id).keyboard(menu);
 		bot.send(rep);
-		});
+	});
 }
 
 if (setup.kik_token !== "") {
@@ -884,11 +882,6 @@ if (setup.kik_token !== "") {
 		apiKey: setup.kik_token,
 		baseUrl: setup.kik_url,
 	});
-	var server = restify.createServer({
-		name : "Kik bot HTTP server"
-	});
-	var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
-	var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 	server.listen(port, ipaddress, function () {
 		console.log('%s listening to %s', server.name, server.url); 
 	});
@@ -1030,4 +1023,3 @@ process.on('unhandledRejection', (reason, p) => {
 process.on('uncaughtException', (err) => {
 	console.error(`Caught exception: ${err}`);
 });
-}
