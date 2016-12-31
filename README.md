@@ -21,4 +21,4 @@ An official fork of the abandoned [Metagon, the Discord bot](http://metagon.tk).
 ## Contact
 * Telegram: [@austinhuang](http://telegram.me/austinhuang)
 * Kik: [@austinhuang0131](http://kik.me/austinhuang0131)
-* Call: +1 (289) 799-6618 in US/Canada OR +44 843 558 5832 in UK
+* Call: +1 (289) 799-6618 in Canada OR +1 (828) 572-8838 in United States OR +44 843 558 5832 in UK
