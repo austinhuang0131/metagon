@@ -163,18 +163,78 @@ if (setup.telegram !== "") {
 				bot.send(err);
 			}
 		});
-	})
+	});
+	bot.command('bunny', function(message) {
+		request('https://api.bunnies.io/v2/loop/random/?media=mp4', function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				body = JSON.parse(body);
+				var rep = new File().file(body.media.mp4).caption('').to(message.chat.id);
+				bot.send(rep);
+			} else {
+				var err = new Message().text('An error occured. Please check whether https://api.bunnies.io/docs is online or not, and retry.').to(message.chat.id);
+				bot.send(err);
+			}
+		});
+	});
 	bot.command('penguin', function(message) {
 		request('http://penguin.wtf/', function(error, response, body) {
 			if (!error && response.statusCode === 200) {
-				var rep = new File().file(body).caption('').to(message.chat.id);
-				bot.send(rep);
+				if (!body.startsWith("http://penguin.wtf/images")) {
+					var err = new Message().text('Due to API unavaibility, this function is removed. It will be added back automatically as soon as the API is back on.').to(message.chat.id);
+					bot.send(err);
+				}
+				else {
+					var rep = new File().file(body).caption('').to(message.chat.id);
+					bot.send(rep);
+				}
 			} else {
 				var err = new Message().text('An error occured. Please check whether http://penguin.wtf is online or not, and retry.').to(message.chat.id);
 				bot.send(err);
 			}
 		});
-	})
+	});
+	bot.command('flickr ...query', function(message) {
+		if (message.args.query === undefined) {
+			request("https://api.flickr.com/services/rest?api_key="+setup.flickr+"&method=flickr.photos.getRecent&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					body = JSON.parse(body);
+					photo = body.photos.photo[Math.floor(Math.random() * body.photos.photo.length)];
+					request("https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key="+setup.flickr+"&photo_id="+photo.id+"&format=json&nojsoncallback=1", function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				body = JSON.parse(body);
+				bot.send(new File().file(body.sizes.size[body.sizes.size.length - 1].source).caption(photo.title).to(message.chat.id));
+			}
+			else {bot.send(new Message().text('An error occured. Please check whether Flickr is online or not, and retry.').to(message.chat.id));}
+		});
+				}
+				else {
+					bot.send(new Message().text('An error occured. Please check whether Flickr is online or not, and retry.').to(message.chat.id));
+				}
+			});
+		}
+		else {
+			request("https://api.flickr.com/services/rest?api_key="+setup.flickr+"&method=flickr.photos.search&text="+message.args.query+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					body = JSON.parse(body);
+					if (body.photos.total === 0 || body.photos.total === "0") {
+						bot.send(new Message().text('No results.').to(message.chat.id));
+					} else {
+						var photo = body.photos.photo[Math.floor(Math.random() * body.photos.photo.length)];
+						request("https://api.flickr.com/services/rest?method=flickr.photos.getSizes&api_key="+setup.flickr+"&photo_id="+photo.id+"&format=json&nojsoncallback=1", function(error, response, body) {
+							if (!error && response.statusCode === 200) {
+								body = JSON.parse(body);
+								bot.send(new File().file(body.sizes.size[body.sizes.size.length - 1].source).caption(photo.title).to(message.chat.id));
+							}
+							else {bot.send(new Message().text('An error occured. Please check whether Flickr is online or not, and retry.').to(message.chat.id));}
+						});
+					}
+				}
+				else {
+					bot.send(new Message().text('An error occured. Please check whether Flickr is online or not, and retry.').to(message.chat.id));
+				}
+			});
+		}
+	});
 	bot.command('snake', function(message) {
 		request('http://fur.im/snek/snek.php', function(error, response, body) {
 			if (!error && response.statusCode === 200) {
@@ -186,7 +246,7 @@ if (setup.telegram !== "") {
 				bot.send(err);
 			}
 		});
-	})
+	});
 	bot.command('truth', function(message) {
 		request({
 				url: "http://unknowndeveloper.tk/truths.php",
@@ -204,7 +264,7 @@ if (setup.telegram !== "") {
 				bot.send(err);
 			}
 		});
-	})
+	});
 	bot.command('dare', function(message) {
 		request({
 				url: "http://unknowndeveloper.tk/dares.php",
@@ -222,7 +282,7 @@ if (setup.telegram !== "") {
 				bot.send(err);
 			}
 		});
-	})
+	});
 	bot.command('mcserver [ip]', function(message) {
 		if (message.args.ip !== undefined) {
 			request('https://mcapi.ca/query/'+message.args.ip+'/info', function(error, response, body) {
@@ -251,7 +311,7 @@ if (setup.telegram !== "") {
 			var err = new Message().text('/mcserver <Address>').to(message.chat.id);
 			bot.send(err);
 		}
-	})
+	});
 	bot.command('settings', function(message) {
 		var config = JSON.parse(fs.readFileSync("config.json", "utf8"));
 		var output = "Your current settings:\n* Not-Suitable-For-Work/18+ content (/nsfw): ";
@@ -464,7 +524,8 @@ if (setup.telegram !== "") {
 		});
 	});
 
-	const image = new Keyboard().keys([['Cat', 'Penguin', 'Snake'], ['Imgur', 'Flickr'], ["IbSearch", "Pixiv"], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
+// Put Penguin back once the API went back!!!
+	const image = new Keyboard().keys([['Cat', 'Bunny', 'Snake'], ['Imgur', 'Flickr'], ["IbSearch", "Pixiv"], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
 	const BIM = new Keyboard().keys([["Back to Image Menu"]]).oneTime(true).resize(true).selective(true);
 	bot.get(/Image/i, function(message) {
 		if (message.text !== "Images" && message.text !== "Back to Image Menu") {return;}
@@ -482,12 +543,32 @@ if (setup.telegram !== "") {
 			});
 		});
 		bot.get(/Penguin/i, function(message) {
-			if (message.text !== "Penguin") {return;}
-			request("http://penguin.wtf/", function(error, response, body) {
+			request('http://penguin.wtf/', function(error, response, body) {
 				if (!error && response.statusCode === 200) {
-					bot.send(new File().file(body).caption("").to(message.chat.id).keyboard(image));
+					if (!body.startsWith("http://penguin.wtf/images")) {
+						var err = new Message().text('Due to API unavaibility, this function is removed. It will be added back automatically as soon as the API is back on.').to(message.chat.id);
+						bot.send(err);
+					}
+					else {
+						var rep = new File().file(body).caption('').to(message.chat.id);
+						bot.send(rep);
+					}
 				} else {
-					bot.send(new Message().text("An error occured. Please check whether http://penguin.wtf is online or not, and retry.").to(message.chat.id).keyboard(image));
+					var err = new Message().text('An error occured. Please check whether http://penguin.wtf is online or not, and retry.').to(message.chat.id);
+					bot.send(err);
+				}
+			});
+		}); // CHECK API AVAIBILITY
+		bot.get(/Bunny/i, function(message) {
+			if (message.text !== "Bunny") {return;}
+			request('https://api.bunnies.io/v2/loop/random/?media=mp4', function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					body = JSON.parse(body);
+					var rep = new File().file(body.media.mp4).caption('').to(message.chat.id).keyboard(image);
+					bot.send(rep);
+				} else {
+					var err = new Message().text('An error occured. Please check whether https://api.bunnies.io/docs is online or not, and retry.').to(message.chat.id).keyboard(image);
+					bot.send(err);
 				}
 			});
 		});
@@ -560,6 +641,51 @@ if (setup.telegram !== "") {
 						var msg = illust.image_urls.large;
 						if (illust.is_manga === true) {msg += "\nThis is a multiple-page illustration, so only the first page is shown. View the full content at http://www.pixiv.net/member_illust.php?mode=medium&illust_id="+illust.id;}
 						bot.send(new Message().text(msg).to(message.chat.id).keyboard(image));
+					});
+				}
+			});
+		});
+		bot.get(/Flickr/i, function(message) {
+			bot.send(new Message().text("Input a query, or \"Skip\" to find global recent photos.\nPlease note that this command is slow to execute (≈10 seconds). Be patient.").to(message.chat.id).keyboard(new Keyboard().keys([["Skip"],["Back to Image Menu"]]).oneTime(true).resize(true).selective(true))).then(answer => {
+				var photo = {};
+				if (answer.text === "Skip") {
+					request("https://api.flickr.com/services/rest?api_key="+setup.flickr+"&method=flickr.photos.getRecent&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
+						if (!error && response.statusCode === 200) {
+							body = JSON.parse(body);
+							photo = body.photos.photo[Math.floor(Math.random() * body.photos.photo.length)];
+							request("https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key="+setup.flickr+"&photo_id="+photo.id+"&format=json&nojsoncallback=1", function(error, response, body) {
+								if (!error && response.statusCode === 200) {
+									body = JSON.parse(body);
+									bot.send(new File().file(body.sizes.size[body.sizes.size.length - 1].source).caption(photo.title).to(message.chat.id).keyboard(image));
+								}
+								else {bot.send(new Message().text('An error occured. Please check whether Flickr is online or not, and retry.').to(message.chat.id).keyboard(image));}
+							});
+						}
+						else {
+							bot.send(new Message().text('An error occured. Please check whether Flickr is online or not, and retry.').to(message.chat.id).keyboard(image));
+						}
+					});
+				}
+				else if (answer.text !== "Back to Image Menu") {
+					request("https://api.flickr.com/services/rest?api_key="+setup.flickr+"&method=flickr.photos.search&text="+answer.text+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
+						if (!error && response.statusCode === 200) {
+							body = JSON.parse(body);
+							if (body.photos.total === 0 || body.photos.total === "0") {
+								bot.send(new Message().text('No results.').to(message.chat.id).keyboard(image));
+							} else {
+								photo = body.photos.photo[Math.floor(Math.random() * body.photos.photo.length)];
+								request("https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key="+setup.flickr+"&photo_id="+photo.id+"&format=json&nojsoncallback=1", function(error, response, body) {
+									if (!error && response.statusCode === 200) {
+										body = JSON.parse(body);
+										bot.send(new File().file(body.sizes.size[body.sizes.size.length - 1].source).caption(photo.title).to(message.chat.id).keyboard(image));
+									}
+									else {bot.send(new Message().text('An error occured. Please check whether Flickr is online or not, and retry.').to(message.chat.id).keyboard(image));}
+								});
+							}
+						}
+						else {
+							bot.send(new Message().text('An error occured. Please check whether Flickr is online or not, and retry.').to(message.chat.id).keyboard(image));
+						}
 					});
 				}
 			});
