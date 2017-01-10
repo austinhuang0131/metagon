@@ -149,7 +149,7 @@ if (setup.telegram !== "") {
 			bot.send(rep);
 			return;
 		}
-		var rep = new Message().text('What do you want to do now?\n\nWish you a Happy New Year.').to(message.chat.id).keyboard(menu);
+		var rep = new Message().text('What do you want to do now?').to(message.chat.id).keyboard(menu);
 		bot.send(rep);
 	});
 	bot.command('cat', function(message) {
@@ -1019,7 +1019,7 @@ if (setup.telegram !== "") {
 	});
 	bot.get(/Back\sto\sMain\sMenu/i, function(message) {
 		if (message.text !== "Back to Main Menu") {return;}
-		var rep = new Message().text('What do you want to do now?\n\nWish you a Happy New Year').to(message.chat.id).keyboard(menu);
+		var rep = new Message().text('What do you want to do now?').to(message.chat.id).keyboard(menu);
 		bot.send(rep);
 	});
 }
