@@ -10,5 +10,9 @@
     "pixiv_password": "",
     "truthanddare": "",
     "imgur": "",
-    "flickr": ""
+    "flickr": "",
+ 	"yelp": {
+		"clientId": "",
+		"clientSecret": ""
+	}
 }
