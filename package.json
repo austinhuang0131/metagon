@@ -1,7 +1,7 @@
 {
-  "name": "metagon",
-  "version": "1.1.3",
-  "description": "Metagon on Telegram/Kik",
+  "name": "lydia",
+  "version": "1.1.4",
+  "description": "Lydia on Telegram/Kik",
   "private": false,
   "main": "start.js",
   "scripts": {
@@ -11,15 +11,17 @@
   "license": "SEE LICENSE IN readme.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/austinhuang0131/metagon.git"
+    "url": "ssh://581204327628e191f2000152@mtgtelegram-austinhuang.rhcloud.com/~/git/mtgtelegram.git/"
   },
   "dependencies": {
     "@kikinteractive/kik": "^2.0.12",
+    "accounting": "^0.4.1",
     "gyazo-upload": "0.0.2",
     "node-9gag": "^0.2.3",
     "pixiv.js": "^0.18.0",
     "request": "^2.76.0",
     "restify": "^4.2.0",
-    "telegram-api": "^0.7.6"
+    "telegram-api": "^0.7.6",
+    "yelp-fusion": "^1.0.3"
   }
 }
