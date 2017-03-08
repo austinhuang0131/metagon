@@ -187,14 +187,14 @@ if (setup.telegram !== "") {
 			request("https://api.flickr.com/services/rest?api_key="+setup.flickr+"&method=flickr.photos.getRecent&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
-					photo = body.photos.photo[Math.floor(Math.random() * body.photos.photo.length)];
+					var photo = body.photos.photo[Math.floor(Math.random() * body.photos.photo.length)];
 					request("https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key="+setup.flickr+"&photo_id="+photo.id+"&format=json&nojsoncallback=1", function(error, response, body) {
-			if (!error && response.statusCode === 200) {
-				body = JSON.parse(body);
-				bot.send(new File().file(body.sizes.size[body.sizes.size.length - 1].source).caption(photo.title).to(message.chat.id));
-			}
-			else {bot.send(new Message().text('An error occured. Please check whether Flickr is online or not, and retry.').to(message.chat.id));}
-		});
+						if (!error && response.statusCode === 200) {
+							body = JSON.parse(body);
+							bot.send(new File().file(body.sizes.size[body.sizes.size.length - 1].source).caption(photo.title).to(message.chat.id));
+						}
+						else {bot.send(new Message().text('An error occured. Please check whether Flickr is online or not, and retry.').to(message.chat.id));}
+					});
 				}
 				else {
 					bot.send(new Message().text('An error occured. Please check whether Flickr is online or not, and retry.').to(message.chat.id));
@@ -1037,7 +1037,7 @@ if (setup.telegram !== "") {
 								}
 								var yelptext = "Use the /yelp command to retrieve details of the business.\n\n";
 								response.jsonBody.businesses.forEach(function(business) {
-									yelptext += business.name+": "+business.location.address1+", "+business.rating+"★ out of "+business.review_count+" reviews. `/yelp "+business.id+"`\n\n";
+									yelptext += business.name+": "+business.location.address1+", "+business.rating+"★ out of "+business.review_count+" reviews. \"/yelp "+business.id+"\"\n\n";
 								});
 								bot.send(new Message().text(yelptext).to(message.chat.id).keyboard(util));
 							});
