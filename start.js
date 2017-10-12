@@ -7,7 +7,6 @@ var BulkMessage = require("telegram-api/types/BulkMessage");
 var fs = require("fs"); // Config
 var setup = JSON.parse(fs.readFileSync("setup.json", "utf8"));
 var config = JSON.parse(fs.readFileSync("config.json", "utf8"));
-var Kik = require('@kikinteractive/kik');
 var restify = require('restify');
 var request = require("request");
 var accounting = require("accounting");
@@ -124,7 +123,7 @@ var gagbrds = ["funny", "wtf", "gif", "gaming", "anime-manga", "movie-tv", "cute
 var gagsubs = ["Hot", "Fresh"];
 var session = [];
 
-console.log("Metagon for Telegram/Kik, 1.0.7 by austinhuang.");
+console.log("Metagon for Telegram, 1.1.0 by austinhuang.");
 var server = restify.createServer({
 	name : "Bot HTTP server"
 });
@@ -136,6 +135,7 @@ if (setup.telegram !== "") {
 	});
 	bot.start().catch(err => {
 		console.error(err);
+		process.exit(0);
 	});
 	bot.on('update', update => {
 		if (update[0] !== undefined) {
@@ -149,13 +149,14 @@ if (setup.telegram !== "") {
 			}
 		}
 	});
+	// Austinhuang only: Start command should sync with "Back to Main Menu"
 	bot.command('start', function(message) {
 		if (message.chat.id < 0) {
 			var rep = new Message().text('Keyboard mode is NOT available in group chats.').to(message.chat.id);
 			bot.send(rep);
 			return;
 		}
-		var rep = new Message().text('What do you want to do now?').to(message.chat.id).keyboard(menu);
+		var rep = new Message().markdown('What do you want to do now?\n\nBoth Minecraft commands along with 9gag in Keyboard mode are now back in service.\nNEW: /design ("Quote on Design" in Fun category)').to(message.chat.id).keyboard(menu);
 		bot.send(rep);
 	});
 	bot.command('cat', function(message) {
@@ -236,64 +237,20 @@ if (setup.telegram !== "") {
 			}
 		});
 	});
-	bot.command('truth', function(message) {
-		request({
-				/*url: "http://unknowndeveloper.tk/truths.php",
-				auth: {
-					username: "username",
-					password: setup.truthanddare
-				}*/
-				url: "https://lydia.jaren.co/api/truth",
-				headers: {
-					"Authorization": "%&*^&%&$^#%&*^%$#%^*&"
-				}
-			}, function(error, response, body) {
-			if (!error && response.statusCode === 200) {
-				/*body = JSON.parse(body);*/
-				var rep = new Message().text(body/*[0].Dare*/).to(message.chat.id);
-				bot.send(rep);
-			} else {
-				var err = new Message().text('An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.').to(message.chat.id);
-				bot.send(err);
-			}
-		});
-	});
-	bot.command('dare', function(message) {
-		request({
-				/*url: "http://unknowndeveloper.tk/dares.php",
-				auth: {
-					username: "username",
-					password: setup.truthanddare
-				}*/
-				url: "https://lydia.jaren.co/api/dare",
-				headers: {
-					"Authorization": "%&*^&%&$^#%&*^%$#%^*&"
-				}
-			}, function(error, response, body) {
-			if (!error && response.statusCode === 200) {
-				/*body = JSON.parse(body);*/
-				var rep = new Message().text(body/*[0].Dare*/).to(message.chat.id);
-				bot.send(rep);
-			} else {
-				var err = new Message().text('An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.').to(message.chat.id);
-				bot.send(err);
-			}
-		});
-	});
 	bot.command('mcserver [ip]', function(message) {
 		if (message.args.ip !== undefined) {
-			request('https://mcapi.ca/query/'+message.args.ip+'/info', function(error, response, body) {
+			if (!message.args.ip.includes(":")) {message.args.ip += ":25565"}
+			request.post('https://mcapi.de/api/server/', {json: {ip: message.args.ip.split(":")[0], port: message.args.ip.split(":")[1]}}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
-					body = JSON.parse(body);
-					if (body.status === false) {
+					if (body.result.status !== "success") {
 						var err = new Message().text('Your input is invalid, or the server you requested is offline, or maybe you just need a retry.\nYour input is '+message.args.ip).to(message.chat.id);
 						bot.send(err);
 						return;
 					}
-					var mcrep = "Query: "+message.args.ip+"\nPlayers: "+body.players.online+"/"+body.players.max+"\nPing: "+body.ping+"ms";
+					var mcrep = message.args.ip+" ("+body.hostname+")\nPlayers: "+body.players.online+"/"+body.players.max+"\nBlocked by Mojang: "+body.blocked.status+"\nSoftware: "+body.software.name+", MC Version "+body.software.version+"\nPing: "+body.list.ping+"ms";
 					var rep = new Message().text(mcrep).to(message.chat.id);
 					bot.send(rep);
-					var icon = new Message().text("https://mcapi.ca/query/"+message.args.ip+"/icon").to(message.chat.id);
+					var icon = new Message().text("http://mcapi.de/api/image/favicon/"+message.args.ip.replace(":", "/")).to(message.chat.id);
 					setTimeout(function(){
 						bot.send(icon);
 					}, 50);
@@ -335,6 +292,30 @@ if (setup.telegram !== "") {
 	bot.command('yoda', function(message) {
 		var rep = new Message().text(yodasaid[Math.floor(Math.random() * yodasaid.length)]).to(message.chat.id);
 		bot.send(rep);
+	});
+	bot.command('design', function(message) {
+			request("http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1", (error, response, body) => {
+				if (!error && response.statusCode === 200) {
+					body = JSON.parse(body);
+					bot.send(new Message().text(body[0].content.replace("<p>", "").replace("</p>", "")+"\n--- "+body[0].title).to(message.chat.id));
+				}
+				else {
+					bot.send(new Message().text("An error occured.").to(message.chat.id));
+				}
+			});
+		});
+	bot.command('paste [content]', function(message) {
+		if (message.args.content === undefined) {
+			bot.send(new Message().text("/paste <Content>").to(message.chat.id));
+			return;
+		}
+		request.post('https://pastebin.com/api/api_post.php', {form: {api_dev_key: setup.pastebin, api_option: "paste", api_paste_code: message.args.content}}, function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				bot.send(new Message().text(body).to(message.chat.id));
+			} else {
+				bot.send(new Message().text('An error occured. Please check your input, or retry.').to(message.chat.id));
+			}
+		});
 	});
 	bot.command('gyazo', function(message) {
 		var q = new Message().text('No longer available in command mode. Please open a private chat and use keyboard mode.').to(message.chat.id);
@@ -449,20 +430,26 @@ if (setup.telegram !== "") {
 		else {bot.send(new Message().text("/bitly <shorten/expand> <Link>").to(message.chat.id));}
 	});
 	bot.command("mcuser [username]", function(message) {
-		var mcuser = message.args.username;
+		var mcuser = message.args.username.replace("-", "");
 		if (mcuser !== undefined) {
-			request('https://mcapi.de/api/user/' + mcuser, function(error, response, body) {
-				if (!error && response.statusCode === 200) {
+			request('http://mcapi.de/api/user/' + mcuser, function(error, response, body) {
+				if (!error) {
 					var mcapi = JSON.parse(body);
-					if (mcapi.result.status !== "Error") {
-						var mcuserout = "Username: "+mcapi.username+"\nUUID: "+mcapi.uuid+"\n2D Body: http://mcapi.de/api/image/user/body/"+mcapi.username+".png\n2D Head: http://mcapi.de/api/image/user/head/"+mcapi.username+".png\nHelm: http://mcapi.de/api/image/user/helm/"+mcapi.username+".png\n3D Head: http://mcapi.de/api/image/user/isometric/"+mcapi.username+".png";
-						bot.send(new Message().text(mcuserout).to(message.chat.id));
-					} else {
-						bot.send(new Message().text("An error occurred. The requested user may be cracked, or you typed in a wrong username/UUID.").to(message.chat.id));
+					if (mcapi.result.status === "Ok") {
+						request('http://mcapi.de/api/user/'+mcapi.uuid+'/reputation', function(error, response, body) {
+							var mcrep = JSON.parse(body);
+							bot.send(new Message().markdown(mcapi.username+" (UUID: "+mcapi.uuid+")\nName history: "+mcapi.history.map(h => h.name).splice(mcapi.history.length - 1, 1).join(", ")+"\n\n== Appearance ==\nBody: https://crafatar.com/renders/body/"+mcapi.uuid+"\nSkin: https://crafatar.com/skins/"+mcapi.uuid+"\nCape: https://crafatar.com/cape/"+mcapi.uuid+"\n\n**Reputation:** "+mcrep.reputation+"\nRecorded bans:\nMCBans: "+mcrep.services.mcbans[0].amount+" / Glizer: "+mcrep.services.glizer[0].amount+" / MCBouncer: "+mcrep.services.mcbouncer[0].amount).to(message.chat.id));
+						});
+					}
+					else if (mcapi.result.status === "The service is currently cooling down and cannot perform any requests. Please try it later again.") {
+						bot.send(new Message().text("The user should be cracked (Not registered with Mojang). Or the Mojang server broke. Who knows.").to(message.chat.id).keyboard(util));
+					}
+					else {
+						bot.send(new Message().text("An error occurred.").to(message.chat.id).keyboard(util));
 					}
 				}
 				else {
-					bot.send(new Message().text("An error occurred! Retry?").to(message.chat.id)); 
+					bot.send(new Message().text("An error occurred! Retry?").to(message.chat.id).keyboard(util)); 
 				}
 			});
 		}
@@ -476,6 +463,7 @@ if (setup.telegram !== "") {
 	bot.command("ibsearch ...query", function(message) {
 		if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {
 			if (message.args.query === undefined) {message.args.query = "";}
+			bot.send(new Message().text("Warning: If a GIF image is returned from the API, it'll take 1~2 minutes to get the image delivered to you. Otherwise, your image will be delivered to you within 10 seconds.").to(message.chat.id));
 			request("https://ibsearch.xxx/api/v1/images.json?key="+setup.ibsearch+"&limit=1&q=random:+"+message.args.query, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					if (body !== "[]") {
@@ -584,12 +572,14 @@ if (setup.telegram !== "") {
 
 	const image = new Keyboard().keys([['Cat', 'Bunny', 'Snake'], ['Imgur', 'Flickr'], ["IbSearch", "Pixiv"], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
 	const BIM = new Keyboard().keys([["Back to Image Menu"]]).oneTime(true).resize(true).selective(true);
-	bot.get(/Image/i, function(message) {
-		if (message.text !== "Images" && message.text !== "Back to Image Menu") {return;}
+	bot.get(/Back to Main Menu/i, function(message) {
+		var rep = new Message().markdown('What do you want to do now?\n\nBoth Minecraft commands along with 9gag in Keyboard mode are now back in service.\nNEW: /design ("Quote on Design" in Fun category)').to(message.chat.id).keyboard(menu);
+		bot.send(rep);
+	});
+	bot.get(/Image/g, function(message) {
 		bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(image));
 	});
-		bot.get(/Cat/i, function(message) {
-			if (message.text !== "Cat") {return;}
+		bot.get(/Cat/g, function(message) {
 			request("http://random.cat/meow", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
@@ -599,8 +589,7 @@ if (setup.telegram !== "") {
 				}
 			});
 		});
-		bot.get(/Bunny/i, function(message) {
-			if (message.text !== "Bunny") {return;}
+		bot.get(/Bunny/g, function(message) {
 			request('https://api.bunnies.io/v2/loop/random/?media=mp4', function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
@@ -612,8 +601,7 @@ if (setup.telegram !== "") {
 				}
 			});
 		});
-		bot.get(/Snake/i, function(message) {
-			if (message.text !== "Snake") {return;}
+		bot.get(/Snake/g, function(message) {
 			request("http://fur.im/snek/snek.php", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
@@ -623,10 +611,9 @@ if (setup.telegram !== "") {
 				}
 			});
 		});
-		bot.get(/IbSearch/i, function(message) {
-			if (message.text !== "IbSearch") {return;}
+		bot.get(/IbSearch/g, function(message) {
 			if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {
-				bot.send(new Message().text("Input a query.").to(message.chat.id).keyboard(new Keyboard().keys([["Skip"],["Back to Image Menu"]]).oneTime(true).resize(true).selective(true))).then(answer => {
+				bot.send(new Message().markdown("Input a query.\n**Warning:** If a GIF image is returned from the API, it'll take 1~2 minutes to get the image delivered to you. Otherwise, this command will take you around 10 seconds to execute.").to(message.chat.id).keyboard(new Keyboard().keys([["Skip"],["Back to Image Menu"]]).oneTime(true).resize(true).selective(true))).then(answer => {
 					if (answer.text !== "Back to Image Menu") {
 						var q = "";
 						if (answer.text !== "Skip") {q = answer.text;}
@@ -651,8 +638,7 @@ if (setup.telegram !== "") {
 				bot.send(new Message().text("You don't have /nsfw config enabled. Please enable it before using this function.").to(message.chat.id).keyboard(image));
 			}
 		});
-		bot.get(/Imgur/i, function(message) {
-			if (message.text !== "Imgur") {return;}
+		bot.get(/Imgur/g, function(message) {
 			bot.send(new Message().text("Input a query.").to(message.chat.id).keyboard(new Keyboard().keys([["Back to Image Menu"]]).oneTime(true).resize(true).selective(true))).then(answer => {
 				if (answer.text !== "Back to Image Menu") {
 					request({url:"https://api.imgur.com/3/gallery/search?q="+answer.text, headers:{'Authorization': 'Client-ID '+setup.imgur}}, function(error, response, body) {
@@ -666,8 +652,7 @@ if (setup.telegram !== "") {
 				}
 			});
 		});
-		bot.get(/Pixiv/i, function(message) {
-			if (message.text !== "Pixiv" || setup.pixiv_username === "" || setup.pixiv_password === "") {return;}
+		bot.get(/Pixiv/g, function(message) {
 			bot.send(new Message().text("Input a query.").to(message.chat.id).keyboard(BIM)).then(answer => {
 				if (answer.text !== "Back to Image Menu") {
 					var q = answer.text;
@@ -685,7 +670,7 @@ if (setup.telegram !== "") {
 				}
 			});
 		});
-		bot.get(/Flickr/i, function(message) {
+		bot.get(/Flickr/g, function(message) {
 			bot.send(new Message().text("Input a query, or \"Skip\" to find global recent photos.\nPlease note that this command is slow to execute (≈10 seconds). Be patient.").to(message.chat.id).keyboard(new Keyboard().keys([["Skip"],["Back to Image Menu"]]).oneTime(true).resize(true).selective(true))).then(answer => {
 				var photo = {};
 				if (answer.text === "Skip") {
@@ -730,60 +715,25 @@ if (setup.telegram !== "") {
 				}
 			});
 		});
-	const fun = new Keyboard().keys([['Truth', 'Dare'], ['Yoda Quote', 'Chuck Norris'], ['9gag', 'Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
-	bot.get(/Fun/i, function(message) {
-		if (message.text !== "Fun" && message.text !== "Back to Fun Menu") {return;}
+	const fun = new Keyboard().keys([['Yoda Quote', 'Chuck Norris'], ['9gag', 'Quote on Design'], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
+	bot.get(/Fun/g, function(message) {
 		bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(fun));
 	});
-		bot.get(/Truth/i, function(message) {
-			if (message.text !== "Truth") {return;}
-			request({
-				/*url: "http://unknowndeveloper.tk/truths.php",
-				auth: {
-					username: "username",
-					password: setup.truthanddare
-				}*/
-				url: "https://lydia.jaren.co/api/truth",
-				headers: {
-					"Authorization": "%&*^&%&$^#%&*^%$#%^*&"
-				}
-			}, function(error, response, body) {
-				if (!error && response.statusCode === 200) {
-					/*body = JSON.parse(body);*/
-					var rep = new Message().text(body/*[0].Dare*/).to(message.chat.id).keyboard(fun);
-					bot.send(rep);
-				} else {
-					bot.send(new Message().text("An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.").to(message.chat.id).keyboard(fun));
-				}
-			});
-		});
-		bot.get(/Dare/i, function(message) {
-			if (message.text !== "Dare") {return;}
-			request({
-				/*url: "http://unknowndeveloper.tk/dares.php",
-				auth: {
-					username: "username",
-					password: setup.truthanddare
-				}*/
-				url: "https://lydia.jaren.co/api/dare",
-				headers: {
-					"Authorization": "%&*^&%&$^#%&*^%$#%^*&"
-				}
-			}, function(error, response, body) {
-				if (!error && response.statusCode === 200) {
-					/*body = JSON.parse(body);*/
-					bot.send(new Message().text(body/*[0].Dare*/).to(message.chat.id).keyboard(fun));
-				} else {
-					bot.send(new Message().text("An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.").to(message.chat.id).keyboard(fun));
-				}
-			});
-		});
-		bot.get(/Yoda\sQuote/i, function(message) {
-			if (message.text !== "Yoda Quote") {return;}
+		bot.get(/Yoda\sQuote/g, function(message) {
 			bot.send(new Message().text(yodasaid[Math.floor(Math.random() * yodasaid.length)]).to(message.chat.id).keyboard(fun));
 		});
-		bot.get(/Chuck\sNorris/i, function(message) {
-			if (message.text !== "Chuck Norris") {return;}
+		bot.get(/Quote\son\sDesign/g, function(message) {
+			request("http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1", (error, response, body) => {
+				if (!error && response.statusCode === 200) {
+					body = JSON.parse(body);
+					bot.send(new Message().text(body[0].content.replace("<p>", "").replace("</p>", "")+"\n--- "+body[0].title).to(message.chat.id).keyboard(fun));
+				}
+				else {
+					bot.send(new Message().text("An error occured.").to(message.chat.id).keyboard(fun));
+				}
+			});
+		});
+		bot.get(/Chuck\sNorris/g, function(message) {
 			const cn = new Keyboard()
 								.keys([["Nerdy & Explicit Only", "Exclude Nerdy & Explicit"], ["Nerdy Only", "Exclude Nerdy"], ["Explicit Only", "Exclude Explicit"] , ["Nah, any joke is fine."]])
 								.force(true)
@@ -811,8 +761,7 @@ if (setup.telegram !== "") {
 				});
 			});
 		});
-		bot.get(/9gag/i, function(message) {
-			if (message.text !== "9gag" && message.text !== "Back to 9gag Menu") {return;}
+		bot.get(/9gag/g, function(message) {
 			const gagkb = new Keyboard()
 								.keys([['Search', 'Back to Fun Menu', 'Trending'], ['Funny', 'WTF', 'GIF'], ['NSFW', 'Gaming', 'Anime-Manga'], ['Movie-TV', 'Cute', 'Girl'], ['Awesome', 'Cosplay', 'Sport'], ['Food', 'Ask9gag', 'Timely']])
 								.force(true)
@@ -821,7 +770,7 @@ if (setup.telegram !== "") {
 								.selective(true);
 			var rep = new Message().text('If you want to search using a specific query, click "Search".\nIf you want to get a random gag in a specific category, click your prefered category.\nYou can also click "Back to Fun Menu".').to(message.chat.id).keyboard(gagkb);
 			bot.send(rep).then(answer => {
-				if (gagbrds.indexOf(answer.text) > -1) {
+				if (gagbrds.indexOf(answer.text.toLowerCase()) > -1) {
 					const subs = new Keyboard()
 										.keys([['Hot', 'Fresh'], ['Back to 9gag Menu']])
 										.force(true)
@@ -831,7 +780,7 @@ if (setup.telegram !== "") {
 					var rep = new Message().text("Choose a subsection.").to(message.chat.id).keyboard(subs);
 					bot.send(rep).then(subanswer => {
 						if (gagsubs.indexOf(subanswer.text) > -1) {
-							gag.section(answer.text, subanswer.text, function(err, res) {
+							gag.section(answer.text.toLowerCase(), subanswer.text.toLowerCase(), function(err, res) {
 								if (err) {
 									var rep = new Message().text("An error occured. Retry?").to(message.chat.id).keyboard(fun);
 									bot.send(rep);
@@ -907,14 +856,12 @@ if (setup.telegram !== "") {
 				}
 			});
 		});
-	const util = new Keyboard().keys([['Bitly', 'Gyazo'], ['Minecraft User', 'Minecraft Server'], ['Yelp', 'Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
+	const util = new Keyboard().keys([['Bitly', 'Gyazo'], ['Minecraft User', 'Minecraft Server'], ['Yelp', 'Pastebin'], ['Back to Main Menu']]).force(true).oneTime(true).resize(true).selective(true);
 	const ukb = new Keyboard().keys([["Back to Utility Menu"]]).oneTime(true).resize(true).selective(true);
-	bot.get(/Utility/i, function(message) {
-		if (message.text !== "Utility" && message.text !== "Back to Utility Menu") {return;}
+	bot.get(/Utility/g, function(message) {
 		bot.send(new Message().text("Choose one of the following options.").to(message.chat.id).keyboard(util));
 	});
-		bot.get(/Bitly/i, function(message) {
-			if (message.text !== "Bitly") {return;}
+		bot.get(/Bitly/g, function(message) {
 			const bkb = new Keyboard()
 							.keys([["Make a Bitly Link"], ["Expand a Bitly link"], ["Back to Utility Menu"]])
 							.force(true)
@@ -939,7 +886,7 @@ if (setup.telegram !== "") {
 				}
 			});
 		});
-		bot.get(/Gyazo/i, function(message) {
+		bot.get(/Gyazo/g, function(message) {
 		var q = new Message().text('You can use the following methods to upload an image to gyazo...\n* Send me the direct URL to the image\n* Upload it here (PLEASE COMPRESS IT, or it\'ll upload as a document and it just won\'t work)').to(message.chat.id);
 		bot.send(q).then(answer => {
 			if (answer.photo !== undefined) {
@@ -965,22 +912,20 @@ if (setup.telegram !== "") {
 			}
 		});
 	});
-		bot.get(/Minecraft Server/i, function(message) {
-			if (message.text !== "Minecraft Server") {return;}
+		bot.get(/Minecraft Server/g, function(message) {
 			bot.send(new Message().text("Please enter the address of the server you want to check.").to(message.chat.id).keyboard(ukb)).then(answer => {
 				if (answer.text !== "Back to Utility Menu") {
-					request('https://mcapi.ca/query/'+answer.text+'/info', function(error, response, body) {
+					if (!answer.text.includes(":")) {answer.text += ":25565"}
+					request.post('https://mcapi.de/api/server/', {json: {ip: answer.text.split(":")[0], port: answer.text.split(":")[1]}}, function(error, response, body) {
 						if (!error && response.statusCode === 200) {
-							body = JSON.parse(body);
-							if (body.status === false) {
-								var err = new Message().text('Your input is invalid, or the server you requested is offline, or maybe you just need a retry.\nYour input is '+message.args.ip).to(message.chat.id).keyboard(util);
+							if (body.result.status !== "success") {
+								var err = new Message().text('Your input is invalid, or the server you requested is offline, or maybe you just need a retry.\nYour input is '+answer.text).to(message.chat.id).keyboard(util);
 								bot.send(err);
 								return;
 							}
-							var mcrep = "Query: "+answer.text+"\nPlayers: "+body.players.online+"/"+body.players.max+"\nPing: "+body.ping+"ms";
-							var rep = new Message().text(mcrep).to(message.chat.id);
+							var rep = new Message().text(answer.text+" ("+body.hostname+")\nPlayers: "+body.players.online+"/"+body.players.max+"\nBlocked by Mojang: "+body.blocked.status+"\nSoftware: "+body.software.name+", MC Version "+body.software.version+"\nPing: "+body.list.ping+"ms").to(message.chat.id);
 							bot.send(rep);
-							var icon = new Message().text("https://mcapi.ca/query/"+answer.text+"/icon").to(message.chat.id).keyboard(util);
+							var icon = new Message().text("http://mcapi.de/api/image/favicon/"+answer.text.replace(":", "/")).to(message.chat.id).keyboard(util);
 							setTimeout(function(){
 								bot.send(icon);
 							}, 50);
@@ -993,19 +938,24 @@ if (setup.telegram !== "") {
 				}
 			});
 		});
-		bot.get(/Minecraft User/i, function(message) {
-			if (message.text !== "Minecraft User") {return;}
+		bot.get(/Minecraft User/g, function(message) {
 			bot.send(new Message().text("Please enter the username or UUID you want to check.").to(message.chat.id).keyboard(ukb)).then(answer => {
 				if (answer.text !== "Back to Utility Menu") {
-					var mcuser = answer.text;
-					request('https://mcapi.de/api/user/' + mcuser, function(error, response, body) {
-						if (!error && response.statusCode === 200) {
+					var mcuser = answer.text.replace("-", "");
+					request('http://mcapi.de/api/user/' + mcuser, function(error, response, body) {
+						if (!error) {
 							var mcapi = JSON.parse(body);
-							if (mcapi.result.status !== "Error") {
-								var mcuserout = "Username: "+mcapi.username+"\nUUID: "+mcapi.uuid+"\n2D Body: http://mcapi.de/api/image/user/body/"+mcapi.username+".png\n2D Head: http://mcapi.de/api/image/user/head/"+mcapi.username+".png\nHelm: http://mcapi.de/api/image/user/helm/"+mcapi.username+".png\n3D Head: http://mcapi.de/api/image/user/isometric/"+mcapi.username+".png";
-								bot.send(new Message().text(mcuserout).to(message.chat.id).keyboard(util));
-							} else {
-								bot.send(new Message().text("An error occurred. The requested user may be cracked, or you typed in a wrong username/UUID.").to(message.chat.id).keyboard(util));
+							if (mcapi.result.status === "Ok") {
+								request('http://mcapi.de/api/user/'+mcapi.uuid+'/reputation', function(error, response, body) {
+									var mcrep = JSON.parse(body);
+									bot.send(new Message().markdown(mcapi.username+" (UUID: "+mcapi.uuid+")\nName history: "+mcapi.history.map(h => h.name).splice(mcapi.history.length - 1, 1).join(", ")+"\n\n== Appearance ==\nBody: https://crafatar.com/renders/body/"+mcapi.uuid+"\nSkin: https://crafatar.com/skins/"+mcapi.uuid+"\nCape: https://crafatar.com/cape/"+mcapi.uuid+"\n\n**Reputation:** "+mcrep.reputation+"\nRecorded bans:\nMCBans: "+mcrep.services.mcbans[0].amount+" / Glizer: "+mcrep.services.glizer[0].amount+" / MCBouncer: "+mcrep.services.mcbouncer[0].amount).to(message.chat.id).keyboard(util));
+								});
+							}
+							else if (mcapi.result.status === "The service is currently cooling down and cannot perform any requests. Please try it later again.") {
+								bot.send(new Message().text("The user should be cracked (Not registered with Mojang). Or the Mojang server broke. Who knows.").to(message.chat.id).keyboard(util));
+							}
+							else {
+								bot.send(new Message().text("An error occurred.").to(message.chat.id).keyboard(util));
 							}
 						}
 						else {
@@ -1015,9 +965,21 @@ if (setup.telegram !== "") {
 				}
 			});
 		});
-		bot.get(/Yelp/i, function(message) {
-			if (message.text !== "Yelp") {return;}
-			bot.send(new Message().text("I need your location. You have these options:\n - Send me your location if you're on phone, or:\n - Type in your location, e.g. \"Montréal, QC\".\nTo protect your privacy, your location will NOT be recorded.").to(message.chat.id).keyboard(ukb)).then(answer => {
+		bot.get(/Pastebin/g, function(message) {
+			bot.send(new Message().text("Please enter the content you'd like to have in your paste. Your paste will be posted without a title by a guest, and it will not expire.").to(message.chat.id).keyboard(ukb)).then(answer => {
+				if (answer.text !== "Back to Utility Menu") {
+					request.post('https://pastebin.com/api/api_post.php', {form: {api_dev_key: setup.pastebin, api_option: "paste", api_paste_code: answer.text}}, function(error, response, body) {
+						if (!error && response.statusCode === 200) {
+							bot.send(new Message().text(body).to(message.chat.id).keyboard(util));
+						} else {
+							bot.send(new Message().text('An error occured. Please check your input, or retry.').to(message.chat.id).keyboard(util));
+						}
+					});
+				}
+			});
+		});
+		bot.get(/Yelp/g, function(message) {
+			bot.send(new Message().text("I need your location. You have these options:\n - Send me your location if you're on phone, or:\n - Type in your location, e.g. \"Montréal, QC\".\nYour location will NOT be recorded.").to(message.chat.id).keyboard(ukb)).then(answer => {
 				if (answer.text !== "Back to Utility Menu") {
 					var yelpobj = {};
 					if (answer.location !== undefined) {
@@ -1046,8 +1008,7 @@ if (setup.telegram !== "") {
 				}
 			});
 		});
-	bot.get(/Settings/i, function(message) {
-		if (message.text !== "Settings") {return;}
+	bot.get(/Settings/g, function(message) {
 		var output = "Your current settings:\n* Not-Suitable-For-Work/18+ content: ";
 		if (config.telegram.nsfw.indexOf(message.chat.id) > -1) {output += "Enabled";} else {output += "Disabled";}
 		output += "\nTo change the config, use the buttons below. Replying anything other than the keyboard choices will exit this menu.";
@@ -1078,13 +1039,11 @@ if (setup.telegram !== "") {
 			}
 		});
 	});
-	bot.get(/About\/Support/i, function(message) {
-		if (message.text !== "About/Support") {return;}
-		var err = new Message().text('Metagon, Confidence in Usability.\n\nOriginally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/metagon.').to(message.chat.id).keyboard(menu);
+	bot.get(/About\/Support/g, function(message) {
+		var err = new Message().text('Metagon, Confidence in Usability.\n\nOriginally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/metagon. If you want to make suggestions, click Feedback.').to(message.chat.id).keyboard(menu);
 		bot.send(err);
 	})
-	bot.get(/Feedback/i, function(message) {
-		if (message.text !== "Feedback") {return;}
+	bot.get(/Feedback/g, function(message) {
 		if (setup.myid === undefined) {
 			bot.send(new Message().text('Hmm...I don\'t know who is the owner. Tell the host of the bot to...\n - Go to setup.json and put his ID in the myid OR\n - Just paste 265228448 (@austinhuang) into myid').to(message.chat.id));
 		}
@@ -1097,169 +1056,9 @@ if (setup.telegram !== "") {
 			bot.send(rep);
 		});
 	});
-	bot.get(/Back\sto\sMain\sMenu/i, function(message) {
-		if (message.text !== "Back to Main Menu") {return;}
-		var rep = new Message().text('What do you want to do now?').to(message.chat.id).keyboard(menu);
-		bot.send(rep);
-	});
 }
 
-if (setup.kik_token !== "") {
-	var kik = new Kik({
-		username: setup.kik_username,
-		apiKey: setup.kik_token,
-		baseUrl: "https://5be3dc12.ngrok.io",
-	});
-	server.listen(port, ipaddress, function () {
-		console.log('%s listening to %s', server.name, server.url); 
-	});
-	server.post('/incoming', kik.incoming());
-	kik.updateBotConfiguration();
-	kik.onTextMessage((message,next) => {
-  		console.log("KIK @"+message.from+": "+message.body);
-		var arrayFound = session.find(function(item) {
-			return item.chat === message.chatId;
-		});
-		if (arrayFound !== undefined) {
-			if (arrayFound.session === "pixiv" && message.body !== "Back to Image menu") {
-				var q = message.body;
-				if (config.kik.nsfw.indexOf(message.chat.id) === -1) {q += " -R-18 -R-18G";}
-				pixiv.search(q, {per_page: 100, mode: "tag"}).then(json => {
-					console.log(arrayFound.session);
-					/*if (json.response.length === 0) {*/
-						message.reply(Kik.Message.text("No results.").addResponseKeyboard(["Cat", "Bunny", "Snake", "Back to Main Menu"]));
-						/*return;
-					}
-					var illust = json.response[Math.floor(Math.random() * json.response.length)];
-					message.reply(Kik.Message.picture(illust.image_urls.large));
-					if (illust.is_manga === true) {message.reply(Kik.Message.text("\nThis is a multiple-page illustration, so only the first page is shown. View the full content at http://www.pixiv.net/member_illust.php?mode=medium&illust_id="+illust.id).addResponseKeyboard(["Cat", "Bunny", "Snake", "Back to Main Menu"]));}*/
-				});
-			}
-			session = session.splice(i, 1);
-		}
-		if (message.body === "/help") {
-			message.reply("https://github.com/austinhuang0131/metagon/wiki");
-		}
-		else if (message.body === "/start" || message.body === "Back to Main Menu" || message.body === "start") {
-			message.reply(Kik.Message.text("What do you want to do now?").addResponseKeyboard(["Images", "Fun", "Utility", "Settings", "About/Support"]));
-		}
-		else if (message.body === "About/Support") {
-			message.reply('Originally in Discord, I am a multifunction bot to suit your needs!\nIf you have any questions, feel free to ask my creator, @austinhuang.\nMy documentation, source, and bug report desk is at https://github.com/austinhuang0131/metagon.');
-		}
-		else if (message.body.toLowerCase() === "settings") {
-			var output = "Your current settings:\n* Not-Suitable-For-Work/18+ content: ";
-			if (config.kik.nsfw.indexOf(message.chatid) > -1) {output += "Enabled\n";} else {output += "Disabled\n";}
-			output += "\nTo change the config, use the buttons below.";
-			message.reply(Kik.Message.text(output).addResponseKeyboard(['Toggle SFW/NSFW', 'Back to Main Menu']));
-		}
-		else if (message.body.toLowerCase() === "nsfw" || message.body === "Toggle SFW/NSFW") {
-					var index = config.kik.nsfw.indexOf(message.chatid);
-					if (index > -1) {
-						config.kik.nsfw.splice(index, 1);
-						message.reply(Kik.Message.text("Done! To adjust another setting, or to check the current settings, please click Settings.").addResponseKeyboard(["Images", "Fun", "Utility", "Settings", "About/Support", "Feedback"]));
-						fs.writeFile('config.json', JSON.stringify(config), 'utf8');
-					}
-					else if (index === -1) {
-						config.kik.nsfw.push(message.chatid);
-						message.reply(Kik.Message.text("NSFW has been enabled. Please make sure you are LEGAL to see NSFW content in your country. To adjust another setting, or to check the current settings, please click Settings.").addResponseKeyboard(["Images", "Fun", "Utility", "Settings", "About/Support", "Feedback"]));
-						fs.writeFile('config.json', JSON.stringify(config), 'utf8');
-					}
-				}
-		else if (message.body.toLowerCase() === "images" || message.body === "Back to Image menu") {
-			message.reply(Kik.Message.text("What do you want to do now?").addResponseKeyboard(["Cat", "Bunny", "Snake", "Back to Main Menu"]));
-		}
-		else if (message.body.toLowerCase() === "cat") {
-			request("http://random.cat/meow", function(error, response, body) {
-				if (!error && response.statusCode === 200) {
-					body = JSON.parse(body);
-					message.reply(Kik.Message.picture(body.file).addResponseKeyboard(["Cat", "Bunny", "Snake", "Back to Main Menu"]));
-				} else {
-					message.reply(Kik.Message.text("An error occured. Please check whether http://random.cat is online or not, and retry.").addResponseKeyboard(["Cat", "Bunny", "Snake", "Back to Main Menu"]));
-				}
-			});
-		}
-		else if (message.body.toLowerCase() === "snake") {
-			request("http://fur.im/snek/snek.php", function(error, response, body) {
-				if (!error && response.statusCode === 200) {
-					body = JSON.parse(body);
-					message.reply(Kik.Message.picture(body.file).addResponseKeyboard(["Cat", "Bunny", "Snake", "Back to Main Menu"]));
-				} else {
-					message.reply(Kik.Message.text("An error occured. Please check whether http://fur.im/snek/snek.php is online or not, and retry.").addResponseKeyboard(["Cat", "Bunny", "Snake", "Back to Main Menu"]));
-				}
-			});
-		}
-		else if (message.body.toLowerCase() === "bunny") {
-			request('https://api.bunnies.io/v2/loop/random/?media=gif', function(error, response, body) {
-				if (!error && response.statusCode === 200) {
-					body = JSON.parse(body);
-					message.reply(Kik.Message.video(body.media.gif));
-				} else {
-					message.reply(Kik.Message.text('An error occured. Please check whether https://api.bunnies.io/docs is online or not, and retry.'));
-				}
-			});
-		}
-		else if (message.body.toLowerCase() === "pixiv") {
-			session[session.length] = {chat: message.chatId, session: "pixiv"};
-			message.reply(Kik.Message.text("Input a query.").addResponseKeyboard(["Back to Image menu"]));
-		}
-		else if (message.body.toLowerCase() === "fun") {
-			message.reply(Kik.Message.text("What do you want to do now?").addResponseKeyboard(["Truth", "Dare", "Yoda Quote", "Chuck Norris", "9gag", "Back to Main Menu"]));
-		}
-		else if (message.body.toLowerCase() === "truth") {
-			request({
-				url: "http://unknowndeveloper.tk/truths.php",
-				auth: {
-					username: "username",
-					password: setup.truthanddare
-				}
-			}, function(error, response, body) {
-				if (!error && response.statusCode === 200) {
-					body = JSON.parse(body);
-					message.reply(body[0].Truth);
-				} else {
-					message.reply('An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.');
-				}
-			});
-		}
-		else if (message.body.toLowerCase() === "dare") {
-			request({
-				url: "http://unknowndeveloper.tk/dares.php",
-				auth: {
-					username: "username",
-					password: setup.truthanddare
-				}
-			}, function(error, response, body) {
-				if (!error && response.statusCode === 200) {
-					body = JSON.parse(body);
-					message.reply(body[0].Dare);
-				} else {
-					message.reply('An error occured. Please check whether http://unknowndeveloper.tk/ is online or not, and retry.');
-				}
-			});
-		}
-		else if (message.body.toLowerCase() === "yoda quote" || message.body.toLowerCase() === "yoda") {
-			message.reply(yodasaid[Math.floor(Math.random() * yodasaid.length)]);
-		}
-		else if (message.body.toLowerCase() === "gyazo") {
-			message.reply("Please upload an image here. (Unlike Telegram/Discord version, using direct URL does not work here.)");
-			kik.onPictureMessage((answer) => {
-				gyazo(answer.picUrl).then((urls) => {
-					answer.reply(urls[0]);
-				});
-			});
-			kik.onLinkMessage((answer) => {
-				gyazo(answer.url).then((urls) => {
-					answer.reply(urls[0]);
-				});
-			});
-		}
-	});
-	kik.onStartChattingMessage((message,next) => {
-		console.log("KIK @"+message.from+" started to use this bot!");
-		message.reply(Kik.Message.text("Hello. This is Metagon. Nice to meet you! You can type \"/start\" to begin, or \"@metagon start\" in group chats. If you have any questions, visit https://github.com/austinhuang0131/metagon/wiki or contact @austinhuang0131.").addResponseKeyboard(["Images", "Fun", "Utility", "Settings", "About/Support"]));
-	});
-}
-
+setTimeout(function(){bot.stop();bot.start();}, 21600000);
 process.on('unhandledRejection', (reason, p) => {
 	console.error("Unhandled:"+p+" Reason: "+reason);
 });
