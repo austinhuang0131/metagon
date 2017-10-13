@@ -1,18 +1,15 @@
 {
     "telegram": "",
     "myid": 265228448,
-    "kik_token": "",
-    "kik_username": "",
-    "kik_url": "",
     "bitly_token": "",
+    "pastebin": "",
     "ibsearch": "",
     "pixiv_username": "",
     "pixiv_password": "",
     "truthanddare": "",
     "imgur": "",
-    "flickr": "",
-	"yelp": {
-		"clientId": "",
-		"clientSecret": ""
-	}
+    "yelp": {
+	"clientId": "",
+	"clientSecret": ""
+    }
 }
