@@ -15,6 +15,8 @@
     "request": "^2.83.0",
     "restify": "^4.3.0",
     "imgur-uploader": "^4.2.1",
+    "node-9gag": "^0.2.4",
+    "datadog": "HashGo/node-datadog",
     "pixiv.js": "^0.18.0",
     "pixiv-img": "^0.3.1"
   },

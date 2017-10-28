@@ -12,6 +12,8 @@ var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 const Pixiv = require('pixiv.js');
 const pixiv = new Pixiv(process.env.pixiv_username, process.env.pixiv_password);
 const pixivImg = require('pixiv-img');
+var gagbrds = ["funny", "wtf", "gif", "gaming", "anime-manga", "movie-tv", "cute", "girl", "awesome", "cosplay", "sport", "food", "ask9gag", "timely", "nsfw"];
+var gagsubs = ["hot", "fresh"];
 var yoda_said = [
   '"Fear is the path to the dark side. Fear leads to anger, anger leads to hate, hate leads to suffering." -- Yoda \n',
   '"Confer on you, the level of Jedi Knight, the Council does. But, agree with your taking this boy as your Padawan Learner, I do not." -- Yoda to Obi-Wan Kenobi\n',
@@ -105,10 +107,59 @@ var yoda_said = [
   '"To the Force, look for guidance. Accept what fate has placed before us." -- Yoda\n',
   '"Yoda, you seek?" -- Yoda\n', '"My ally is the Force" -- Yoda\n'
 ];
+var gag = require("node-9gag");
+var DataDog = require('datadog');
+var dd = new DataDog(process.env.datadog1, process.env.datadog2);
+
+bot.on('incoming', message => {
+	dd.postEvent({
+	   title: message.source + 'message received',
+	   text: 'User '+message.address.user.name+': '+message.text
+	});
+});
+bot.on('error', err => {
+	dd.postEvent({
+	   title: 'ERROR!!!',
+	   text: err
+	});
+});
+
+bot.on('conversationUpdate', function (message) {
+    if (message.address.conversation.isGroup) {
+        if (message.membersAdded) {
+            message.membersAdded.forEach(function (identity) {
+                if (identity.id === message.address.bot.id) {
+                    var reply = new builder.Message()
+                            .address(message.address)
+                            .text("Hello everyone! This is Metagon. You can reply me \"start\" to start using me! For more info, visit http://metagon.cf.");
+                    bot.send(reply);
+                }
+            });
+        }
+        if (message.membersRemoved) {
+            message.membersRemoved.forEach(function (identity) {
+                if (identity.id === message.address.bot.id) {
+                    var reply = new builder.Message()
+                        .address(message.address)
+                        .text("Sorry to see you go! If you experienced issue, or you'd like to see a better Metagon, please tell us at http://metagon.cf/#contact-us.");
+                    bot.send(reply);
+                }
+            });
+        }
+    }
+});
+bot.on('contactRelationUpdate', function (message) {
+    if (message.action === 'add') {
+        var name = message.user ? message.user.name : null;
+        var reply = new builder.Message()
+                .address(message.address)
+                .text("Hello everyone! This is Metagon. You can reply me \"start\" to start using me! For more info, visit http://metagon.cf.", name || 'there');
+        bot.send(reply);
+    }
+});
 
 // Menus
-bot.beginDialogAction("menu", "/menu", { matches: "menu"});
-bot.beginDialogAction("menu", "/menu", { matches: /\/start/g});
+bot.beginDialogAction("menu", "/menu", { matches: /start/gi});
 bot.dialog('/menu', function (session) {
 	if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
 }
@@ -180,7 +231,7 @@ bot.dialog('/image', [
 			session.beginDialog("/pixiv1");
 		}
 		else if (results.response.endsWith("Quit")) {
-			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"/start\".");
+			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
 		}
 		else if (results.response.endsWith("Back to Main Menu")) {
 			session.replaceDialog("/menu");
@@ -235,7 +286,7 @@ bot.dialog('/utility', [
 			session.beginDialog("/paste1");
 		}
 		else if (results.response.endsWith("Quit")) {
-			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"/start\".");
+			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
 		}
 		else if (results.response.endsWith("Back to Main Menu")) {
 			session.replaceDialog("/menu");
@@ -246,7 +297,8 @@ bot.dialog('/utility', [
 bot.beginDialogAction("fun", "/fun", { matches: /Fun/g});
 bot.dialog('/fun', [
 	function (session) {
-		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
+		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
+			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
 	}
 		else {
 			var msg = new builder.Message(session);
@@ -277,8 +329,11 @@ bot.dialog('/fun', [
 		else if (results.response.endsWith("Design")) {
 			session.beginDialog("/design");
 		}
+		else if (results.response.endsWith("9gag")) {
+			session.beginDialog("/9gag1");
+		}
 		else if (results.response.endsWith("Quit")) {
-			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"/start\".");
+			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
 		}
 		else if (results.response.endsWith("Back to Main Menu")) {
 			session.replaceDialog("/menu");
@@ -490,7 +545,7 @@ bot.dialog('/imgur2', function (session) {
 		});
 	}
 	else if (session.message.text.startsWith("/imgur")) {
-		session.endDialog("Missing search query! Correct usage: \"/imgur <Query>\"");
+		session.endDialog("Missing search query! Correct usage: \"/imgur (Query)\"");
 	}
 	else {
 		session.endDialog();
@@ -573,7 +628,7 @@ bot.dialog('/flickr2', function (session) {
 		});
 	}
 	else if (session.message.text.startsWith("/flickr")) {
-		session.endDialog("Missing search query! Correct usage: \"/flickr <Query>\"");
+		session.endDialog("Missing search query! Correct usage: \"/flickr (Query)\"");
 	}
 	else {
 		session.endDialog();
@@ -618,6 +673,11 @@ bot.dialog('/ibsearch1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
+		if (results.response.endsWith("Back to Image Menu")) {
+			session.endDialog();
+			session.replaceDialog("/image");
+			return;
+		}
 		request("https://ibsearch.xxx/api/v1/images.json?key="+process.env.ibsearch+"&limit=1&q=random:+"+results.response+nsfw.find(i => {return i.user === session.message.address.user.id}).nsfw, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				if (body !== "[]") {
@@ -732,6 +792,11 @@ bot.dialog('/pixiv1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
+		if (results.response.endsWith("Back to Image Menu")) {
+			session.endDialog();
+			session.replaceDialog("/image");
+			return;
+		}
 		pixiv.search(results.response+nsfw.find(i => {return i.user === session.message.address.user.id}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
 			var illust = json.response[Math.floor(Math.random() * json.response.length)];
 			if (illust === undefined) {
@@ -829,6 +894,11 @@ bot.dialog('/shorten1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
+		if (results.response.endsWith("Back to Utility Menu")) {
+			session.endDialog();
+			session.replaceDialog("/utility");
+			return;
+		}
 		var site = "";
 		if (!results.response.startsWith("http")) {site = "http://"+results.response;} else {site = results.response;}
 		request("https://api-ssl.bitly.com/v3/shorten?access_token="+process.env.bitly_token+"&longUrl="+site+"&format=txt", function(error, response, body) {
@@ -872,6 +942,11 @@ bot.dialog('/expand1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
+		if (results.response.endsWith("Back to Utility Menu")) {
+			session.endDialog();
+			session.replaceDialog("/utility");
+			return;
+		}
 		var site = "";
 		if (!results.response.startsWith("http")) {site = "http://"+results.response;} else {site = results.response;}
 		request("https://api-ssl.bitly.com/v3/expand?access_token="+process.env.bitly_token+"&shortUrl="+site+"&format=txt", function(error, response, body) {
@@ -914,6 +989,11 @@ bot.dialog('/mcuser1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
+		if (results.response.endsWith("Back to Utility Menu")) {
+			session.endDialog();
+			session.replaceDialog("/utility");
+			return;
+		}
 		request('http://mcapi.de/api/user/' + results.response, function(error, response, body) {
 			if (!error) {
 				var mcapi = JSON.parse(body);
@@ -994,6 +1074,11 @@ bot.dialog('/mcserver1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
+		if (results.response.endsWith("Back to Utility Menu")) {
+			session.endDialog();
+			session.replaceDialog("/utility");
+			return;
+		}
 		var ip = {};
 		if (results.response.split(":")[1] === undefined) {
 			ip = {ip: results.response};
@@ -1144,6 +1229,150 @@ bot.dialog('/design', function (session) {
 			session.endDialog("ERROR! I could not connect to http://quotesondesign.com/wp-json/posts. Please retry. If the problem persists, leave an issue at http://metagon.cf");
 		}
 	});
+});
+
+bot.beginDialogAction("9gag", "/9gag2", { matches: /\/9gag/g});
+bot.dialog('/9gag1',[
+	function (session) {
+		var msg = new builder.Message(session);
+		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachments([
+			new builder.HeroCard(session)
+			.title("Select a subsection to visit, or \"Search\" to search for posts.")
+			.buttons([
+				builder.CardAction.imBack(session, "Search", "Search"),
+				builder.CardAction.imBack(session, "Back to Fun Menu", "Back to Fun Menu"),
+				builder.CardAction.imBack(session, "trending", "trending"),
+				builder.CardAction.imBack(session, "funny", "funny"),builder.CardAction.imBack(session, "wtf", "wtf"),builder.CardAction.imBack(session, "gif", "gif"),builder.CardAction.imBack(session, "gaming", "gaming"),builder.CardAction.imBack(session, "anime-manga", "anime-manga"),builder.CardAction.imBack(session, "movie-tv", "movie-tv"),builder.CardAction.imBack(session, "cute", "cute"),builder.CardAction.imBack(session, "girl", "girl"),builder.CardAction.imBack(session, "awesome", "awesome"),builder.CardAction.imBack(session, "cosplay", "cosplay"),builder.CardAction.imBack(session, "sport", "sport"),builder.CardAction.imBack(session, "food", "food"),builder.CardAction.imBack(session, "ask9gag", "ask9gag"),builder.CardAction.imBack(session, "timely", "timely"),builder.CardAction.imBack(session, "nsfw", "nsfw")
+			])
+		]);
+		builder.Prompts.text(session, msg);
+	},
+	function (session, results) {
+		if (results.response.endsWith("Back to Fun Menu")) {
+			session.endDialog();
+			session.replaceDialog("/fun");
+		}
+		else if (results.response.endsWith("Search")) {
+			nsfw.push({user: session.message.address.user.id, gag: "search"});
+			var msg = new builder.Message(session);
+			msg.attachmentLayout(builder.AttachmentLayout.carousel)
+			msg.attachments([
+				new builder.HeroCard(session)
+				.title("Input a search query.")
+				.buttons([
+					builder.CardAction.imBack(session, "Back to Fun Menu", "Back to Fun Menu")
+				])
+			]);
+			builder.Prompts.text(session, msg);
+		}
+		else if (results.response.endsWith("Trending")) {
+			gag.section("trending", function(err, res) {
+				if (err) {
+					session.endDialog("An error occured. Retry?");
+					session.replaceDialog("/fun");
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+				}
+				else {
+					session.endDialog(res[Math.floor(Math.random() * res.length)].url);
+					session.replaceDialog("/fun");
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+				}
+			});
+		}
+		else if (gagbrds.indexOf(results.response) > -1) {
+			nsfw.push({user: session.message.address.user.id, gag: results.response});
+			var msg = new builder.Message(session);
+			msg.attachmentLayout(builder.AttachmentLayout.carousel)
+			msg.attachments([
+				new builder.HeroCard(session)
+				.title("Hot or Fresh?")
+				.buttons([
+					builder.CardAction.imBack(session, "Hot", "Hot"),
+					builder.CardAction.imBack(session, "Fresh", "Fresh")
+				])
+			]);
+			builder.Prompts.text(session, msg);
+		}
+    },
+	function (session, results) {
+		if (nsfw.find(i => {return i.user === session.message.address.user.id;}).gag === "search") {
+			gag.find(results.response, function(err, res) {
+				if (err) {
+					session.endDialog("An error occured. Retry?");
+					session.replaceDialog("/fun");
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+				}
+				else {
+					session.endDialog(res[Math.floor(Math.random() * res.length)].url);
+					session.replaceDialog("/fun");
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+				}
+			});
+		}
+		else if (results.response.endsWith("Hot")) {
+			gag.section(nsfw.find(i => {return i.user === session.message.address.user.id;}).gag, "hot", function(err, res) {
+				if (err) {
+					session.endDialog("An error occured. Retry?");
+					session.replaceDialog("/fun");
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+				}
+				else {
+					session.endDialog(res[Math.floor(Math.random() * res.length)].url);
+					session.replaceDialog("/fun");
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+				}
+			});
+		}
+		else if (results.response.endsWith("Fresh")) {
+			gag.section(nsfw.find(i => {return i.user === session.message.address.user.id;}).gag, "fresh", function(err, res) {
+				if (err) {
+					session.endDialog("An error occured. Retry?");
+					session.replaceDialog("/fun");
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+				}
+				else {
+					session.endDialog(res[Math.floor(Math.random() * res.length)].url);
+					session.replaceDialog("/fun");
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+				}
+			});
+		}
+		else if (results.response.endsWith("Back to Fun Menu")) {
+			session.endDialog();
+			session.replaceDialog("/fun");
+			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+		}
+	}
+]);
+bot.dialog('/9gag2', function (session) {
+	var args = [session.message.text.split(" ")[1], session.message.text.split(" ")[2]];
+	if (session.message.text.startsWith(" ")) {
+		args = [session.message.text.split(" ")[2], session.message.text.split(" ")[3]];
+	}
+	if (gagbrds.indexOf(args[0]) > -1 && gagsubs.indexOf(args[1]) > -1) {
+		gag.section(args[0], args[1], function(err, res) {
+			if (err) {
+				session.endDialog("An error occured. Retry?");
+			}
+			else {
+				session.endDialog(res[Math.floor(Math.random() * res.length)].url);
+			}
+		});
+	}
+	else if (args[0] === "search") {
+		gag.find(args[1], function(err, res) {
+			if (err) {
+				session.endDialog("An error occured. Retry?");
+			}
+			else {
+				session.endDialog(res[Math.floor(Math.random() * res.length)].url);
+			}
+		});
+	}
+	else {
+		session.endDialog("Invalid arguments!\n* /9gag (section) (hot/fresh)\n* /9gag search (Query)");
+	}
 });
 
 // General Guidance
