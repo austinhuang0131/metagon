@@ -1,27 +1,30 @@
 {
-  "name": "metagon",
-  "version": "1.1.4",
-  "description": "Metagon on Telegram/Kik",
-  "private": false,
-  "main": "start.js",
+  "name": "metagon_plus",
+  "version": "1.0.0",
+  "description": "Lol",
+  "main": "index.js",
   "scripts": {
-    "start": "node start.js"
+    "test": "echo THERE IS NO TEST COMMAND, JUST START THE APP",
+    "start": "node index"
   },
-  "author": "Austin Huang <austinhuang0131@icloud.com>",
-  "license": "SEE LICENSE IN readme.md",
+  "keywords": [],
+  "author": "austinhuang",
+  "license": "ISC",
+  "dependencies": {
+    "botbuilder": "^3.11.0",
+    "request": "^2.83.0",
+    "restify": "^4.3.0",
+    "imgur-uploader": "^4.2.1",
+    "pixiv.js": "^0.18.0",
+    "pixiv-img": "^0.3.1"
+  },
+  "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/austinhuang0131/metagon.git"
+    "url": "git+https://github.com/austinhuang0131/metagon_plus.git"
   },
-  "dependencies": {
-    "@kikinteractive/kik": "^2.0.12",
-    "accounting": "^0.4.1",
-    "gyazo-upload": "0.0.2",
-    "node-9gag": "^0.2.3",
-    "pixiv.js": "^0.18.0",
-    "request": "^2.76.0",
-    "restify": "^4.2.0",
-    "telegram-api": "^0.7.6",
-    "yelp-fusion": "^1.0.3"
-  }
+  "bugs": {
+    "url": "https://github.com/austinhuang0131/metagon_plus/issues"
+  },
+  "homepage": "https://github.com/austinhuang0131/metagon_plus#readme"
 }
