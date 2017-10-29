@@ -6,7 +6,12 @@ var connector = new builder.ChatConnector({
     appPassword: process.env.appkey
 });
 var request = require('request');
-const imgurUploader = require('imgur-uploader');
+var cloudinary = require('cloudinary');
+cloudinary.config({ 
+  cloud_name: 'metagon', 
+  api_key: process.env.cloudinary1, 
+  api_secret: process.env.cloudinary2 
+});
 var bot = new builder.UniversalBot(connector);
 var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 const Pixiv = require('pixiv.js');
@@ -164,6 +169,7 @@ bot.dialog('/menu', function (session) {
 	if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
 }
 	else {
+		session.sendTyping();
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.carousel)
 		msg.attachments([
@@ -358,6 +364,7 @@ bot.dialog('/about', function (session) {
 // Image
 bot.beginDialogAction("cat", "/cat", { matches: /\/cat/g});
 bot.dialog('/cat', function (session) {
+	session.sendTyping();
 	request('http://random.cat/meow', function(error, response, body) {
 		if (!error && response.statusCode === 200 && session.message.text === "/cat") {
 			body = JSON.parse(body);
@@ -390,14 +397,15 @@ bot.dialog('/cat', function (session) {
 
 bot.beginDialogAction("snake", "/snake", { matches: /\/snake/g});
 bot.dialog('/snake', function (session) {
+	session.sendTyping();
 	request('http://fur.im/snek/snek.php', function(error, response, body) {
 		if (!error && response.statusCode === 200 && session.message.text === "/snake") {
 			body = JSON.parse(body);
 			session.endDialog({
   				attachments: [
   					{
-  						contentType: "image/*",
- 						contentUrl: body.file
+						contentType: "image/*",
+						contentUrl: body.file
  					}
   				]
   			});
@@ -407,8 +415,8 @@ bot.dialog('/snake', function (session) {
 			session.endDialog({
   				attachments: [
   					{
-  						contentType: "image/*",
- 						contentUrl: body.file
+ 						contentType: "image/*",
+						contentUrl: body.file
  					}
   				]
   			});
@@ -422,6 +430,7 @@ bot.dialog('/snake', function (session) {
 
 bot.beginDialogAction("bunny", "/bunny", { matches: /\/bunny/g});
 bot.dialog('/bunny', function (session) {
+	session.sendTyping();
 	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', function(error, response, body) {
 		if (!error && response.statusCode === 200 && session.message.text === "/bunny" && session.message.source.includes("skype")) {
 			body = JSON.parse(body);
@@ -568,6 +577,7 @@ bot.dialog('/flickr1',[
 	},
 	function (session, results, next) {
 		if (results.response !== "Back to Image Menu") {
+			session.sendTyping();
 			request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+results.response+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
@@ -603,6 +613,7 @@ bot.dialog('/flickr1',[
 		}
     }]);
 bot.dialog('/flickr2', function (session) {
+	session.sendTyping();
 	if (session.message.text.split(" ").slice(1).join(" ") !== "" && session.message.text.startsWith("/flickr")) {
 		request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+session.message.text.substring(9)+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
@@ -678,7 +689,8 @@ bot.dialog('/ibsearch1',[
 			session.replaceDialog("/image");
 			return;
 		}
-		request("https://ibsearch.xxx/api/v1/images.json?key="+process.env.ibsearch+"&limit=1&q=random:+"+results.response+nsfw.find(i => {return i.user === session.message.address.user.id}).nsfw, function(error, response, body) {
+		session.sendTyping();
+		request("https://ibsearch.xxx/api/v1/images.json?key="+process.env.ibsearch+"&limit=1&q=random:+"+results.response+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				if (body !== "[]") {
 					body = JSON.parse(body);
@@ -707,6 +719,7 @@ bot.dialog('/ibsearch1',[
 ]);
 bot.dialog('/ibsearch2',[
 	function (session) {
+		session.sendTyping();
 		nsfw.push({user: session.message.address.user.id, query: session.message.text.substring(11)});
 		fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		if (session.message.source !== "groupme") {
@@ -744,7 +757,7 @@ bot.dialog('/ibsearch2',[
 					});
 				}
 				else {
-					session.endDialog("No result. Change your query? Was "+nsfw.find(i => {return i.user === session.message.address.user.id}).query);
+					session.endDialog("No result. Change your query? Was "+nsfw.find(i => {return i.user === session.message.address.user.id;}).query);
 				}
 			}
 			else {
@@ -797,7 +810,8 @@ bot.dialog('/pixiv1',[
 			session.replaceDialog("/image");
 			return;
 		}
-		pixiv.search(results.response+nsfw.find(i => {return i.user === session.message.address.user.id}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
+		session.sendTyping();
+		pixiv.search(results.response+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
 			var illust = json.response[Math.floor(Math.random() * json.response.length)];
 			if (illust === undefined) {
 				session.endDialog("No results.");
@@ -807,17 +821,18 @@ bot.dialog('/pixiv1',[
 				var msg = "";
 				if (illust.is_manga === true) {msg += "\nThis is a multiple-page illustration, so only the first page is shown. View the full content at http://www.pixiv.net/member_illust.php?mode=medium&illust_id="+illust.id;}
 				pixivImg(illust.image_urls.large).then(output => {
-					imgurUploader(fs.readFileSync(output), {title: "http://metagon.js.org"}, process.env.imgur).then(urls => {
+					cloudinary.uploader.upload(output, urls => {
 						session.endDialog({
 							text: msg,
 							attachments: [
 								{
 									contentType: "image/*",
-									contentUrl: urls.link
+									contentUrl: urls.url
 								}
 							]
 						});
 						session.replaceDialog("/image");
+						fs.unlink(output);
 					});
 				});
 			}
@@ -827,6 +842,7 @@ bot.dialog('/pixiv1',[
 ]);
 bot.dialog('/pixiv2',[
 	function (session) {
+		session.sendTyping();
 		nsfw.push({user: session.message.address.user.id, query: session.message.text.substring(8)});
 		fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		if (session.message.source !== "groupme") {
@@ -859,16 +875,18 @@ bot.dialog('/pixiv2',[
 				var msg = "";
 				if (illust.is_manga === true) {msg += "\nThis is a multiple-page illustration, so only the first page is shown. View the full content at http://www.pixiv.net/member_illust.php?mode=medium&illust_id="+illust.id;}
 				pixivImg(illust.image_urls.large).then(output => {
-					imgurUploader(fs.readFileSync(output), {title: "http://metagon.js.org"}, process.env.imgur).then(urls => {
+					cloudinary.uploader.upload(output, urls => {
 						session.endDialog({
 							text: msg,
 							attachments: [
 								{
 									contentType: "image/*",
-									contentUrl: urls.link
+									contentUrl: urls.url
 								}
 							]
 						});
+						session.replaceDialog("/image");
+						fs.unlink(output);
 					});
 				});
 			}
@@ -1123,7 +1141,6 @@ bot.dialog('/mcserver2', function (session) {
 	}
 	request.post('https://mcapi.de/api/server/', {json: ip}, function(error, response, body) {
 		if (!error) {
-			console.log(ip);
 			if (body.result.status === "success") {
 				session.endDialog({
 					text: session.message.text.substring(10)+" ("+body.hostname+")\n* Players: "+body.players.online+"/"+body.players.max+"\n* Blocked by Mojang: "+body.blocked.status+"\n* Software: "+body.software.name+", MC Version "+body.software.version+"\n* Ping: "+body.list.ping+"ms",
