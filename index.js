@@ -169,7 +169,6 @@ bot.dialog('/menu', function (session) {
 	if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
 }
 	else {
-		session.sendTyping();
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.carousel)
 		msg.attachments([
@@ -1259,7 +1258,6 @@ bot.dialog('/9gag1',[
 			.buttons([
 				builder.CardAction.imBack(session, "Search", "Search"),
 				builder.CardAction.imBack(session, "Back to Fun Menu", "Back to Fun Menu"),
-				builder.CardAction.imBack(session, "trending", "trending"),
 				builder.CardAction.imBack(session, "funny", "funny"),builder.CardAction.imBack(session, "wtf", "wtf"),builder.CardAction.imBack(session, "gif", "gif"),builder.CardAction.imBack(session, "gaming", "gaming"),builder.CardAction.imBack(session, "anime-manga", "anime-manga"),builder.CardAction.imBack(session, "movie-tv", "movie-tv"),builder.CardAction.imBack(session, "cute", "cute"),builder.CardAction.imBack(session, "girl", "girl"),builder.CardAction.imBack(session, "awesome", "awesome"),builder.CardAction.imBack(session, "cosplay", "cosplay"),builder.CardAction.imBack(session, "sport", "sport"),builder.CardAction.imBack(session, "food", "food"),builder.CardAction.imBack(session, "ask9gag", "ask9gag"),builder.CardAction.imBack(session, "timely", "timely"),builder.CardAction.imBack(session, "nsfw", "nsfw")
 			])
 		]);
@@ -1283,20 +1281,6 @@ bot.dialog('/9gag1',[
 			]);
 			builder.Prompts.text(session, msg);
 		}
-		else if (results.response.endsWith("Trending")) {
-			gag.section("trending", function(err, res) {
-				if (err) {
-					session.endDialog("An error occured. Retry?");
-					session.replaceDialog("/fun");
-					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
-				}
-				else {
-					session.endDialog(res[Math.floor(Math.random() * res.length)].url);
-					session.replaceDialog("/fun");
-					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
-				}
-			});
-		}
 		else if (gagbrds.indexOf(results.response) > -1) {
 			nsfw.push({user: session.message.address.user.id, gag: results.response});
 			var msg = new builder.Message(session);
@@ -1317,6 +1301,11 @@ bot.dialog('/9gag1',[
 			gag.find(results.response, function(err, res) {
 				if (err) {
 					session.endDialog("An error occured. Retry?");
+					session.replaceDialog("/fun");
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+				}
+				else if (res[Math.floor(Math.random() * res.length)] === undefined) {
+					session.endDialog("No results. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
 				}
@@ -1373,7 +1362,7 @@ bot.dialog('/9gag2', function (session) {
 				session.endDialog("An error occured. Retry?");
 			}
 			else {
-				session.endDialog(res[Math.floor(Math.random() * res.length)].url);
+				session.send(res[Math.floor(Math.random() * res.length)].url);
 			}
 		});
 	}
@@ -1381,9 +1370,15 @@ bot.dialog('/9gag2', function (session) {
 		gag.find(args[1], function(err, res) {
 			if (err) {
 				session.endDialog("An error occured. Retry?");
+				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+			}
+			else if (res[Math.floor(Math.random() * res.length)] === undefined) {
+				session.endDialog("No results. Retry?");
+				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
 			}
 			else {
 				session.endDialog(res[Math.floor(Math.random() * res.length)].url);
+				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
 			}
 		});
 	}
