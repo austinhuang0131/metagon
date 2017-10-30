@@ -136,7 +136,7 @@ bot.on('conversationUpdate', function (message) {
                 if (identity.id === message.address.bot.id) {
                     var reply = new builder.Message()
                             .address(message.address)
-                            .text("Hello everyone! This is Metagon. You can reply me \"start\" to start using me! For more info, visit http://metagon.cf.");
+                            .text("Hello everyone! This is Metagon. You can reply \"start\" to start using me! For more info, visit http://metagon.cf.");
                     bot.send(reply);
                 }
             });
@@ -158,39 +158,79 @@ bot.on('contactRelationUpdate', function (message) {
         var name = message.user ? message.user.name : null;
         var reply = new builder.Message()
                 .address(message.address)
-                .text("Hello everyone! This is Metagon. You can reply me \"start\" to start using me! For more info, visit http://metagon.cf.", name || 'there');
+                .text("Hello there! This is Metagon. You can reply \"start\" to start using me! For more info, visit http://metagon.cf.");
         bot.send(reply);
     }
 });
 
 // Menus
 bot.beginDialogAction("menu", "/menu", { matches: /start/gi});
-bot.dialog('/menu', function (session) {
-	if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
-}
-	else {
-		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
-		msg.attachments([
-			new builder.HeroCard(session)
-			.title("What would you like to do right now?")
-			.subtitle("Select one of the following categories.")
-			.buttons([
-				builder.CardAction.imBack(session, "Images", "Images"),
-				builder.CardAction.imBack(session, "Utility", "Utility"),
-				builder.CardAction.imBack(session, "Fun", "Fun"),
-				builder.CardAction.imBack(session, "About/Support", "About/Support"),
-			])
-		]);
-		session.endDialog(msg);
+bot.dialog('/menu', [
+	function (session) {
+		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
+			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
+		}
+		else {
+			var msg = new builder.Message(session);
+			msg.attachmentLayout(builder.AttachmentLayout.carousel)
+			msg.attachments([
+				new builder.HeroCard(session)
+				.title("What would you like to do right now?")
+				.subtitle("Select one of the following categories.")
+				.buttons([
+					builder.CardAction.imBack(session, "Images", "Images"),
+					builder.CardAction.imBack(session, "Utility", "Utility"),
+					builder.CardAction.imBack(session, "Fun", "Fun"),
+					builder.CardAction.imBack(session, "About/Support", "About/Support"),
+					builder.CardAction.imBack(session, "Feedback", "Questions/Feedback"),
+					builder.CardAction.imBack(session, "Quit", "Quit")
+				])
+			]);
+			session.endDialog(msg);
+		}
+	}, function (session, response) {
+		if (results.response.endsWith("Image")) {
+			session.beginDialog("/image");
+		}
+		else if (results.response.endsWith("Utility")) {
+			session.beginDialog("/utility");
+		}
+		else if (results.response.endsWith("Fun")) {
+			session.beginDialog("/fun");
+		}
+		else if (results.response.endsWith("Quit")) {
+			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
+		}
+		else if (results.response.endsWith("Support")) {
+			session.beginDialog("/about");
+		}
+		else if (results.response.endsWith("Feedback")) {
+			session.beginDialog("/feedback");
+		}
 	}
-});
-
-bot.beginDialogAction("image", "/image", { matches: /Image/g});
+]);
 bot.dialog('/image', [
 	function (session) {
-		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
+		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
+			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
 }
+		else if (session.message.source === "kik") {
+			var msg = new builder.Message(session);
+			msg.attachmentLayout(builder.AttachmentLayout.carousel)
+			msg.attachments([
+				new builder.HeroCard(session)
+				.title("What would you like to do right now?")
+				.subtitle("Select one of the following functions. Some functions have been disabled  due to regulations (http://metagon.cf/kik-disabled).")
+				.buttons([
+					builder.CardAction.imBack(session, "Cat", "Cat"),
+					builder.CardAction.imBack(session, "Snake", "Snake"),
+					builder.CardAction.imBack(session, "Bunny", "Bunny"),
+					builder.CardAction.imBack(session, "Back to Main Menu", "Back to Main Menu"),
+					builder.CardAction.imBack(session, "Quit", "Quit")
+				])
+			]);
+			builder.Prompts.text(session, msg);
+		}
 		else {
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel)
@@ -243,8 +283,6 @@ bot.dialog('/image', [
 		}
 	}
 ]);
-
-bot.beginDialogAction("utility", "/utility", { matches: /Utility/g});
 bot.dialog('/utility', [
 	function (session) {
 		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
@@ -298,8 +336,6 @@ bot.dialog('/utility', [
 		}
 	}
 ]);
-
-bot.beginDialogAction("fun", "/fun", { matches: /Fun/g});
 bot.dialog('/fun', [
 	function (session) {
 		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
@@ -346,19 +382,54 @@ bot.dialog('/fun', [
 	}
 ]);
 
-bot.beginDialogAction("about", "/about", { matches: /About\/Support/g});
 bot.beginDialogAction("help", "/about", { matches: /help/i});
 bot.dialog('/about', function (session) {
 	if (session.message.source === "kik") {
-	session.endDialog("Thank you for using Metagon. Originally in Discord, I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n\nIf you have any questions, feel free to contact my master at @austinhuang0131.\n\nDo I help you a lot? Consider a small donation (Detail in documentation)!");
+	session.endDialog("Thank you for using Metagon. Originally in Discord, I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at @austinhuang0131.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+	}
+	else if (session.message.source === "telegram") {
+	session.endDialog("Thank you for using Metagon. Originally in Discord, I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at @austinhuang.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "skype") {
-	session.endDialog("Thank you for using Metagon. Originally in Discord, I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n\nIf you have any questions, feel free to contact my master at \"live:austin.0131\".\n\nDo I help you a lot? Consider a small donation (Detail in documentation)!");
+	session.endDialog("Thank you for using Metagon. Originally in Discord, I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at \"live:austin.0131\".\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else {
 	session.endDialog("Thank you for using Metagon. Originally in Discord, I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation/Contact Us: http://metagon.cf\n\nDo I help you a lot? Consider a small donation (Detail in documentation)!");
 	}
 });
+
+bot.beginDialogAction("feedback", "/feedback", { matches: /Feedback/g});
+bot.dialog('/feedback', [
+	function (session) {
+		var msg = new builder.Message(session);
+		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachments([
+			new builder.HeroCard(session)
+			.title("Have an idea? Found a bug? Write to us here!")
+			.subtitle("Don't spam. Slack/SfB/MSTeams users: Leave me your email if you need support.")
+			.buttons([
+				builder.CardAction.imBack(session, "Back to Main Menu", "Back to Main Menu")
+			])
+		]);
+		builder.Prompts.text(session, msg);
+	},
+	function (session, results) {
+		if (results.response !== "Back to Main Menu") {
+			request.post("https://maker.ifttt.com/trigger/feedback/with/key/kDnVlmQo6Z_Py2bwvlCGyLNh2y05mL_rL0CF7cAflOE", {json: {value1: session.message.address.user.name + " (" + session.message.address.user.id + ")", value2: session.message.source, value3: results.response}}, function(error, response, body) {
+				// This URL is public. If you guys spam it, I'll remove it. This webhook connects to my Telegram.
+				if (!error && response.statusCode === 200 && body === "Congratulations! You've fired the feedback event") {
+					session.endDialog("Your message is sent successfully.\n* If you are a Telegram/Kik/Skype user, or you provided your email: I'll get you in touch within 48 hours.");
+					session.replaceDialog("/menu");
+				}
+				else {
+				}
+			});
+		}
+		else {
+			session.replaceDialog("/menu");
+		}
+    }
+]);
 
 // Image
 bot.beginDialogAction("cat", "/cat", { matches: /\/cat/g});
@@ -486,6 +557,16 @@ bot.dialog('/bunny', function (session) {
 bot.beginDialogAction("imgur", "/imgur2", { matches: /\/imgur/g});
 bot.dialog('/imgur1',[
 	function (session) {
+		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/imgur (Query)`");
+			session.replaceDialog("/image");
+			return;
+		}
+		if (session.message.source === "kik") {
+			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			session.replaceDialog("/image");
+			return;
+		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.carousel)
 		msg.attachments([
@@ -498,7 +579,7 @@ bot.dialog('/imgur1',[
 		]);
 		builder.Prompts.text(session, msg);
 	},
-	function (session, results, next) {
+	function (session, results) {
 		if (results.response !== "Back to Image Menu") {
 			request({url:"https://api.imgur.com/3/gallery/search?q="+results.response, headers:{'Authorization': 'Client-ID '+process.env.imgur}}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
@@ -523,6 +604,10 @@ bot.dialog('/imgur1',[
 		}
     }]);
 bot.dialog('/imgur2', function (session) {
+	if (session.message.source === "kik") {
+		session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+		return;
+	}
 	if (session.message.text.split(" ").slice(1).join(" ") !== "" && session.message.text.startsWith("/imgur")) {
 		request({url:"https://api.imgur.com/3/gallery/search?q="+session.message.text.substring(7), headers:{'Authorization': 'Client-ID '+process.env.imgur}}, function(error, response, body) {
 			if (!error && response.statusCode === 200 && session.message.source === "kik") {
@@ -563,6 +648,16 @@ bot.dialog('/imgur2', function (session) {
 bot.beginDialogAction("flickr", "/flickr2", { matches: /\/flickr/g});
 bot.dialog('/flickr1',[
 	function (session) {
+		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/flickr (Query)`");
+			session.replaceDialog("/image");
+			return;
+		}
+		if (session.message.source === "kik") {
+			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			session.replaceDialog("/image");
+			return;
+		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.carousel)
 		msg.attachments([
@@ -612,9 +707,13 @@ bot.dialog('/flickr1',[
 		}
     }]);
 bot.dialog('/flickr2', function (session) {
+	if (session.message.source === "kik") {
+		session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+		return;
+	}
 	session.sendTyping();
 	if (session.message.text.split(" ").slice(1).join(" ") !== "" && session.message.text.startsWith("/flickr")) {
-		request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+session.message.text.substring(9)+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
+		request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+session.message.text.split(" ").slice(1).join(" ")+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
 				var photo = body.photos.photo[Math.floor(Math.random() * body.photos.photo.length)];
@@ -648,6 +747,16 @@ bot.dialog('/flickr2', function (session) {
 bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /\/ibsearch/g});
 bot.dialog('/ibsearch1',[
 	function (session) {
+		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/ibsearch (Query)`");
+			session.replaceDialog("/image");
+			return;
+		}
+		if (session.message.source === "kik") {
+			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			session.replaceDialog("/image");
+			return;
+		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.carousel)
 		msg.attachments([
@@ -718,6 +827,10 @@ bot.dialog('/ibsearch1',[
 ]);
 bot.dialog('/ibsearch2',[
 	function (session) {
+		if (session.message.source === "kik") {
+			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			return;
+		}
 		session.sendTyping();
 		nsfw.push({user: session.message.address.user.id, query: session.message.text.substring(11)});
 		fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
@@ -770,6 +883,16 @@ bot.dialog('/ibsearch2',[
 bot.beginDialogAction("pixiv", "/pixiv2", { matches: /\/pixiv/g});
 bot.dialog('/pixiv1',[
 	function (session) {
+		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/pixiv (Query)`");
+			session.replaceDialog("/image");
+			return;
+		}
+		if (session.message.source === "kik") {
+			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			session.replaceDialog("/image");
+			return;
+		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.carousel)
 		msg.attachments([
@@ -841,28 +964,34 @@ bot.dialog('/pixiv1',[
 ]);
 bot.dialog('/pixiv2',[
 	function (session) {
-		session.sendTyping();
-		nsfw.push({user: session.message.address.user.id, query: session.message.text.substring(8)});
-		fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
-		if (session.message.source !== "groupme") {
-			var msg = new builder.Message(session);
-			msg.attachmentLayout(builder.AttachmentLayout.carousel)
-			msg.attachments([
-				new builder.HeroCard(session)
-				.title("Show NSFW content?")
-				.subtitle("Make sure you're legal to do this, because we're not liable for anything you've done!")
-				.buttons([
-					builder.CardAction.imBack(session, "Yes", "Yes"),
-					builder.CardAction.imBack(session, "No", "No")
-				])
-			]);
-			builder.Prompts.confirm(session, msg);
+		if (session.message.source === "kik") {
+			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			return;
 		}
 		else {
-			builder.Prompts.confirm(session, "Do you want me to show NSFW content? Make sure you're legal to do this, because we're not liable for anything you've done! Type \"yes\" or \"no\".");
+			nsfw.push({user: session.message.address.user.id, query: session.message.text.substring(8)});
+			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
+			if (session.message.source !== "groupme") {
+				var msg = new builder.Message(session);
+				msg.attachmentLayout(builder.AttachmentLayout.carousel)
+				msg.attachments([
+					new builder.HeroCard(session)
+					.title("Show NSFW content?")
+					.subtitle("Make sure you're legal to do this, because we're not liable for anything you've done!")
+					.buttons([
+						builder.CardAction.imBack(session, "Yes", "Yes"),
+						builder.CardAction.imBack(session, "No", "No")
+					])
+				]);
+				builder.Prompts.confirm(session, msg);
+			}
+			else {
+				builder.Prompts.confirm(session, "Do you want me to show NSFW content? Make sure you're legal to do this, because we're not liable for anything you've done! Type \"yes\" or \"no\".");
+			}
 		}
 	},
 	function (session, results) {
+		session.sendTyping();
 		var rating = "";
 		if (results.response === false) {rating = " -R-18 -R-18G";}
 		pixiv.search(nsfw.find(i => {return i.user === session.message.address.user.id}).query+rating, {per_page: 100, mode: "tag"}).then(json => {
@@ -884,7 +1013,6 @@ bot.dialog('/pixiv2',[
 								}
 							]
 						});
-						session.replaceDialog("/image");
 						fs.unlink(output);
 					});
 				});
@@ -898,6 +1026,11 @@ bot.dialog('/pixiv2',[
 bot.beginDialogAction("shorten", "/shorten2", { matches: /\/shorten/g});
 bot.dialog('/shorten1',[
 	function (session) {
+		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/shorten (Url)`");
+			session.replaceDialog("/utility");
+			return;
+		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.carousel)
 		msg.attachments([
@@ -916,8 +1049,19 @@ bot.dialog('/shorten1',[
 			session.replaceDialog("/utility");
 			return;
 		}
-		var site = "";
-		if (!results.response.startsWith("http")) {site = "http://"+results.response;} else {site = results.response;}
+		if (results.response.startsWith("<") && results.response.includes("|")) {
+			var site = results.response.split("|")[0].replace("<", "");
+		}
+		else if (results.response.startsWith("<")) {
+			var site = results.response.replace("<", "").replace(">", "").replace(";", "");
+		}
+		else if (!site.startsWith("http")) {
+			var site = "http://"+results.response;
+		}
+		else {
+			var site = results.response;
+		}
+		console.log(site);
 		request("https://api-ssl.bitly.com/v3/shorten?access_token="+process.env.bitly_token+"&longUrl="+site+"&format=txt", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				session.endDialog("Done! "+body);
@@ -931,8 +1075,18 @@ bot.dialog('/shorten1',[
     }
 ]);
 bot.dialog('/shorten2', function (session) {
-	var site = "";
-	if (!session.message.text.substring(9).startsWith("http")) {site = "http://"+session.message.text.substring(9);} else {site = session.message.text.substring(9);}
+	if (session.message.text.substring(9).startsWith("<") && session.message.text.substring(9).includes("|")) {
+		var site = session.message.text.substring(9).split("|")[0].replace("<", "");
+	}
+	else if (session.message.text.substring(9).startsWith("<")) {
+		var site = session.message.text.substring(9).replace("<", "").replace(">", "").replace(";", "");
+	}
+	else if (!site.startsWith("http")) {
+		var site = "http://"+session.message.text.substring(9);
+	}
+	else {
+		var site = session.message.text.substring(9);
+	}
 	request("https://api-ssl.bitly.com/v3/shorten?access_token="+process.env.bitly_token+"&longUrl="+site+"&format=txt", function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			session.endDialog("Done! "+body);
@@ -946,6 +1100,11 @@ bot.dialog('/shorten2', function (session) {
 bot.beginDialogAction("shorten", "/expand2", { matches: /\/expand/g});
 bot.dialog('/expand1',[
 	function (session) {
+		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/expand (Url)`");
+			session.replaceDialog("/utility");
+			return;
+		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.carousel)
 		msg.attachments([
@@ -964,8 +1123,18 @@ bot.dialog('/expand1',[
 			session.replaceDialog("/utility");
 			return;
 		}
-		var site = "";
-		if (!results.response.startsWith("http")) {site = "http://"+results.response;} else {site = results.response;}
+		if (results.response.startsWith("<") && results.response.includes("|")) {
+			var site = results.response.split("|")[0].replace("<", "");
+		}
+		else if (results.response.startsWith("<")) {
+			var site = results.response.replace("<", "").replace(">", "").replace(";", "");
+		}
+		else if (!site.startsWith("http")) {
+			var site = "http://"+results.response;
+		}
+		else {
+			var site = results.response;
+		}
 		request("https://api-ssl.bitly.com/v3/expand?access_token="+process.env.bitly_token+"&shortUrl="+site+"&format=txt", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				session.endDialog("Done! "+body);
@@ -979,9 +1148,19 @@ bot.dialog('/expand1',[
     }
 ]);
 bot.dialog('/expand2', function (session){
-	request("https://api-ssl.bitly.com/v3/expand?access_token="+process.env.bitly_token+"&shortUrl="+session.message.text.substring(9)+"&format=txt", function(error, response, body) {
-		var site = "";
-		if (!session.message.text.substring(8).startsWith("http")) {site = "http://"+session.message.text.substring(8);} else {site = session.message.text.substring(8);}
+	if (session.message.text.substring(9).startsWith("<") && session.message.text.substring(9).includes("|")) {
+		var site = session.message.text.substring(9).split("|")[0].replace("<", "");
+	}
+	else if (session.message.text.substring(9).startsWith("<")) {
+		var site = session.message.text.substring(9).replace("<", "").replace(">", "").replace(";", "");
+	}
+	else if (!site.startsWith("http")) {
+		var site = "http://"+session.message.text.substring(9);
+	}
+	else {
+		var site = session.message.text.substring(9);
+	}
+	request("https://api-ssl.bitly.com/v3/expand?access_token="+process.env.bitly_token+"&shortUrl="+site+"&format=txt", function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			session.endDialog("Done! "+body);
 		}
@@ -994,6 +1173,11 @@ bot.dialog('/expand2', function (session){
 bot.beginDialogAction("mcuser", "/mcuser2", { matches: /\/mcuser/g});
 bot.dialog('/mcuser1',[
 	function (session) {
+		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/mcuser (Username/UUID)`");
+			session.replaceDialog("/utility");
+			return;
+		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.carousel)
 		msg.attachments([
@@ -1079,6 +1263,11 @@ bot.dialog('/mcuser2', function (session) {
 bot.beginDialogAction("mcserver", "/mcserver2", { matches: /\/mcserver/g});
 bot.dialog('/mcserver1',[
 	function (session) {
+		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/mcserver (Address)`");
+			session.replaceDialog("/utility");
+			return;
+		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.carousel)
 		msg.attachments([
@@ -1164,6 +1353,11 @@ bot.dialog('/mcserver2', function (session) {
 bot.beginDialogAction("paste", "/paste2", { matches: /\/paste/g});
 bot.dialog('/paste1',[
 	function (session) {
+		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/paste (content)`");
+			session.replaceDialog("/utility");
+			return;
+		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.carousel)
 		msg.attachments([
@@ -1202,20 +1396,38 @@ bot.dialog('/paste2', function (session) {
 // Fun
 bot.beginDialogAction("joke", "/joke", { matches: /\/joke/g});
 bot.dialog('/joke', function (session) {
-	request('http://api.icndb.com/jokes/random?escape=javascript', function(error, response, body) {
-		if (!error && response.statusCode === 200 && session.message.text === "/joke") {
-			body = JSON.parse(body);
-			session.endDialog(body.value.joke);
-		}
-		else if (!error && response.statusCode === 200) {
-			body = JSON.parse(body);
-			session.endDialog(body.value.joke);
-			session.replaceDialog("/fun");
-		}
-		else {
-			session.endDialog("ERROR! I could not connect to http://api.icndb.com/jokes/random. Please retry. If the problem persists, leave an issue at http://metagon.cf");
-		}
-	});
+	if (session.message.source === "kik") {
+		request('http://api.icndb.com/jokes/random?escape=javascript?exclude=[explicit]', function(error, response, body) {
+			if (!error && response.statusCode === 200 && session.message.text === "/joke") {
+				body = JSON.parse(body);
+				session.endDialog(body.value.joke);
+			}
+			else if (!error && response.statusCode === 200) {
+				body = JSON.parse(body);
+				session.endDialog(body.value.joke);
+				session.replaceDialog("/fun");
+			}
+			else {
+				session.endDialog("ERROR! I could not connect to http://api.icndb.com/jokes/random. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+			}
+		});
+	}
+	else {
+		request('http://api.icndb.com/jokes/random?escape=javascript', function(error, response, body) {
+			if (!error && response.statusCode === 200 && session.message.text === "/joke") {
+				body = JSON.parse(body);
+				session.endDialog(body.value.joke);
+			}
+			else if (!error && response.statusCode === 200) {
+				body = JSON.parse(body);
+				session.endDialog(body.value.joke);
+				session.replaceDialog("/fun");
+			}
+			else {
+				session.endDialog("ERROR! I could not connect to http://api.icndb.com/jokes/random. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+			}
+		});
+	}
 });
 
 bot.beginDialogAction("yoda", "/yoda", { matches: /\/yoda/g});
@@ -1250,6 +1462,11 @@ bot.dialog('/design', function (session) {
 bot.beginDialogAction("9gag", "/9gag2", { matches: /\/9gag/g});
 bot.dialog('/9gag1',[
 	function (session) {
+		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/9gag (Section) (Hot/Fresh)` or `/9gag search (Query)`");
+			session.replaceDialog("/utility");
+			return;
+		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.carousel)
 		msg.attachments([
@@ -1257,8 +1474,8 @@ bot.dialog('/9gag1',[
 			.title("Select a subsection to visit, or \"Search\" to search for posts.")
 			.buttons([
 				builder.CardAction.imBack(session, "Search", "Search"),
-				builder.CardAction.imBack(session, "Back to Fun Menu", "Back to Fun Menu"),
-				builder.CardAction.imBack(session, "funny", "funny"),builder.CardAction.imBack(session, "wtf", "wtf"),builder.CardAction.imBack(session, "gif", "gif"),builder.CardAction.imBack(session, "gaming", "gaming"),builder.CardAction.imBack(session, "anime-manga", "anime-manga"),builder.CardAction.imBack(session, "movie-tv", "movie-tv"),builder.CardAction.imBack(session, "cute", "cute"),builder.CardAction.imBack(session, "girl", "girl"),builder.CardAction.imBack(session, "awesome", "awesome"),builder.CardAction.imBack(session, "cosplay", "cosplay"),builder.CardAction.imBack(session, "sport", "sport"),builder.CardAction.imBack(session, "food", "food"),builder.CardAction.imBack(session, "ask9gag", "ask9gag"),builder.CardAction.imBack(session, "timely", "timely"),builder.CardAction.imBack(session, "nsfw", "nsfw")
+				builder.CardAction.imBack(session, "funny", "funny"),builder.CardAction.imBack(session, "wtf", "wtf"),builder.CardAction.imBack(session, "gif", "gif"),builder.CardAction.imBack(session, "gaming", "gaming"),builder.CardAction.imBack(session, "anime-manga", "anime-manga"),builder.CardAction.imBack(session, "movie-tv", "movie-tv"),builder.CardAction.imBack(session, "cute", "cute"),builder.CardAction.imBack(session, "girl", "girl"),builder.CardAction.imBack(session, "awesome", "awesome"),builder.CardAction.imBack(session, "cosplay", "cosplay"),builder.CardAction.imBack(session, "sport", "sport"),builder.CardAction.imBack(session, "food", "food"),builder.CardAction.imBack(session, "ask9gag", "ask9gag"),builder.CardAction.imBack(session, "timely", "timely"),builder.CardAction.imBack(session, "nsfw", "nsfw"),
+				builder.CardAction.imBack(session, "Back to Fun Menu", "Back to Fun Menu")
 			])
 		]);
 		builder.Prompts.text(session, msg);
@@ -1267,6 +1484,11 @@ bot.dialog('/9gag1',[
 		if (results.response.endsWith("Back to Fun Menu")) {
 			session.endDialog();
 			session.replaceDialog("/fun");
+		}
+		else if (results.response.endsWith("nsfw") && session.message.source === "kik") {
+			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			session.replaceDialog("/fun");
+			return;
 		}
 		else if (results.response.endsWith("Search")) {
 			nsfw.push({user: session.message.address.user.id, gag: "search"});
@@ -1304,13 +1526,13 @@ bot.dialog('/9gag1',[
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
 				}
-				else if (res[Math.floor(Math.random() * res.length)] === undefined) {
+				else if (res.result[Math.floor(Math.random() * res.result.length)] === undefined) {
 					session.endDialog("No results. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
 				}
 				else {
-					session.endDialog(res[Math.floor(Math.random() * res.length)].url);
+					session.endDialog(res.result[Math.floor(Math.random() * res.result.length)].url);
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
 				}
@@ -1357,6 +1579,10 @@ bot.dialog('/9gag2', function (session) {
 		args = [session.message.text.split(" ")[2], session.message.text.split(" ")[3]];
 	}
 	if (gagbrds.indexOf(args[0]) > -1 && gagsubs.indexOf(args[1]) > -1) {
+		if (args[0] === "nsfw" || session.message.source === "kik") {
+			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			return;
+		}
 		gag.section(args[0], args[1], function(err, res) {
 			if (err) {
 				session.endDialog("An error occured. Retry?");
@@ -1368,16 +1594,17 @@ bot.dialog('/9gag2', function (session) {
 	}
 	else if (args[0] === "search") {
 		gag.find(args[1], function(err, res) {
+			console.log(res);
 			if (err) {
 				session.endDialog("An error occured. Retry?");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
 			}
-			else if (res[Math.floor(Math.random() * res.length)] === undefined) {
+			else if (res.result[Math.floor(Math.random() * res.result.length)] === undefined) {
 				session.endDialog("No results. Retry?");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
 			}
 			else {
-				session.endDialog(res[Math.floor(Math.random() * res.length)].url);
+				session.endDialog(res.result[Math.floor(Math.random() * res.result.length)].url);
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
 			}
 		});
