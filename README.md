@@ -1,4 +1,4 @@
-# Metagon for Telegram
+# Metagon for Microsoft BotBuilder
 Best chat bot, lol.
 
 ## License
