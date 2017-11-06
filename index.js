@@ -114,13 +114,37 @@ var yoda_said = [
 ];
 var gag = require("node-9gag");
 var DataDog = require('datadog');
+var discord = require('discordconnector');
+var TCS = require('discordconnector/TestConnectorStorage');
 var dd = new DataDog(process.env.datadog1, process.env.datadog2);
+/*var LineConnector = require( "botbuilder-linebot-connector");
+var lineConnector = new LineConnector.LineConnector({
+    channelId: process.env.line1,
+    channelSecret: process.env.line2,
+    channelAccessToken: process.env.line3
+});*/
+var dc = new discord.DiscordConnector({ 
+    discordSecret: process.env.DISCORD_SECRET, 
+    dlSecret: process.env.DIRECTLINE_SECRET,
+    botName: "Metagon",
+    botId: process.env.BOT_ID
+});
+var storage = new TCS.TestConnectorStorage();
+storage.initialize();
 
 bot.on('incoming', message => {
-	dd.postEvent({
-	   title: message.source + 'message received',
-	   text: 'User '+message.address.user.name+': '+message.text
-	});
+	if (message.source === "directline" && message.text.startsWith("/")) {
+		dd.postEvent({
+		   title: 'discord message received',
+		   text: 'User '+message.address.user.name+': '+message.text
+		});
+	}
+	else if (message.source !== "directline") {
+		dd.postEvent({
+		   title: message.source + ' message received',
+		   text: 'User '+message.address.user.name+': '+message.text
+		});
+	}
 });
 bot.on('error', err => {
 	dd.postEvent({
@@ -129,6 +153,9 @@ bot.on('error', err => {
 	});
 });
 
+dc.addStorageClient(storage);
+dc.enableBasicRelay();
+dc.conversationUpdate();
 bot.on('conversationUpdate', function (message) {
     if (message.address.conversation.isGroup) {
         if (message.membersAdded) {
@@ -167,8 +194,8 @@ bot.on('contactRelationUpdate', function (message) {
 bot.beginDialogAction("menu", "/menu", { matches: /start/gi});
 bot.dialog('/menu', [
 	function (session) {
-		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
-			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
+		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness" || session.message.source === "directline") {
+			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business / Discord. Please use only commands.\nFor more information, type \"help\".");
 		}
 		else {
 			var msg = new builder.Message(session);
@@ -186,17 +213,17 @@ bot.dialog('/menu', [
 					builder.CardAction.imBack(session, "Quit", "Quit")
 				])
 			]);
-			session.endDialog(msg);
+			builder.Prompts.text(session, msg);
 		}
-	}, function (session, response) {
-		if (results.response.endsWith("Image")) {
-			session.beginDialog("/image");
+	}, function (session, results) {
+		if (results.response.endsWith("Images")) {
+			session.replaceDialog("/image");
 		}
 		else if (results.response.endsWith("Utility")) {
-			session.beginDialog("/utility");
+			session.replaceDialog("/utility");
 		}
 		else if (results.response.endsWith("Fun")) {
-			session.beginDialog("/fun");
+			session.replaceDialog("/fun");
 		}
 		else if (results.response.endsWith("Quit")) {
 			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
@@ -205,16 +232,13 @@ bot.dialog('/menu', [
 			session.beginDialog("/about");
 		}
 		else if (results.response.endsWith("Feedback")) {
-			session.beginDialog("/feedback");
+			session.replaceDialog("/feedback");
 		}
 	}
 ]);
 bot.dialog('/image', [
 	function (session) {
-		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
-			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
-}
-		else if (session.message.source === "kik") {
+		if (session.message.source === "kik") {
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel)
 			msg.attachments([
@@ -255,25 +279,25 @@ bot.dialog('/image', [
 	},
 	function (session, results) {
 		if (results.response.endsWith("Cat")) {
-			session.beginDialog("/cat");
+			session.replaceDialog("/cat");
 		}
 		else if (results.response.endsWith("Snake")) {
-			session.beginDialog("/snake");
+			session.replaceDialog("/snake");
 		}
 		else if (results.response.endsWith("Bunny")) {
-			session.beginDialog("/bunny");
+			session.replaceDialog("/bunny");
 		}
 		else if (results.response.startsWith("Imgur") || results.response.toLowerCase().startsWith("@metagon imgur")) {
-			session.beginDialog("/imgur1");
+			session.replaceDialog("/imgur1");
 		}
 		else if (results.response.startsWith("Flickr") || results.response.toLowerCase().startsWith("@metagon flickr")) {
-			session.beginDialog("/flickr1");
+			session.replaceDialog("/flickr1");
 		}
 		else if (results.response.startsWith("IbSearch") || results.response.toLowerCase().startsWith("@metagon ibsearch")) {
-			session.beginDialog("/ibsearch1");
+			session.replaceDialog("/ibsearch1");
 		}
 		else if (results.response.startsWith("Pixiv") || results.response.toLowerCase().startsWith("@metagon pixiv")) {
-			session.beginDialog("/pixiv1");
+			session.replaceDialog("/pixiv1");
 		}
 		else if (results.response.endsWith("Quit")) {
 			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
@@ -285,10 +309,6 @@ bot.dialog('/image', [
 ]);
 bot.dialog('/utility', [
 	function (session) {
-		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
-			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
-}
-		else {
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel)
 			msg.attachments([
@@ -307,26 +327,25 @@ bot.dialog('/utility', [
 				])
 			]);
 			builder.Prompts.text(session, msg);
-		}
 	}, 
 	function (session, results) {
 		if (results.response.endsWith("Shorten URLs")) {
-			session.beginDialog("/shorten1");
+			session.replaceDialog("/shorten1");
 		}
 		else if (results.response.endsWith("Expand Bitly URLs")) {
-			session.beginDialog("/expand1");
+			session.replaceDialog("/expand1");
 		}
 		else if (results.response.endsWith("Minecraft User Lookup")) {
-			session.beginDialog("/mcuser1");
+			session.replaceDialog("/mcuser1");
 		}
 		else if (results.response.endsWith("Minecraft Server Status")) {
-			session.beginDialog("/mcserver1");
+			session.replaceDialog("/mcserver1");
 		}
 		else if (results.response.endsWith("Yelp")) {
 			session.send("Coming soon™");
 		}
 		else if (results.response.startsWith("Pastebin") || results.response.toLowerCase().startsWith("@metagon pastebin")) {
-			session.beginDialog("/paste1");
+			session.replaceDialog("/paste1");
 		}
 		else if (results.response.endsWith("Quit")) {
 			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
@@ -338,10 +357,6 @@ bot.dialog('/utility', [
 ]);
 bot.dialog('/fun', [
 	function (session) {
-		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
-			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
-	}
-		else {
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel)
 			msg.attachments([
@@ -358,20 +373,19 @@ bot.dialog('/fun', [
 				])
 			]);
 			builder.Prompts.text(session, msg);
-		}
 	},
 	function (session, results) {
 		if (results.response.endsWith("Yoda Quote")) {
-			session.beginDialog("/yoda");
+			session.replaceDialog("/yoda");
 		}
 		else if (results.response.endsWith("Norris")) {
-			session.beginDialog("/joke");
+			session.replaceDialog("/joke");
 		}
 		else if (results.response.endsWith("Design")) {
-			session.beginDialog("/design");
+			session.replaceDialog("/design");
 		}
 		else if (results.response.endsWith("9gag")) {
-			session.beginDialog("/9gag1");
+			session.replaceDialog("/9gag1");
 		}
 		else if (results.response.endsWith("Quit")) {
 			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
@@ -385,20 +399,25 @@ bot.dialog('/fun', [
 bot.beginDialogAction("help", "/about", { matches: /help/i});
 bot.dialog('/about', function (session) {
 	if (session.message.source === "kik") {
-	session.endDialog("Thank you for using Metagon. Originally in Discord, I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at @austinhuang0131.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+		session.endDialog("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at @austinhuang0131.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "telegram") {
-	session.endDialog("Thank you for using Metagon. Originally in Discord, I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at @austinhuang.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+		session.endDialog("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at @austinhuang.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "skype") {
-	session.endDialog("Thank you for using Metagon. Originally in Discord, I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at \"live:austin.0131\".\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+		session.endDialog("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at \"live:austin.0131\".\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
-	else {
-	session.endDialog("Thank you for using Metagon. Originally in Discord, I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation/Contact Us: http://metagon.cf\n\nDo I help you a lot? Consider a small donation (Detail in documentation)!");
+	else if (session.message.source === "directline" && session.message.text === "/help") {
+		session.endDialog("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at Discord invite `8uFr3J3`.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!");
+	}
+	else if (session.message.source !== "directline") {
+		session.endDialog("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation/Contact Us: http://metagon.cf\n\nDo I help you a lot? Consider a small donation (Detail in documentation)!");
+	}
+	if (session.message.source !== "groupme" && session.message.text.endsWith("support")) {
+		session.replaceDialog("/menu");
 	}
 });
 
-bot.beginDialogAction("feedback", "/feedback", { matches: /Feedback/g});
 bot.dialog('/feedback', [
 	function (session) {
 		var msg = new builder.Message(session);
@@ -434,7 +453,7 @@ bot.dialog('/feedback', [
 // Image
 bot.beginDialogAction("cat", "/cat", { matches: /\/cat/g});
 bot.dialog('/cat', function (session) {
-	session.sendTyping();
+	if (session.message.source !== "directline") {session.sendTyping();}
 	request('http://random.cat/meow', function(error, response, body) {
 		if (!error && response.statusCode === 200 && session.message.text === "/cat") {
 			body = JSON.parse(body);
@@ -467,7 +486,7 @@ bot.dialog('/cat', function (session) {
 
 bot.beginDialogAction("snake", "/snake", { matches: /\/snake/g});
 bot.dialog('/snake', function (session) {
-	session.sendTyping();
+	if (session.message.source !== "directline") {session.sendTyping();}
 	request('http://fur.im/snek/snek.php', function(error, response, body) {
 		if (!error && response.statusCode === 200 && session.message.text === "/snake") {
 			body = JSON.parse(body);
@@ -500,7 +519,7 @@ bot.dialog('/snake', function (session) {
 
 bot.beginDialogAction("bunny", "/bunny", { matches: /\/bunny/g});
 bot.dialog('/bunny', function (session) {
-	session.sendTyping();
+	if (session.message.source !== "directline") {session.sendTyping();}
 	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', function(error, response, body) {
 		if (!error && response.statusCode === 200 && session.message.text === "/bunny" && session.message.source.includes("skype")) {
 			body = JSON.parse(body);
@@ -557,8 +576,8 @@ bot.dialog('/bunny', function (session) {
 bot.beginDialogAction("imgur", "/imgur2", { matches: /\/imgur/g});
 bot.dialog('/imgur1',[
 	function (session) {
-		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/imgur (Query)`");
+		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\" after typing \"Quit\".\n`/imgur (Query)`");
 			session.replaceDialog("/image");
 			return;
 		}
@@ -648,8 +667,8 @@ bot.dialog('/imgur2', function (session) {
 bot.beginDialogAction("flickr", "/flickr2", { matches: /\/flickr/g});
 bot.dialog('/flickr1',[
 	function (session) {
-		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/flickr (Query)`");
+		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/flickr (Query)`");
 			session.replaceDialog("/image");
 			return;
 		}
@@ -671,7 +690,7 @@ bot.dialog('/flickr1',[
 	},
 	function (session, results, next) {
 		if (results.response !== "Back to Image Menu") {
-			session.sendTyping();
+			if (session.message.source !== "directline") {session.sendTyping();}
 			request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+results.response+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
@@ -711,7 +730,7 @@ bot.dialog('/flickr2', function (session) {
 		session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
 		return;
 	}
-	session.sendTyping();
+	if (session.message.source !== "directline") {session.sendTyping();}
 	if (session.message.text.split(" ").slice(1).join(" ") !== "" && session.message.text.startsWith("/flickr")) {
 		request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+session.message.text.split(" ").slice(1).join(" ")+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
@@ -747,8 +766,8 @@ bot.dialog('/flickr2', function (session) {
 bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /\/ibsearch/g});
 bot.dialog('/ibsearch1',[
 	function (session) {
-		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/ibsearch (Query)`");
+		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/ibsearch (Query)`");
 			session.replaceDialog("/image");
 			return;
 		}
@@ -797,7 +816,7 @@ bot.dialog('/ibsearch1',[
 			session.replaceDialog("/image");
 			return;
 		}
-		session.sendTyping();
+		if (session.message.source !== "directline") {session.sendTyping();}
 		request("https://ibsearch.xxx/api/v1/images.json?key="+process.env.ibsearch+"&limit=1&q=random:+"+results.response+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				if (body !== "[]") {
@@ -831,10 +850,10 @@ bot.dialog('/ibsearch2',[
 			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
 			return;
 		}
-		session.sendTyping();
+		if (session.message.source !== "directline") {session.sendTyping();}
 		nsfw.push({user: session.message.address.user.id, query: session.message.text.substring(11)});
 		fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
-		if (session.message.source !== "groupme") {
+		if (session.message.source !== "groupme" && session.message.source !== "directline") {
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel)
 			msg.attachments([
@@ -883,8 +902,8 @@ bot.dialog('/ibsearch2',[
 bot.beginDialogAction("pixiv", "/pixiv2", { matches: /\/pixiv/g});
 bot.dialog('/pixiv1',[
 	function (session) {
-		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/pixiv (Query)`");
+		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/pixiv (Query)`");
 			session.replaceDialog("/image");
 			return;
 		}
@@ -932,7 +951,7 @@ bot.dialog('/pixiv1',[
 			session.replaceDialog("/image");
 			return;
 		}
-		session.sendTyping();
+		if (session.message.source !== "directline") {session.sendTyping();}
 		pixiv.search(results.response+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
 			var illust = json.response[Math.floor(Math.random() * json.response.length)];
 			if (illust === undefined) {
@@ -971,7 +990,7 @@ bot.dialog('/pixiv2',[
 		else {
 			nsfw.push({user: session.message.address.user.id, query: session.message.text.substring(8)});
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
-			if (session.message.source !== "groupme") {
+			if (session.message.source !== "groupme" && session.message.source !== "directline") {
 				var msg = new builder.Message(session);
 				msg.attachmentLayout(builder.AttachmentLayout.carousel)
 				msg.attachments([
@@ -991,7 +1010,7 @@ bot.dialog('/pixiv2',[
 		}
 	},
 	function (session, results) {
-		session.sendTyping();
+		if (session.message.source !== "directline") {session.sendTyping();}
 		var rating = "";
 		if (results.response === false) {rating = " -R-18 -R-18G";}
 		pixiv.search(nsfw.find(i => {return i.user === session.message.address.user.id}).query+rating, {per_page: 100, mode: "tag"}).then(json => {
@@ -1026,8 +1045,8 @@ bot.dialog('/pixiv2',[
 bot.beginDialogAction("shorten", "/shorten2", { matches: /\/shorten/g});
 bot.dialog('/shorten1',[
 	function (session) {
-		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/shorten (Url)`");
+		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/shorten (Url)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1100,8 +1119,8 @@ bot.dialog('/shorten2', function (session) {
 bot.beginDialogAction("shorten", "/expand2", { matches: /\/expand/g});
 bot.dialog('/expand1',[
 	function (session) {
-		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/expand (Url)`");
+		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/expand (Url)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1173,8 +1192,8 @@ bot.dialog('/expand2', function (session){
 bot.beginDialogAction("mcuser", "/mcuser2", { matches: /\/mcuser/g});
 bot.dialog('/mcuser1',[
 	function (session) {
-		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/mcuser (Username/UUID)`");
+		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/mcuser (Username/UUID)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1263,8 +1282,8 @@ bot.dialog('/mcuser2', function (session) {
 bot.beginDialogAction("mcserver", "/mcserver2", { matches: /\/mcserver/g});
 bot.dialog('/mcserver1',[
 	function (session) {
-		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/mcserver (Address)`");
+		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/mcserver (Address)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1353,8 +1372,8 @@ bot.dialog('/mcserver2', function (session) {
 bot.beginDialogAction("paste", "/paste2", { matches: /\/paste/g});
 bot.dialog('/paste1',[
 	function (session) {
-		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/paste (content)`");
+		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/paste (content)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1462,8 +1481,8 @@ bot.dialog('/design', function (session) {
 bot.beginDialogAction("9gag", "/9gag2", { matches: /\/9gag/g});
 bot.dialog('/9gag1',[
 	function (session) {
-		if (session.message.source === "telegram" || session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands.\n`/9gag (Section) (Hot/Fresh)` or `/9gag search (Query)`");
+		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/9gag (Section) (Hot/Fresh)` or `/9gag search (Query)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1615,13 +1634,25 @@ bot.dialog('/9gag2', function (session) {
 });
 
 // General Guidance
+bot.beginDialogAction("unstuck", "/unstuck", { matches: /unstuck!!!/g});
+bot.dialog('/unstuck', function (session) {
+	session.endConversation("Your session data should be cleared. You can now safely re`start` the bot. That means:\n* If you typed something wrong in the last step and I started to hate you, your sin has been forgiven.\n* If you found a bug but can't get out after I was fixed, sorry for the inconvenience.");
+	session.clearDialogStack();
+});
+
 bot.dialog('/', function (session) {
-    session.endDialog('It seems like you\'re confused. Maybe try typing \"help\".');
+	if (session.message.source !== "directline") {
+		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\".');
+	}
+	else {
+		session.endDialog();
+	}
 });
 
 // Setup Restify Server
 var server = restify.createServer();
 server.post('/api/messages', connector.listen());
+/*server.post('/linebot', lineConnector.listen());*/
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
 });
