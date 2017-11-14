@@ -17,7 +17,7 @@ var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 const Pixiv = require('pixiv.js');
 const pixiv = new Pixiv(process.env.pixiv_username, process.env.pixiv_password);
 const pixivImg = require('pixiv-img');
-var gagbrds = ["funny", "wtf", "gif", "gaming", "anime-manga", "movie-tv", "cute", "girl", "awesome", "cosplay", "sport", "food", "ask9gag", "timely", "nsfw"];
+var gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "politics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf"];
 var gagsubs = ["hot", "fresh"];
 var yoda_said = [
   '"Fear is the path to the dark side. Fear leads to anger, anger leads to hate, hate leads to suffering." -- Yoda \n',
@@ -114,15 +114,17 @@ var yoda_said = [
 ];
 var gag = require("node-9gag");
 var DataDog = require('datadog');
-var discord = require('discordconnector');
-var TCS = require('discordconnector/TestConnectorStorage');
 var dd = new DataDog(process.env.datadog1, process.env.datadog2);
+
 /*var LineConnector = require( "botbuilder-linebot-connector");
 var lineConnector = new LineConnector.LineConnector({
     channelId: process.env.line1,
     channelSecret: process.env.line2,
     channelAccessToken: process.env.line3
 });*/
+
+var discord = require('discordconnector');
+var TCS = require('discordconnector/TestConnectorStorage');
 var dc = new discord.DiscordConnector({ 
     discordSecret: process.env.DISCORD_SECRET, 
     dlSecret: process.env.DIRECTLINE_SECRET,
@@ -131,6 +133,18 @@ var dc = new discord.DiscordConnector({
 });
 var storage = new TCS.TestConnectorStorage();
 storage.initialize();
+dc.addStorageClient(storage);
+dc.enableBasicRelay();
+dc.conversationUpdate();
+
+/*var viber = require('botbuilder-viber');
+var viberChannel = new viber.ViberEnabledConnector({
+	Token: process.env.VIBER_TOKEN,
+	Name: 'Metagon',  
+	AvatarUrl: 'https://cdn.discordapp.com/avatars/376786742579298306/813b2b57849c91610fb6b4e74fa758b1.png',
+	Webhook: "https://discoin.herokuapp.com/viber"
+});
+bot.connector("viber", viberChannel);*/
 
 bot.on('incoming', message => {
 	if (message.source === "directline" && message.text.startsWith("/")) {
@@ -153,9 +167,6 @@ bot.on('error', err => {
 	});
 });
 
-dc.addStorageClient(storage);
-dc.enableBasicRelay();
-dc.conversationUpdate();
 bot.on('conversationUpdate', function (message) {
     if (message.address.conversation.isGroup) {
         if (message.membersAdded) {
@@ -194,44 +205,37 @@ bot.on('contactRelationUpdate', function (message) {
 bot.beginDialogAction("menu", "/menu", { matches: /start/gi});
 bot.dialog('/menu', [
 	function (session) {
-		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness" || session.message.source === "directline") {
+		if (session.message.text === "/start" && session.message.source === "directline") {
 			session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business / Discord. Please use only commands.\nFor more information, type \"help\".");
 		}
+		else if (session.message.text.endsWith("start") || session.message.text.endsWith("Start") || session.message.text.endsWith("Back to Start Menu")) {
+			if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
+				session.endDialog("Keyboard Mode is not available on GroupMe / Skype for Business / Discord. Please use only commands.\nFor more information, type \"help\".");
+			}
+			else {
+				builder.Prompts.choice(session, "What would you like to do right now?", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
+			}
+		}
 		else {
-			var msg = new builder.Message(session);
-			msg.attachmentLayout(builder.AttachmentLayout.carousel)
-			msg.attachments([
-				new builder.HeroCard(session)
-				.title("What would you like to do right now?")
-				.subtitle("Select one of the following categories.")
-				.buttons([
-					builder.CardAction.imBack(session, "Images", "Images"),
-					builder.CardAction.imBack(session, "Utility", "Utility"),
-					builder.CardAction.imBack(session, "Fun", "Fun"),
-					builder.CardAction.imBack(session, "About/Support", "About/Support"),
-					builder.CardAction.imBack(session, "Feedback", "Questions/Feedback"),
-					builder.CardAction.imBack(session, "Quit", "Quit")
-				])
-			]);
-			builder.Prompts.text(session, msg);
+			session.endDialog();
 		}
 	}, function (session, results) {
-		if (results.response.endsWith("Images")) {
+		if (results.response.entity.endsWith("Images")) {
 			session.replaceDialog("/image");
 		}
-		else if (results.response.endsWith("Utility")) {
+		else if (results.response.entity.endsWith("Utility")) {
 			session.replaceDialog("/utility");
 		}
-		else if (results.response.endsWith("Fun")) {
+		else if (results.response.entity.endsWith("Fun")) {
 			session.replaceDialog("/fun");
 		}
-		else if (results.response.endsWith("Quit")) {
+		else if (results.response.entity.endsWith("Quit")) {
 			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
 		}
-		else if (results.response.endsWith("Support")) {
-			session.beginDialog("/about");
+		else if (results.response.entity.endsWith("About")) {
+			session.replaceDialog("/about");
 		}
-		else if (results.response.endsWith("Feedback")) {
+		else if (results.response.entity.endsWith("Feedback")) {
 			session.replaceDialog("/feedback");
 		}
 	}
@@ -239,159 +243,92 @@ bot.dialog('/menu', [
 bot.dialog('/image', [
 	function (session) {
 		if (session.message.source === "kik") {
-			var msg = new builder.Message(session);
-			msg.attachmentLayout(builder.AttachmentLayout.carousel)
-			msg.attachments([
-				new builder.HeroCard(session)
-				.title("What would you like to do right now?")
-				.subtitle("Select one of the following functions. Some functions have been disabled  due to regulations (http://metagon.cf/kik-disabled).")
-				.buttons([
-					builder.CardAction.imBack(session, "Cat", "Cat"),
-					builder.CardAction.imBack(session, "Snake", "Snake"),
-					builder.CardAction.imBack(session, "Bunny", "Bunny"),
-					builder.CardAction.imBack(session, "Back to Main Menu", "Back to Main Menu"),
-					builder.CardAction.imBack(session, "Quit", "Quit")
-				])
-			]);
-			builder.Prompts.text(session, msg);
+			builder.Prompts.choice(session, "What would you like to do right now?", "Cat|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
 		}
 		else {
-			var msg = new builder.Message(session);
-			msg.attachmentLayout(builder.AttachmentLayout.carousel)
-			msg.attachments([
-				new builder.HeroCard(session)
-				.title("What would you like to do right now?")
-				.subtitle("Select one of the following functions.")
-				.buttons([
-					builder.CardAction.imBack(session, "Imgur", "Imgur (General)"),
-					builder.CardAction.imBack(session, "Flickr", "Flickr (Photo)"),
-					builder.CardAction.imBack(session, "IbSearch", "IbSearch (Anime)"),
-					builder.CardAction.imBack(session, "Pixiv", "Pixiv (Anime)"),
-					builder.CardAction.imBack(session, "Cat", "Cat"),
-					builder.CardAction.imBack(session, "Snake", "Snake"),
-					builder.CardAction.imBack(session, "Bunny", "Bunny"),
-					builder.CardAction.imBack(session, "Back to Main Menu", "Back to Main Menu"),
-					builder.CardAction.imBack(session, "Quit", "Quit")
-				])
-			]);
-			builder.Prompts.text(session, msg);
+			builder.Prompts.choice(session, "What would you like to do right now?", "Imgur (General)|Flickr (Photo)|IbSearch (Anime)|Pixiv (Anime)|Cat|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
 		}
 	},
 	function (session, results) {
-		if (results.response.endsWith("Cat")) {
+		if (results.response.entity.endsWith("Cat")) {
 			session.replaceDialog("/cat");
 		}
-		else if (results.response.endsWith("Snake")) {
+		else if (results.response.entity.endsWith("Snake")) {
 			session.replaceDialog("/snake");
 		}
-		else if (results.response.endsWith("Bunny")) {
+		else if (results.response.entity.endsWith("Bunny")) {
 			session.replaceDialog("/bunny");
 		}
-		else if (results.response.startsWith("Imgur") || results.response.toLowerCase().startsWith("@metagon imgur")) {
+		else if (results.response.entity.startsWith("Imgur") || results.response.entity.toLowerCase().startsWith("@metagon imgur")) {
 			session.replaceDialog("/imgur1");
 		}
-		else if (results.response.startsWith("Flickr") || results.response.toLowerCase().startsWith("@metagon flickr")) {
+		else if (results.response.entity.startsWith("Flickr") || results.response.entity.toLowerCase().startsWith("@metagon flickr")) {
 			session.replaceDialog("/flickr1");
 		}
-		else if (results.response.startsWith("IbSearch") || results.response.toLowerCase().startsWith("@metagon ibsearch")) {
+		else if (results.response.entity.startsWith("IbSearch") || results.response.entity.toLowerCase().startsWith("@metagon ibsearch")) {
 			session.replaceDialog("/ibsearch1");
 		}
-		else if (results.response.startsWith("Pixiv") || results.response.toLowerCase().startsWith("@metagon pixiv")) {
+		else if (results.response.entity.startsWith("Pixiv") || results.response.entity.toLowerCase().startsWith("@metagon pixiv")) {
 			session.replaceDialog("/pixiv1");
 		}
-		else if (results.response.endsWith("Quit")) {
+		else if (results.response.entity.endsWith("Quit")) {
 			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
 		}
-		else if (results.response.endsWith("Back to Main Menu")) {
-			session.replaceDialog("/menu");
+		else if (results.response.entity.endsWith("Back to Start Menu")) {
+			session.beginDialog("/menu");
 		}
 	}
 ]);
 bot.dialog('/utility', [
 	function (session) {
-			var msg = new builder.Message(session);
-			msg.attachmentLayout(builder.AttachmentLayout.carousel)
-			msg.attachments([
-				new builder.HeroCard(session)
-				.title("What would you like to do right now?")
-				.subtitle("Select one of the following functions.")
-				.buttons([
-					builder.CardAction.imBack(session, "Shorten URLs", "Shorten URLs"),
-					builder.CardAction.imBack(session, "Expand Bitly URLs", "Expand Bitly URLs"),
-					builder.CardAction.imBack(session, "Minecraft User Lookup", "Minecraft User Lookup"),
-					builder.CardAction.imBack(session, "Minecraft Server Status", "Minecraft Server Status"),
-					builder.CardAction.imBack(session, "Yelp", "Yelp"),
-					builder.CardAction.imBack(session, "Pastebin", "Pastebin (Paste text online)"),
-					builder.CardAction.imBack(session, "Back to Main Menu", "Back to Main Menu"),
-					builder.CardAction.imBack(session, "Quit", "Quit")
-				])
-			]);
-			builder.Prompts.text(session, msg);
+		builder.Prompts.choice(session, "What would you like to do right now?", "Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
 	}, 
 	function (session, results) {
-		if (results.response.endsWith("Shorten URLs")) {
+		if (results.response.entity.endsWith("Shorten URLs")) {
 			session.replaceDialog("/shorten1");
 		}
-		else if (results.response.endsWith("Expand Bitly URLs")) {
+		else if (results.response.entity.endsWith("Expand Bitly URLs")) {
 			session.replaceDialog("/expand1");
 		}
-		else if (results.response.endsWith("Minecraft User Lookup")) {
+		else if (results.response.entity.endsWith("Minecraft User Lookup")) {
 			session.replaceDialog("/mcuser1");
 		}
-		else if (results.response.endsWith("Minecraft Server Status")) {
+		else if (results.response.entity.endsWith("Minecraft Server Status")) {
 			session.replaceDialog("/mcserver1");
 		}
-		else if (results.response.endsWith("Yelp")) {
-			session.send("Coming soon™");
-		}
-		else if (results.response.startsWith("Pastebin") || results.response.toLowerCase().startsWith("@metagon pastebin")) {
+		else if (results.response.entity.startsWith("Pastebin") || results.response.entity.toLowerCase().startsWith("@metagon pastebin")) {
 			session.replaceDialog("/paste1");
 		}
-		else if (results.response.endsWith("Quit")) {
+		else if (results.response.entity.endsWith("Quit")) {
 			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
 		}
-		else if (results.response.endsWith("Back to Main Menu")) {
-			session.replaceDialog("/menu");
+		else if (results.response.entity.endsWith("Back to Start Menu")) {
+			session.beginDialog("/menu");
 		}
 	}
 ]);
 bot.dialog('/fun', [
 	function (session) {
-			var msg = new builder.Message(session);
-			msg.attachmentLayout(builder.AttachmentLayout.carousel)
-			msg.attachments([
-				new builder.HeroCard(session)
-				.title("What would you like to do right now?")
-				.subtitle("Select one of the following functions.")
-				.buttons([
-					builder.CardAction.imBack(session, "9gag", "9gag"),
-					builder.CardAction.imBack(session, "Chuck Norris", "Chuck Norris"),
-					builder.CardAction.imBack(session, "Yoda Quote", "Random Yoda Quote"),
-					builder.CardAction.imBack(session, "Quote on Design", "Quote on Design"),
-					builder.CardAction.imBack(session, "Back to Main Menu", "Back to Main Menu"),
-					builder.CardAction.imBack(session, "Quit", "Quit")
-				])
-			]);
-			builder.Prompts.text(session, msg);
+		builder.Prompts.choice(session, "What would you like to do right now?", "9gag|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit", { listStyle: 3 });
 	},
 	function (session, results) {
-		if (results.response.endsWith("Yoda Quote")) {
+		if (results.response.entity.endsWith("Yoda Quote")) {
 			session.replaceDialog("/yoda");
 		}
-		else if (results.response.endsWith("Norris")) {
+		else if (results.response.entity.endsWith("Norris")) {
 			session.replaceDialog("/joke");
 		}
-		else if (results.response.endsWith("Design")) {
+		else if (results.response.entity.endsWith("Design")) {
 			session.replaceDialog("/design");
 		}
-		else if (results.response.endsWith("9gag")) {
+		else if (results.response.entity.endsWith("9gag")) {
 			session.replaceDialog("/9gag1");
 		}
-		else if (results.response.endsWith("Quit")) {
+		else if (results.response.entity.endsWith("Quit")) {
 			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
 		}
-		else if (results.response.endsWith("Back to Main Menu")) {
-			session.replaceDialog("/menu");
+		else if (results.response.entity.endsWith("Back to Start Menu")) {
+			session.beginDialog("/menu");
 		}
 	}
 ]);
@@ -408,12 +345,15 @@ bot.dialog('/about', function (session) {
 		session.endDialog("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at \"live:austin.0131\".\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "directline" && session.message.text === "/help") {
-		session.endDialog("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at Discord invite `8uFr3J3`.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!");
+		session.endDialog("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at Discord invite `8uFr3J3`.\n**Commands:** `/9gag`, `/bunny`, `/cat`, `/flickr`, `/ibsearch`, `/imgur`, `/mcuser`, `/mcserver`, `/pastebin`, `/pixiv`, `/snake`, etc.\n\n* Do I help you a lot? Consider a small donation (Detail in documentation)!");
 	}
 	else if (session.message.source !== "directline") {
-		session.endDialog("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation/Contact Us: http://metagon.cf\n\nDo I help you a lot? Consider a small donation (Detail in documentation)!");
+		session.endDialog("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation/Contact Us: http://metagon.cf\n\nDo I help you a lot? Consider a small donation (Detail in documentation)! The simplest way to use this bot is by typing \"start\".");
 	}
-	if (session.message.source !== "groupme" && session.message.text.endsWith("support")) {
+	else {
+		session.endDialog();
+	}
+	if (session.message.source !== "groupme" && session.message.source !== "directline" && session.message.text.endsWith("support")) {
 		session.replaceDialog("/menu");
 	}
 });
@@ -427,13 +367,13 @@ bot.dialog('/feedback', [
 			.title("Have an idea? Found a bug? Write to us here!")
 			.subtitle("Don't spam. Slack/SfB/MSTeams users: Leave me your email if you need support.")
 			.buttons([
-				builder.CardAction.imBack(session, "Back to Main Menu", "Back to Main Menu")
+				builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu")
 			])
 		]);
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
-		if (results.response !== "Back to Main Menu") {
+		if (results.response !== "Back to Start Menu") {
 			request.post("https://maker.ifttt.com/trigger/feedback/with/key/kDnVlmQo6Z_Py2bwvlCGyLNh2y05mL_rL0CF7cAflOE", {json: {value1: session.message.address.user.name + " (" + session.message.address.user.id + ")", value2: session.message.source, value3: results.response}}, function(error, response, body) {
 				// This URL is public. If you guys spam it, I'll remove it. This webhook connects to my Telegram.
 				if (!error && response.statusCode === 200 && body === "Congratulations! You've fired the feedback event") {
@@ -445,6 +385,7 @@ bot.dialog('/feedback', [
 			});
 		}
 		else {
+			session.endDialog();
 			session.replaceDialog("/menu");
 		}
     }
@@ -629,26 +570,7 @@ bot.dialog('/imgur2', function (session) {
 	}
 	if (session.message.text.split(" ").slice(1).join(" ") !== "" && session.message.text.startsWith("/imgur")) {
 		request({url:"https://api.imgur.com/3/gallery/search?q="+session.message.text.substring(7), headers:{'Authorization': 'Client-ID '+process.env.imgur}}, function(error, response, body) {
-			if (!error && response.statusCode === 200 && session.message.source === "kik") {
-				var msg = new builder.Message(session);
-				msg.attachmentLayout(builder.AttachmentLayout.carousel)
-				msg.attachments([
-					new builder.HeroCard(session)
-					.text()
-					.buttons([
-						builder.CardAction.imBack(session, "Imgur", "Imgur (General)"),
-						builder.CardAction.imBack(session, "Flickr", "Flickr (Photo)"),
-						builder.CardAction.imBack(session, "IbSearch", "IbSearch (Anime)"),
-						builder.CardAction.imBack(session, "Pixiv", "Pixiv (Anime)"),
-						builder.CardAction.imBack(session, "Cat", "Cat"),
-						builder.CardAction.imBack(session, "Snake", "Snake"),
-						builder.CardAction.imBack(session, "Bunny", "Bunny"),
-						builder.CardAction.imBack(session, "Back to Main Menu", "Back to Main Menu")
-					])
-				]);
-				session.endDialog(msg);
-			}
-			else if (!error && response.statusCode === 200) {
+			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
 				if (body.data === []) {session.endDialog("No results. Change your query?");}
 				else {session.endDialog(body.data[Math.floor(Math.random() * body.data.length)].link);}
@@ -1486,30 +1408,19 @@ bot.dialog('/9gag1',[
 			session.replaceDialog("/utility");
 			return;
 		}
-		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
-		msg.attachments([
-			new builder.HeroCard(session)
-			.title("Select a subsection to visit, or \"Search\" to search for posts.")
-			.buttons([
-				builder.CardAction.imBack(session, "Search", "Search"),
-				builder.CardAction.imBack(session, "funny", "funny"),builder.CardAction.imBack(session, "wtf", "wtf"),builder.CardAction.imBack(session, "gif", "gif"),builder.CardAction.imBack(session, "gaming", "gaming"),builder.CardAction.imBack(session, "anime-manga", "anime-manga"),builder.CardAction.imBack(session, "movie-tv", "movie-tv"),builder.CardAction.imBack(session, "cute", "cute"),builder.CardAction.imBack(session, "girl", "girl"),builder.CardAction.imBack(session, "awesome", "awesome"),builder.CardAction.imBack(session, "cosplay", "cosplay"),builder.CardAction.imBack(session, "sport", "sport"),builder.CardAction.imBack(session, "food", "food"),builder.CardAction.imBack(session, "ask9gag", "ask9gag"),builder.CardAction.imBack(session, "timely", "timely"),builder.CardAction.imBack(session, "nsfw", "nsfw"),
-				builder.CardAction.imBack(session, "Back to Fun Menu", "Back to Fun Menu")
-			])
-		]);
-		builder.Prompts.text(session, msg);
+		builder.Prompts.choice(session, "Select a section to visit, or \"Search\" to search for posts.\n\n* \"got\" = Game of Thrones\n* \"imadedis\" = I made dis\n* \"pcmr\" = PC Master Race", "Search|"+gagbrds.join("|")+"|Back to Fun Menu", { listStyle: 3 });
 	},
 	function (session, results) {
-		if (results.response.endsWith("Back to Fun Menu")) {
+		if (results.response.entity.endsWith("Back to Fun Menu")) {
 			session.endDialog();
 			session.replaceDialog("/fun");
 		}
-		else if (results.response.endsWith("nsfw") && session.message.source === "kik") {
+		else if (results.response.entity.endsWith("nsfw") && session.message.source === "kik") {
 			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
 			session.replaceDialog("/fun");
 			return;
 		}
-		else if (results.response.endsWith("Search")) {
+		else if (results.response.entity.endsWith("Search")) {
 			nsfw.push({user: session.message.address.user.id, gag: "search"});
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel)
@@ -1522,19 +1433,9 @@ bot.dialog('/9gag1',[
 			]);
 			builder.Prompts.text(session, msg);
 		}
-		else if (gagbrds.indexOf(results.response) > -1) {
-			nsfw.push({user: session.message.address.user.id, gag: results.response});
-			var msg = new builder.Message(session);
-			msg.attachmentLayout(builder.AttachmentLayout.carousel)
-			msg.attachments([
-				new builder.HeroCard(session)
-				.title("Hot or Fresh?")
-				.buttons([
-					builder.CardAction.imBack(session, "Hot", "Hot"),
-					builder.CardAction.imBack(session, "Fresh", "Fresh")
-				])
-			]);
-			builder.Prompts.text(session, msg);
+		else if (gagbrds.indexOf(results.response.entity) > -1) {
+			nsfw.push({user: session.message.address.user.id, gag: results.response.entity});
+			builder.Prompts.choice(session, "Select a subsection to visit.", "Hot|Fresh", { listStyle: 3 });
 		}
     },
 	function (session, results) {
@@ -1557,7 +1458,7 @@ bot.dialog('/9gag1',[
 				}
 			});
 		}
-		else if (results.response.endsWith("Hot")) {
+		else if (results.response.entity.endsWith("Hot")) {
 			gag.section(nsfw.find(i => {return i.user === session.message.address.user.id;}).gag, "hot", function(err, res) {
 				if (err) {
 					session.endDialog("An error occured. Retry?");
@@ -1571,7 +1472,7 @@ bot.dialog('/9gag1',[
 				}
 			});
 		}
-		else if (results.response.endsWith("Fresh")) {
+		else if (results.response.entity.endsWith("Fresh")) {
 			gag.section(nsfw.find(i => {return i.user === session.message.address.user.id;}).gag, "fresh", function(err, res) {
 				if (err) {
 					session.endDialog("An error occured. Retry?");
@@ -1598,7 +1499,7 @@ bot.dialog('/9gag2', function (session) {
 		args = [session.message.text.split(" ")[2], session.message.text.split(" ")[3]];
 	}
 	if (gagbrds.indexOf(args[0]) > -1 && gagsubs.indexOf(args[1]) > -1) {
-		if (args[0] === "nsfw" || session.message.source === "kik") {
+		if (args[0] === "nsfw" && session.message.source === "kik") {
 			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
 			return;
 		}
@@ -1641,8 +1542,11 @@ bot.dialog('/unstuck', function (session) {
 });
 
 bot.dialog('/', function (session) {
-	if (session.message.source !== "directline") {
-		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\".');
+	if (session.message.source !== "directline" && session.message.source !== "slack") {
+		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
+	}
+	else if (session.message.source === "slack" && !message.address.conversation.isGroup) {
+		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');		
 	}
 	else {
 		session.endDialog();
@@ -1652,6 +1556,7 @@ bot.dialog('/', function (session) {
 // Setup Restify Server
 var server = restify.createServer();
 server.post('/api/messages', connector.listen());
+/*server.post('/viber', viberChannel.listen());*/
 /*server.post('/linebot', lineConnector.listen());*/
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
