@@ -116,7 +116,7 @@ var gag = require("node-9gag");
 var DataDog = require('datadog');
 var dd = new DataDog(process.env.datadog1, process.env.datadog2);
 
-/*var LineConnector = require( "botbuilder-linebot-connector");
+/*var LineConnector = require("botbuilder-linebot-connector");
 var lineConnector = new LineConnector.LineConnector({
     channelId: process.env.line1,
     channelSecret: process.env.line2,
@@ -137,14 +137,14 @@ dc.addStorageClient(storage);
 dc.enableBasicRelay();
 dc.conversationUpdate();
 
-/*var viber = require('botbuilder-viber');
+var viber = require('botbuilder-viber');
 var viberChannel = new viber.ViberEnabledConnector({
 	Token: process.env.VIBER_TOKEN,
 	Name: 'Metagon',  
 	AvatarUrl: 'https://cdn.discordapp.com/avatars/376786742579298306/813b2b57849c91610fb6b4e74fa758b1.png',
 	Webhook: "https://discoin.herokuapp.com/viber"
 });
-bot.connector("viber", viberChannel);*/
+bot.connector("viber", viberChannel);
 
 bot.on('incoming', message => {
 	if (message.source === "directline" && message.text.startsWith("/")) {
@@ -361,7 +361,7 @@ bot.dialog('/about', function (session) {
 bot.dialog('/feedback', [
 	function (session) {
 		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("Have an idea? Found a bug? Write to us here!")
@@ -528,7 +528,7 @@ bot.dialog('/imgur1',[
 			return;
 		}
 		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("Input a search query.")
@@ -600,7 +600,7 @@ bot.dialog('/flickr1',[
 			return;
 		}
 		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("Input a search query.")
@@ -699,7 +699,7 @@ bot.dialog('/ibsearch1',[
 			return;
 		}
 		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("Show NSFW content?")
@@ -721,7 +721,7 @@ bot.dialog('/ibsearch1',[
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		}
 		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("You chose "+results.response+" for NSFW visibility. Input a search query.")
@@ -763,7 +763,7 @@ bot.dialog('/ibsearch1',[
 				session.replaceDialog("/image");
 			}
 		});
-		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
     }
 ]);
 bot.dialog('/ibsearch2',[
@@ -777,7 +777,7 @@ bot.dialog('/ibsearch2',[
 		fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		if (session.message.source !== "groupme" && session.message.source !== "directline") {
 			var msg = new builder.Message(session);
-			msg.attachmentLayout(builder.AttachmentLayout.carousel)
+			msg.attachmentLayout(builder.AttachmentLayout.list);
 			msg.attachments([
 				new builder.HeroCard(session)
 				.title("Show NSFW content?")
@@ -796,7 +796,7 @@ bot.dialog('/ibsearch2',[
 	function (session, results) {
 		var rating = "";
 		if (results.response === false) {rating = "rating:s";}
-		request("https://ibsearch.xxx/api/v1/images.json?key="+process.env.ibsearch+"&limit=1&q=random:+"+nsfw.find(i => {return i.user === session.message.address.user.id}).query+"+"+rating, function(error, response, body) {
+		request("https://ibsearch.xxx/api/v1/images.json?key="+process.env.ibsearch+"&limit=1&q=random:+"+nsfw.find(i => {return i.user === session.message.address.user.id;}).query+"+"+rating, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				if (body !== "[]") {
 					body = JSON.parse(body);
@@ -817,7 +817,7 @@ bot.dialog('/ibsearch2',[
 				session.endDialog("Failed to connect to http://ibsearch.xxx");
 			}
 		});
-		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
     }
 ]);
 
@@ -835,7 +835,7 @@ bot.dialog('/pixiv1',[
 			return;
 		}
 		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("Show NSFW content?")
@@ -857,7 +857,7 @@ bot.dialog('/pixiv1',[
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		}
 		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("You chose "+results.response+" for NSFW visibility. Input a search query.")
@@ -900,7 +900,7 @@ bot.dialog('/pixiv1',[
 				});
 			}
 		});
-		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
     }
 ]);
 bot.dialog('/pixiv2',[
@@ -914,7 +914,7 @@ bot.dialog('/pixiv2',[
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 			if (session.message.source !== "groupme" && session.message.source !== "directline") {
 				var msg = new builder.Message(session);
-				msg.attachmentLayout(builder.AttachmentLayout.carousel)
+				msg.attachmentLayout(builder.AttachmentLayout.list);
 				msg.attachments([
 					new builder.HeroCard(session)
 					.title("Show NSFW content?")
@@ -935,7 +935,7 @@ bot.dialog('/pixiv2',[
 		if (session.message.source !== "directline") {session.sendTyping();}
 		var rating = "";
 		if (results.response === false) {rating = " -R-18 -R-18G";}
-		pixiv.search(nsfw.find(i => {return i.user === session.message.address.user.id}).query+rating, {per_page: 100, mode: "tag"}).then(json => {
+		pixiv.search(nsfw.find(i => {return i.user === session.message.address.user.id;}).query+rating, {per_page: 100, mode: "tag"}).then(json => {
 			var illust = json.response[Math.floor(Math.random() * json.response.length)];
 			if (illust === undefined) {
 				session.endDialog("No results.");
@@ -959,7 +959,7 @@ bot.dialog('/pixiv2',[
 				});
 			}
 		});
-		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
     }
 ]);
 
@@ -973,7 +973,7 @@ bot.dialog('/shorten1',[
 			return;
 		}
 		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("Input the URL you'd like to shorten.")
@@ -1047,7 +1047,7 @@ bot.dialog('/expand1',[
 			return;
 		}
 		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("Input the URL you'd like to expand.")
@@ -1120,7 +1120,7 @@ bot.dialog('/mcuser1',[
 			return;
 		}
 		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("Input the username or UUID you'd like to look up.")
@@ -1210,7 +1210,7 @@ bot.dialog('/mcserver1',[
 			return;
 		}
 		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("Input the server IP/address you'd like to look up.")
@@ -1300,7 +1300,7 @@ bot.dialog('/paste1',[
 			return;
 		}
 		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.carousel)
+		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("Input the content you'd like to paste.")
@@ -1423,7 +1423,7 @@ bot.dialog('/9gag1',[
 		else if (results.response.entity.endsWith("Search")) {
 			nsfw.push({user: session.message.address.user.id, gag: "search"});
 			var msg = new builder.Message(session);
-			msg.attachmentLayout(builder.AttachmentLayout.carousel)
+			msg.attachmentLayout(builder.AttachmentLayout.list);
 			msg.attachments([
 				new builder.HeroCard(session)
 				.title("Input a search query.")
@@ -1444,17 +1444,17 @@ bot.dialog('/9gag1',[
 				if (err) {
 					session.endDialog("An error occured. Retry?");
 					session.replaceDialog("/fun");
-					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 				else if (res.result[Math.floor(Math.random() * res.result.length)] === undefined) {
 					session.endDialog("No results. Retry?");
 					session.replaceDialog("/fun");
-					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 				else {
 					session.endDialog(res.result[Math.floor(Math.random() * res.result.length)].url);
 					session.replaceDialog("/fun");
-					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 			});
 		}
@@ -1463,12 +1463,12 @@ bot.dialog('/9gag1',[
 				if (err) {
 					session.endDialog("An error occured. Retry?");
 					session.replaceDialog("/fun");
-					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 				else {
 					session.endDialog(res[Math.floor(Math.random() * res.length)].url);
 					session.replaceDialog("/fun");
-					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 			});
 		}
@@ -1477,19 +1477,19 @@ bot.dialog('/9gag1',[
 				if (err) {
 					session.endDialog("An error occured. Retry?");
 					session.replaceDialog("/fun");
-					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 				else {
 					session.endDialog(res[Math.floor(Math.random() * res.length)].url);
 					session.replaceDialog("/fun");
-					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 			});
 		}
 		else if (results.response.endsWith("Back to Fun Menu")) {
 			session.endDialog();
 			session.replaceDialog("/fun");
-			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 		}
 	}
 ]);
@@ -1517,15 +1517,15 @@ bot.dialog('/9gag2', function (session) {
 			console.log(res);
 			if (err) {
 				session.endDialog("An error occured. Retry?");
-				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 			else if (res.result[Math.floor(Math.random() * res.result.length)] === undefined) {
 				session.endDialog("No results. Retry?");
-				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 			else {
 				session.endDialog(res.result[Math.floor(Math.random() * res.result.length)].url);
-				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id})), 1);
+				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 		});
 	}
@@ -1556,7 +1556,7 @@ bot.dialog('/', function (session) {
 // Setup Restify Server
 var server = restify.createServer();
 server.post('/api/messages', connector.listen());
-/*server.post('/viber', viberChannel.listen());*/
+server.post('/viber', viberChannel.listen());
 /*server.post('/linebot', lineConnector.listen());*/
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
