@@ -1,27 +1,11 @@
-**THIS IS VERY VERY IMPORTANT!!!**
-
 ## Issue
-### Don't post these issues:
-* Uptime (Directly contact [@austinhuang](http://telegram.me/austinhuang) for restarting. Also consider donate for more uptime.)
-* Content (We are not responsible for the content provided by various APIs)
-* Without the template (WRITE IN THE TEMPLATE!!!)
-
-### Template
-```markdown
-* Platform: [Telegram/Kik]
-* Category: [Bug/Improvement/Feature Request]
-
-## Description
-(Please be detailed unless you will describe it in Steps to Reproduce)
-
-### Steps to Reproduce: (Required for bugs, optional for improvement)
-Background: (Your chat client & Your settings)
-1. Type in "..."
-2. ...
-Expected Result: ...
-Actual Result: ...
-```
+### Don't post issues:
+* Relating to the uptime (After a crash, the bot should restart within 20 minutes if I'm not online, or 5 minutes if I'm online. Uptime is monitored.)
+* Relating to the content (We are not responsible for the content provided by various APIs.)
+  * Unless you're on Kik, where NSFW content is prohibited. As such, you should report to us if the bot posted something questionable **on Kik**.
+* Without the template
 
 ## Pull Request
-* **Please test it before you request.**
-* I do know that it is 2 bots in 1 script, but could you please NOT separate it into 2 scripts? Thanks.
+* **Please [test it](https://docs.microsoft.com/en-us/bot-framework/debug-bots-emulator) before you request.**
+
+Thank you for contributing.
