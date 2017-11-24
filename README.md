@@ -62,6 +62,6 @@ Thanks!
 
 
 # Donate
-More thanks! Click [here](http://austinhuang.me/#im-buying-you-a-coffeeteadrinkwhatever) or use the widget below.
+More thanks! Click [here](http://austinhuang.me/donate) or use the widget below.
 
 <script src="https://liberapay.com/~18025/widgets/receiving.js"></script> (Euros only)
