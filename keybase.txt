@@ -1,0 +1,68 @@
+==================================================================
+https://keybase.io/austinhuang
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://metagon.cf
+  * I am austinhuang (https://keybase.io/austinhuang) on keybase.
+  * I have a public key with fingerprint B945 6EC5 7DDC 2A8F D2AA  0AFB 2D68 824E 8AD8 B573
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "01013938f5d93ff5ef73dfabaad797cbf963fc821654dd69590da8f43a5261f99a3c0a",
+      "fingerprint": "b9456ec57ddc2a8fd2aa0afb2d68824e8ad8b573",
+      "host": "keybase.io",
+      "key_id": "2d68824e8ad8b573",
+      "kid": "01013938f5d93ff5ef73dfabaad797cbf963fc821654dd69590da8f43a5261f99a3c0a",
+      "uid": "e18c225c0ff4bc357efd1f4bde5cb119",
+      "username": "austinhuang"
+    },
+    "service": {
+      "hostname": "metagon.cf",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 1
+  },
+  "ctime": 1510154351,
+  "expire_in": 157680000,
+  "prev": "5e8d864b929bac52366e3849af2f812b58f57fc90d464f00b7a2e5416d547f1f",
+  "seqno": 44,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.0.76
+Comment: https://keybase.io/crypto
+
+yMIpAnicrVJbSBVBGD4ns+xId7KotNhuBmp7m72czIciKCoJKowyjjM7M8dN3T2d
+3XPUTDOJCsOQiCIsjKJ7SBe6PFhYBBFhoD1ImFoglFqiRg8JVrNibz02LzPzz/d9
+8/0f/8vpCb6A/+jelrCe2pTkf/P8fMy3J2GpXcEhG5dzwQquiIxvpBgTxw0VmZgL
+crzAC5IuaRRgXaIUEKpKmEIEIVZ11UBUVyRqaKKgABljRQc6j6FGZQkCURGorkPJ
+4CGXwVHTCpNoJGpaLpNFugwUYgAVY0NkeCxCyEOKRKxomigTDWINAVVixELb8RjM
+HIIOyTJtVmOX0Li9f+D/s+/YuBwRNEMUgcFTKiNDAiqhWGBHTICBBEH3gA6JWrCE
+MDSMOa5pFcagFeYqMzj2EDcN4mXrNTMBKiEuDNtWlkEZORK1Xduwi1m90HUjTtDj
+ueURD1hKUGhCIoRMC7MgGSNOoo5pW1xQYEjDNT1NAbCugSwBIYMjZREzSkKmhwCq
+ovFsef+QOJMERMOaIiNd1BE0gCgpCpE0WYdUpJogIsByU6nBMpEVmfI8UqFIgCwo
+GMgqFTzHDjlg2VxQlplPGGaajhm2oBuLEq7yRUv+ZJ8/4JuSOMmbMF9g2qy/c2ff
+mfp7V9Pn/dcaBtycm6l1M+O3j6ehtwfVdfhp+62++uTK/qGz2es3ddfPycz+Hvp5
+UekpzDr28Uzf9nlX02Y9HGrPI/llM6q65q8OpMO70dLMod0FucaqZY1dyXlfj8x9
+lNtKu8BcPvH89YGOofRTec9ONh/ON6+31g6k1FxuXzQyGN+27xOsy0jZmfOFFpOx
+E62NUtvGXn9W9ujyna/h6cHAsJIpz77SsHjzWKw5syW5p1q8n/5rR1vf8K2qt+0r
+/Tng26aFBZfWlHW+S+l8kLTijn9J8aHarWmn+Q0o1C/faFrwY2S04sO92tEtFzq6
+30+tWYvnPDm359Xta2XJDb96g4+re/8AGRZBwQ==
+=QW21
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/austinhuang
+
+==================================================================
