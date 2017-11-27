@@ -32,7 +32,7 @@ In most situations you can just use the startup menu. However, if you're on Disc
 
 # Useful Links
 * [Change Log](https://github.com/austinhuang0131/metagon/releases)
-* [Current Status & Maintenance Schedule](https://uptime.statuscake.com/?TestID=Qz3YIiN7Yr)
+* [Current Status & Maintenance Schedule](https://0131.statuspage.io) **NEW**
 * [Legal (Privacy/ToS)](/legal)
 
 # IMPORTANT! Per-Platform Issues
