@@ -90,3 +90,15 @@ If you have any questions about these Terms, please contact us.
 
 ---
 [Terms of Service created by TermsFeed](https://termsfeed.com/terms-service/) for Metagon.
+
+Privacy for Requested Work
+==========================
+
+This privacy policy applies to Discord bots that are used in individual servers, and are made by me, as well as the Discord OAuth app called "0131-oauth-portal". **Instagram officials: READ HERE**
+
+* As a user of 0131-oauth-portal, you provide data to us, 0131 Bot Services, in the form of messages (Whenever applicable) and user identifiers (Names and platforms, that's all), we call them **Customer Data**. 0131-oauth-portal will only use said Customer Data to process your request and to function properly. **We do not store your data.**
+  * 0131-oauth-portal is running on [Glitch](http://glitch.com). Glitch will receive the Customer Data to help the proper functioning of Metagon. Please review [Glitch Privacy Policy](https://glitch.com/legal#privacy).
+* 0131 Bot Services will protect personal information by using reasonable security safeguards against loss or theft, as well as unauthorized access, disclosure, copying, use or modification.
+* We do not store your data, thus we can't remove something that doesn't exist.
+
+If you do not accept any one of above, please stop using our service.
