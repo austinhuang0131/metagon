@@ -115,6 +115,10 @@ var yoda_said = [
 var gag = require("node-9gag");
 var DataDog = require('datadog');
 var dd = new DataDog(process.env.datadog1, process.env.datadog2);
+/*var Dictionary = require('mw-dictionary'),
+	dict = new Dictionary({
+		key: process.env.dictionary
+	});*/
 
 /*var LineConnector = require("botbuilder-linebot-connector");
 var lineConnector = new LineConnector.LineConnector({
@@ -137,6 +141,11 @@ dc.addStorageClient(storage);
 dc.enableBasicRelay();
 dc.conversationUpdate();
 
+function f2c(f) {
+	var c = (parseInt(f) - 32) / 1.8;
+	return c.toFixed();
+}
+
 /*var viber = require('botbuilder-viber');
 var viberChannel = new viber.ViberEnabledConnector({
 	Token: process.env.VIBER_TOKEN,
@@ -145,6 +154,39 @@ var viberChannel = new viber.ViberEnabledConnector({
 	Webhook: "https://discoin.herokuapp.com/viber"
 });
 bot.connector("viber", viberChannel);*/
+
+setInterval(function(){
+	dd.postSeries({
+		"series": [{
+			"metric": "memory.rss",
+			"points": [
+				[Date.now()/1000, process.memoryUsage().rss]
+			],
+			"type": "gauge",
+			"tags": ["memory"]
+		}]
+	});
+	dd.postSeries({
+		"series": [{
+			"metric": "memory.heapTotal",
+			"points": [
+				[Date.now()/1000, process.memoryUsage().heapTotal]
+			],
+			"type": "gauge",
+			"tags": ["memory"]
+		}]
+	});
+	dd.postSeries({
+		"series": [{
+			"metric": "memory.heapUsed",
+			"points": [
+				[Date.now()/1000, process.memoryUsage().heapUsed]
+			],
+			"type": "gauge",
+			"tags": ["memory"]
+		}]
+	});
+}, 5000);
 
 bot.on('incoming', message => {
 	if (message.source === "directline" && message.text.startsWith("/")) {
@@ -281,10 +323,13 @@ bot.dialog('/image', [
 ]);
 bot.dialog('/utility', [
 	function (session) {
-		builder.Prompts.choice(session, "What would you like to do right now?", "Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
+		builder.Prompts.choice(session, "What would you like to do right now?", "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
 	}, 
 	function (session, results) {
-		if (results.response.entity.endsWith("Shorten URLs")) {
+		if (results.response.entity.endsWith("Weather")) {
+			session.replaceDialog("/weather1");
+		}
+		else if (results.response.entity.endsWith("Shorten URLs")) {
 			session.replaceDialog("/shorten1");
 		}
 		else if (results.response.entity.endsWith("Expand Bitly URLs")) {
@@ -309,7 +354,7 @@ bot.dialog('/utility', [
 ]);
 bot.dialog('/fun', [
 	function (session) {
-		builder.Prompts.choice(session, "What would you like to do right now?", "9gag|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit", { listStyle: 3 });
+		builder.Prompts.choice(session, "What would you like to do right now?", "9gag|Urban Dictionary|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit", { listStyle: 3 });
 	},
 	function (session, results) {
 		if (results.response.entity.endsWith("Yoda Quote")) {
@@ -323,6 +368,9 @@ bot.dialog('/fun', [
 		}
 		else if (results.response.entity.endsWith("9gag")) {
 			session.replaceDialog("/9gag1");
+		}
+		else if (results.response.entity.endsWith("Urban Dictionary")) {
+			session.replaceDialog("/ud1");
 		}
 		else if (results.response.entity.endsWith("Quit")) {
 			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
@@ -392,7 +440,7 @@ bot.dialog('/feedback', [
 ]);
 
 // Image
-bot.beginDialogAction("cat", "/cat", { matches: /^\/cat/g});
+bot.beginDialogAction("cat", "/cat", { matches: /^( \/|\/)cat/g});
 bot.dialog('/cat', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
 	request('http://random.cat/meow', function(error, response, body) {
@@ -425,7 +473,7 @@ bot.dialog('/cat', function (session) {
 	});
 });
 
-bot.beginDialogAction("snake", "/snake", { matches: /^\/snake/g});
+bot.beginDialogAction("snake", "/snake", { matches: /^( \/|\/)snake/g});
 bot.dialog('/snake', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
 	request('http://fur.im/snek/snek.php', function(error, response, body) {
@@ -458,7 +506,7 @@ bot.dialog('/snake', function (session) {
 	});
 });
 
-bot.beginDialogAction("bunny", "/bunny", { matches: /^\/bunny/g});
+bot.beginDialogAction("bunny", "/bunny", { matches: /^( \/|\/)bunny/g});
 bot.dialog('/bunny', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
 	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', function(error, response, body) {
@@ -514,7 +562,7 @@ bot.dialog('/bunny', function (session) {
 	});
 });
 
-bot.beginDialogAction("imgur", "/imgur2", { matches: /^\/imgur/g});
+bot.beginDialogAction("imgur", "/imgur2", { matches: /^( \/|\/)imgur/g});
 bot.dialog('/imgur1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -581,7 +629,7 @@ bot.dialog('/imgur2', function (session) {
 	}
 });
 
-bot.beginDialogAction("flickr", "/flickr2", { matches: /^\/flickr/g});
+bot.beginDialogAction("flickr", "/flickr2", { matches: /^( \/|\/)flickr/g});
 bot.dialog('/flickr1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -680,7 +728,7 @@ bot.dialog('/flickr2', function (session) {
 	}
 });
 
-bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^\/ibsearch/g});
+bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/)ibsearch/g});
 bot.dialog('/ibsearch1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -816,7 +864,7 @@ bot.dialog('/ibsearch2',[
     }
 ]);
 
-bot.beginDialogAction("pixiv", "/pixiv2", { matches: /^\/pixiv/g});
+bot.beginDialogAction("pixiv", "/pixiv2", { matches: /^( \/|\/)pixiv/g});
 bot.dialog('/pixiv1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -876,27 +924,76 @@ bot.dialog('/pixiv1',[
 				session.replaceDialog("/image");
 			}
 			else {
-				var msg = "";
-				if (illust.is_manga === true) {msg += "\nThis is a multiple-page illustration, so only the first page is shown. View the full content at http://www.pixiv.net/member_illust.php?mode=medium&illust_id="+illust.id;}
 				pixivImg(illust.image_urls.large).then(output => {
 					cloudinary.uploader.upload(output, urls => {
-						session.endDialog({
-							text: msg,
+						session.send({
 							attachments: [
 								{
 									contentType: "image/*",
-									contentUrl: urls.url
+									contentUrl: urls.secure_url
 								}
 							]
 						});
-						session.replaceDialog("/image");
+						nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
+						if (illust.is_manga === true) {
+							builder.Prompts.choice(session, "\nThis illustration contains "+illust.page_count+" pages. You can choose to...\n\nWARNING: \"View all pages\" will spam your conversation with "+illust.page_count+" images. Use with caution!", "View all pages|Restart a Search|Back to Image Menu", { listStyle: 3 });
+							nsfw.push({user: session.message.address.user.id, illust: illust.id});
+						}
+						else {
+							session.replaceDialog("/image");
+						}
+						fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 						fs.unlink(output);
 					});
 				});
 			}
 		});
-		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
-    }
+    },
+	function (session, results) {
+		if (results.response.entity === "Restart a Search") {
+			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
+			session.reset("/pixiv1");
+		}
+		else if (results.response.entity === "Back to Image Menu") {
+			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
+			session.replaceDialog("/image");
+		}
+		else if (results.response.entity === "View all pages") {
+			session.sendTyping();
+			pixiv.works(nsfw.find(i => {return i.user === session.message.address.user.id;}).illust).then(json => {
+				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
+				fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
+				var idx = 0;
+				function doNext() {
+					var p = json.response[0].metadata.pages[idx];
+					pixivImg(p.image_urls.large).then(output => {
+						cloudinary.uploader.upload(output, urls => {
+							const order = json.response[0].metadata.pages.indexOf(p) + 1;
+							session.send({
+								text: "Page "+order,
+								attachments: [
+									{
+										contentType: "image/*",
+										contentUrl: urls.secure_url
+									}
+								]
+							});
+							fs.unlink(output);
+						});
+					});
+					idx++;
+					if (idx < json.response[0].metadata.pages.length) {
+						setTimeout(doNext, 1000);
+					}
+					else {
+						return;
+					}
+				}
+				doNext()
+				setTimeout(function() {session.replaceDialog("/image")}, json.response[0].metadata.pages.length * 1000 + 1000);;
+			});
+		}
+	}
 ]);
 bot.dialog('/pixiv2',[
 	function (session) {
@@ -945,7 +1042,7 @@ bot.dialog('/pixiv2',[
 							attachments: [
 								{
 									contentType: "image/*",
-									contentUrl: urls.url
+									contentUrl: urls.secure_url
 								}
 							]
 						});
@@ -959,7 +1056,7 @@ bot.dialog('/pixiv2',[
 ]);
 
 // Utility
-bot.beginDialogAction("shorten", "/shorten2", { matches: /^\/shorten/g});
+bot.beginDialogAction("shorten", "/shorten2", { matches: /^( \/|\/)shorten/g});
 bot.dialog('/shorten1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -1032,7 +1129,7 @@ bot.dialog('/shorten2', function (session) {
 	});
 });
 
-bot.beginDialogAction("expand", "/expand2", { matches: /^\/expand/g});
+bot.beginDialogAction("expand", "/expand2", { matches: /^( \/|\/)expand/g});
 bot.dialog('/expand1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -1105,7 +1202,7 @@ bot.dialog('/expand2', function (session){
 	});
 });
 
-bot.beginDialogAction("mcuser", "/mcuser2", { matches: /^\/mcuser/g});
+bot.beginDialogAction("mcuser", "/mcuser2", { matches: /^( \/|\/)mcuser/g});
 bot.dialog('/mcuser1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -1195,7 +1292,7 @@ bot.dialog('/mcuser2', function (session) {
 	});
 });
 
-bot.beginDialogAction("mcserver", "/mcserver2", { matches: /^\/mcserver/g});
+bot.beginDialogAction("mcserver", "/mcserver2", { matches: /^( \/|\/)mcserver/g});
 bot.dialog('/mcserver1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -1285,7 +1382,7 @@ bot.dialog('/mcserver2', function (session) {
 	});
 });
 
-bot.beginDialogAction("paste", "/paste2", { matches: /^\/paste/g});
+bot.beginDialogAction("paste", "/paste2", { matches: /^( \/|\/)paste/g});
 bot.dialog('/paste1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -1305,6 +1402,11 @@ bot.dialog('/paste1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
+		if (results.response.endsWith("Back to Utility Menu")) {
+			session.endDialog();
+			session.replaceDialog("/utility");
+			return;
+		}
 		request.post('https://pastebin.com/api/api_post.php', {form: {api_dev_key: process.env.pastebin, api_option: "paste", api_paste_code: results.response}}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				session.endDialog("Done! "+body);
@@ -1328,8 +1430,113 @@ bot.dialog('/paste2', function (session) {
 	});
 });
 
+bot.beginDialogAction("weather", "/weather2", { matches: /^( \/|\/)weather/g});
+bot.dialog('/weather1',[
+	function (session) {
+		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/paste (content)`");
+			session.replaceDialog("/utility");
+			return;
+		}
+		var msg = new builder.Message(session);
+		msg.attachmentLayout(builder.AttachmentLayout.list);
+		msg.attachments([
+			new builder.HeroCard(session)
+			.title("Type the name of the city you'd like to check the weather for.")
+			.buttons([
+				builder.CardAction.imBack(session, "Back to Utility Menu", "Back to Utility Menu")
+			])
+		]);
+		builder.Prompts.text(session, msg);
+	},
+	function (session, results) {
+		if (results.response.endsWith("Back to Utility Menu")) {
+			session.endDialog();
+			session.replaceDialog("/utility");
+			return;
+		}
+		request('https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22'+results.response+'%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys', {json: true}, function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				var weather = body.query.results.channel.item;
+				session.endDialog(weather.title+"\n\n== Condition ==\n\n"+weather.condition.text+", "+weather.condition.temp+"ºF ("+f2c(weather.condition.temp)+"ºC)\n\n== Forecast ==\n\n* Today: "+weather.forecast[0].text+", "+weather.forecast[0].low+"ºF ("+f2c(weather.forecast[0].low)+"ºC) ~ "+weather.forecast[0].high+"ºF ("+f2c(weather.forecast[0].high)+"ºC)\n* Tomorrow: "+weather.forecast[1].text+", "+weather.forecast[1].low+"ºF ("+f2c(weather.forecast[1].low)+"ºC) ~ "+weather.forecast[1].high+"ºF ("+f2c(weather.forecast[1].high)+"ºC)\n* "+weather.forecast[2].day+": "+weather.forecast[2].text+", "+weather.forecast[2].low+"ºF ("+f2c(weather.forecast[2].low)+"ºC) ~ "+weather.forecast[2].high+"ºF ("+f2c(weather.forecast[2].high)+"ºC)\n== Misc ==\n\n* Sunrise: "+body.query.results.channel.astronomy.sunrise+", Sunset: "+body.query.results.channel.astronomy.sunset);
+				session.replaceDialog("/utility");
+			}
+			else {
+				session.endDialog("An error occurred.");
+				session.replaceDialog("/utility");
+			}
+		});
+    }
+]);
+bot.dialog('/weather2', function (session) {
+	request('https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22'+session.message.text.replace("/weather", "").replace(" ", "")+'%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys', {json: true}, function(error, response, body) {
+		if (!error && response.statusCode === 200) {
+			var weather = body.query.results.channel.item;
+			session.endDialog(weather.title+"\n\n== Condition ==\n\n"+weather.condition.text+", "+weather.condition.temp+"ºF ("+f2c(weather.condition.temp)+"ºC)\n\n== Forecast ==\n\n* Today: "+weather.forecast[0].text+", "+weather.forecast[0].low+"ºF ("+f2c(weather.forecast[0].low)+"ºC) ~ "+weather.forecast[0].high+"ºF ("+f2c(weather.forecast[0].high)+"ºC)\n* Tomorrow: "+weather.forecast[1].text+", "+weather.forecast[1].low+"ºF ("+f2c(weather.forecast[1].low)+"ºC) ~ "+weather.forecast[1].high+"ºF ("+f2c(weather.forecast[1].high)+"ºC)\n* "+weather.forecast[2].day+": "+weather.forecast[2].text+", "+weather.forecast[2].low+"ºF ("+f2c(weather.forecast[2].low)+"ºC) ~ "+weather.forecast[2].high+"ºF ("+f2c(weather.forecast[2].high)+"ºC)\n== Misc ==\n\n* Sunrise: "+body.query.results.channel.astronomy.sunrise+", Sunset: "+body.query.results.channel.astronomy.sunset);
+		}
+		else {
+			session.endDialog("An error occurred.");
+		}
+	});
+});
+
 // Fun
-bot.beginDialogAction("joke", "/joke", { matches: /^\/joke/g});
+bot.beginDialogAction("ud", "/ud2", { matches: /^( \/|\/)ud/g});
+bot.dialog('/ud1',[
+	function (session) {
+		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
+			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/paste (content)`");
+			session.replaceDialog("/utility");
+			return;
+		}
+		var msg = new builder.Message(session);
+		msg.attachmentLayout(builder.AttachmentLayout.list);
+		msg.attachments([
+			new builder.HeroCard(session)
+			.title("Type the word you'd like to search for.")
+			.buttons([
+				builder.CardAction.imBack(session, "Back to Fun Menu", "Back to Fun Menu")
+			])
+		]);
+		builder.Prompts.text(session, msg);
+	},
+	function (session, results) {
+		if (results.response.endsWith("Back to Fun Menu")) {
+			session.endDialog();
+			session.replaceDialog("/fun");
+			return;
+		}
+		request('http://api.urbandictionary.com/v0/define?term='+results.response, {json: true}, function(error, response, body) {
+			if (!error && response.statusCode === 200 && body.list.length !== 0) {
+				session.endDialog("Top UD result for "+results.response+"\n\n== Definition ==\n\n"+body.list[0].definition+"\n\n == Example ==\n\n"+body.list[0].example+"\n\n* "+body.list[0].thumbs_up+"\uD83D\uDC4D / "+body.list[0].thumbs_down+"\uD83D\uDC4E");
+				session.replaceDialog("/fun");
+			}
+			else if (!error && response.statusCode === 200) {
+				session.endDialog("No results!");
+				session.replaceDialog("/fun");
+			}
+			else {
+				session.endDialog("An error occurred.");
+				session.replaceDialog("/fun");
+			}
+		});
+    }
+]);
+bot.dialog('/ud2', function (session) {
+	request('http://api.urbandictionary.com/v0/define?term='+session.message.text.replace("/ud", "").replace(" ", ""), {json: true}, function(error, response, body) {
+		if (!error && response.statusCode === 200 && body.list.length !== 0) {
+			session.endDialog("Top UD result for "+session.message.text.replace("/ud", "").replace(" ", "")+"\n\n== Definition ==\n\n"+body.list[0].definition+"\n\n == Example ==\n\n"+body.list[0].example+"\n\n* "+body.list[0].thumbs_up+"\uD83D\uDC4D / "+body.list[0].thumbs_down+"\uD83D\uDC4E");
+		}
+		else if (!error && response.statusCode === 200) {
+			session.endDialog("No results!");
+		}
+		else {
+			session.endDialog("An error occurred.");
+		}
+	});
+});
+
+bot.beginDialogAction("joke", "/joke", { matches: /^( \/|\/)joke/g});
 bot.dialog('/joke', function (session) {
 	if (session.message.source === "kik") {
 		request('http://api.icndb.com/jokes/random?escape=javascript?exclude=[explicit]', function(error, response, body) {
@@ -1365,7 +1572,7 @@ bot.dialog('/joke', function (session) {
 	}
 });
 
-bot.beginDialogAction("yoda", "/yoda", { matches: /^\/yoda/g});
+bot.beginDialogAction("yoda", "/yoda", { matches: /^( \/|\/)yoda/g});
 bot.dialog('/yoda', function (session) {
 		if (session.message.text === "/yoda") {
 			session.send(yoda_said[Math.floor(Math.random() * yoda_said.length)]);
@@ -1376,7 +1583,7 @@ bot.dialog('/yoda', function (session) {
 		}
 });
 
-bot.beginDialogAction("design", "/design", { matches: /^\/design/g});
+bot.beginDialogAction("design", "/design", { matches: /^( \/|\/)design/g});
 bot.dialog('/design', function (session) {
 	request('http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1', function(error, response, body) {
 		if (!error && response.statusCode === 200 && session.message.text === "/design") {
@@ -1394,7 +1601,7 @@ bot.dialog('/design', function (session) {
 	});
 });
 
-bot.beginDialogAction("9gag", "/9gag2", { matches: /^\/9gag/g});
+bot.beginDialogAction("9gag", "/9gag2", { matches: /^( \/|\/)9gag/g});
 bot.dialog('/9gag1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
