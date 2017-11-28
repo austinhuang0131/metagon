@@ -1107,10 +1107,10 @@ bot.dialog('/shorten2', function (session) {
 	if (session.message.text.replace("/shorten", "").replace(" ", "") === "") {
 		session.send("Missing query! /shorten (URL)")
 	}
-	if (session.message.text.replace("/shorten", "").replace(" ", "").startsWith("<") && session.message.text..replace("/pixiv", "").replace(" ", "").includes("|")) {
+	if (session.message.text.replace("/shorten", "").replace(" ", "").startsWith("<") && session.message.text.replace("/pixiv", "").replace(" ", "").includes("|")) {
 		var site = session.message.text.replace("/shorten", "").replace(" ", "").split("|")[0].replace("<", "");
 	}
-	else if (session.message.text..replace("/shorten", "").replace(" ", "").startsWith("<")) {
+	else if (session.message.text.replace("/shorten", "").replace(" ", "").startsWith("<")) {
 		var site = session.message.text.replace("/shorten", "").replace(" ", "").replace("<", "").replace(">", "").replace(";", "");
 	}
 	else {
