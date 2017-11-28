@@ -1,6 +1,10 @@
 # Category: Fun
 These commands are located in the Fun category of the startup menu.
 
+## Urban Dictionary
+Returns the top definition for a word on UD.
+* Command Entry: `/ud <Word>`
+
 ## Yoda said...
 Returns a Yoda quote. _However it's very limited: There's only [91 quotes](https://github.com/hemanth/node-yoda-said)._
 * Command Entry: `/yoda`
