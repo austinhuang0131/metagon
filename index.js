@@ -611,7 +611,7 @@ bot.dialog('/imgur2', function (session) {
 		session.send('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
 		return;
 	}
-	if (session.message.text.split(" ").slice(1).join(" ") !== "" && session.message.text.startsWith("/imgur")) {
+	if (session.message.text.replace("/imgur", "").replace(" ", "") !== "") {
 		request({url:"https://api.imgur.com/3/gallery/search?q="+session.message.text.substring(7), headers:{'Authorization': 'Client-ID '+process.env.imgur}}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
@@ -621,11 +621,8 @@ bot.dialog('/imgur2', function (session) {
 			else {session.send("Failed to connect to http://imgur.com");}
 		});
 	}
-	else if (session.message.text.startsWith("/imgur")) {
-		session.send("Missing search query! Correct usage: \"/imgur (Query)\"");
-	}
 	else {
-		session.send();
+		session.send("Missing search query! Correct usage: \"/imgur (Query)\"");
 	}
 });
 
@@ -696,7 +693,7 @@ bot.dialog('/flickr2', function (session) {
 		return;
 	}
 	if (session.message.source !== "directline") {session.sendTyping();}
-	if (session.message.text.split(" ").slice(1).join(" ") !== "" && session.message.text.startsWith("/flickr")) {
+	if (session.message.text.replace("/flickr", "").replace(" ", "") !== "") {
 		request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+session.message.text.split(" ").slice(1).join(" ")+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
@@ -720,11 +717,8 @@ bot.dialog('/flickr2', function (session) {
 			else {session.send("Failed to connect to http://flickr.com");}
 		});
 	}
-	else if (session.message.text.startsWith("/flickr")) {
-		session.send("Missing search query! Correct usage: \"/flickr (Query)\"");
-	}
 	else {
-		session.send();
+		session.send("Missing search query! Correct usage: \"/flickr (Query)\"");
 	}
 });
 
@@ -1001,6 +995,9 @@ bot.dialog('/pixiv2',[
 			session.send('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
 			return;
 		}
+		else if (session.message.text.replace("/pixiv", "").replace(" ", "") === "") {
+			session.send("Missing search query! Correct usage: \"/pixiv (Query)\"")
+		}
 		else {
 			nsfw.push({user: session.message.address.user.id, query: session.message.text.substring(8)});
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
@@ -1107,24 +1104,27 @@ bot.dialog('/shorten1',[
     }
 ]);
 bot.dialog('/shorten2', function (session) {
-	if (session.message.text.substring(9).startsWith("<") && session.message.text.substring(9).includes("|")) {
-		var site = session.message.text.substring(9).split("|")[0].replace("<", "");
+	if (session.message.text.replace("/shorten", "").replace(" ", "") === "") {
+		session.send("Missing query! /shorten (URL)")
 	}
-	else if (session.message.text.substring(9).startsWith("<")) {
-		var site = session.message.text.substring(9).replace("<", "").replace(">", "").replace(";", "");
+	if (session.message.text.replace("/shorten", "").replace(" ", "").startsWith("<") && session.message.text..replace("/pixiv", "").replace(" ", "").includes("|")) {
+		var site = session.message.text.replace("/shorten", "").replace(" ", "").split("|")[0].replace("<", "");
+	}
+	else if (session.message.text..replace("/shorten", "").replace(" ", "").startsWith("<")) {
+		var site = session.message.text.replace("/shorten", "").replace(" ", "").replace("<", "").replace(">", "").replace(";", "");
 	}
 	else {
-		var site = session.message.text.substring(9);
+		var site = session.message.text.replace("/shorten", "").replace(" ", "");
 	}
 	if (!site.startsWith("http")) {
-		site = "http://"+session.message.text.substring(9);
+		site = "http://"+session.message.text.replace("/shorten", "").replace(" ", "");
 	}
 	request("https://api-ssl.bitly.com/v3/shorten?access_token="+process.env.bitly_token+"&longUrl="+site+"&format=txt", function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			session.send("Done! "+body);
 		}
 		else {
-			session.send("An error occured. Invalid address, or retry?");
+			session.send("An error occured. Invalid address, or retry?\n\n/shorten (URL)");
 		}
 	});
 });
@@ -1180,24 +1180,27 @@ bot.dialog('/expand1',[
     }
 ]);
 bot.dialog('/expand2', function (session){
-	if (session.message.text.substring(8).startsWith("<") && session.message.text.substring(9).includes("|")) {
-		var site = session.message.text.substring(8).split("|")[0].replace("<", "");
+	if (session.message.text.replace("/expand", "").replace(" ", "") === "") {
+		session.send("Missing query! /expand (Bitly URL)")
 	}
-	else if (session.message.text.substring(8).startsWith("<")) {
-		var site = session.message.text.substring(8).replace("<", "").replace(">", "").replace(";", "");
+	if (session.message.text.replace("/expand", "").replace(" ", "").startsWith("<") && session.message.text.replace("/expand", "").replace(" ", "").includes("|")) {
+		var site = session.message.text.replace("/expand", "").replace(" ", "").split("|")[0].replace("<", "");
+	}
+	else if (session.message.text.replace("/expand", "").replace(" ", "").startsWith("<")) {
+		var site = session.message.text.replace("/expand", "").replace(" ", "").replace("<", "").replace(">", "").replace(";", "");
 	}
 	else {
-		var site = session.message.text.substring(8);
+		var site = session.message.text.replace("/expand", "").replace(" ", "");
 	}
 	if (!site.startsWith("http")) {
-		site = "http://"+session.message.text.substring(8);
+		site = "http://"+session.message.text.replace("/expand", "").replace(" ", "");
 	}
 	request("https://api-ssl.bitly.com/v3/expand?access_token="+process.env.bitly_token+"&shortUrl="+site+"&format=txt", function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			session.send("Done! "+body);
 		}
 		else {
-			session.send("An error occured. Invalid address, or retry?");
+			session.send("An error occured. Invalid address, or retry?\n\n/expand (Bitly URL)");
 		}
 	});
 });
@@ -1261,7 +1264,11 @@ bot.dialog('/mcuser1',[
     }
 ]);
 bot.dialog('/mcuser2', function (session) {
-	request('http://mcapi.de/api/user/' + session.message.text.substring(8).replace(" ", ""), function(error, response, body) {
+	if (session.message.text.replace("/mcuser", "").replace(" ", "") === "") {
+		session.send("Missing search query! /mcuser (Username or UUID)");
+		return;
+	}
+	request('http://mcapi.de/api/user/' + session.message.text.replace("/mcuser", "").replace(" ", ""), function(error, response, body) {
 		if (!error) {
 			var mcapi = JSON.parse(body);
 			if (mcapi.result.status === "Ok") {
@@ -1272,9 +1279,6 @@ bot.dialog('/mcuser2', function (session) {
 						var mcrep = JSON.parse(body);
 						if (!body.includes('"services":[]')) {
 							session.send("Reputation: "+mcrep.reputation+"/10\n\nRecorded bans:\n\nMCBans: "+mcrep.services.mcbans[0].amount+" / Glizer: "+mcrep.services.glizer[0].amount+" / MCBouncer: "+mcrep.services.mcbouncer[0].amount);
-						}
-						else {
-							session.send();
 						}
 					});
 				});
@@ -1351,13 +1355,17 @@ bot.dialog('/mcserver1',[
     }
 ]);
 bot.dialog('/mcserver2', function (session) {
+	if (session.message.text.replace("/mcserver", "").replace(" ", "") === "") {
+		session.send("Missing search query! /mcserver (Hostname or IP)");
+		return;
+	}
 	var ip = {};
-	if (session.message.text.substring(10).split(":")[1] === undefined) {
-		ip.ip = session.message.text.substring(10).replace(" ", "");
+	if (session.message.text.replace("/mcserver", "").replace(" ", "").split(":")[1] === undefined) {
+		ip.ip = session.message.text.replace("/mcserver", "").replace(" ", "");
 	}
 	else {
-		ip.ip = session.message.text.substring(10).split(":")[0].replace(" ", "");
-		ip.port = session.message.text.substring(10).split(":")[1];
+		ip.ip = session.message.text.replace("/mcserver", "").replace(" ", "").split(":")[0];
+		ip.port = session.message.text.replace("/mcserver", "").replace(" ", "").split(":")[1];
 	}
 	request.post('https://mcapi.de/api/server/', {json: ip}, function(error, response, body) {
 		if (!error) {
@@ -1420,6 +1428,10 @@ bot.dialog('/paste1',[
     }
 ]);
 bot.dialog('/paste2', function (session) {
+	if (session.message.text.replace("/mcserver", "").replace(" ", "") === "") {
+		session.send("Nothing to paste! /paste (Stuff)");
+		return;
+	}
 	request.post('https://pastebin.com/api/api_post.php', {form: {api_dev_key: process.env.pastebin, api_option: "paste", api_paste_code: session.message.text.substring(7).replace(" ", "")}}, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			session.send("Done! "+body);
@@ -1713,7 +1725,7 @@ bot.dialog('/9gag2', function (session) {
 			}
 		});
 	}
-	else if (args[0] === "search") {
+	else if (args[0] === "search" && args[1] !== undefined) {
 		gag.find(args[1], function(err, res) {
 			console.log(res);
 			if (err) {
