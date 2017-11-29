@@ -244,7 +244,7 @@ bot.on('contactRelationUpdate', function (message) {
 });
 
 // Menus
-bot.beginDialogAction("menu", "/menu", { matches: /^start/gi});
+bot.beginDialogAction("menu", "/menu", { matches: /(\/|Metagon |)start/gi});
 bot.dialog('/menu', [
 	function (session) {
 		if (session.message.text === "/start" && session.message.source === "directline") {
@@ -442,7 +442,7 @@ bot.dialog('/feedback', [
 ]);
 
 // Image
-bot.beginDialogAction("cat", "/cat", { matches: /^( \/|\/)cat/g});
+bot.beginDialogAction("cat", "/cat", { matches: /^( \/|\/|Metagon \/)cat/g});
 bot.dialog('/cat', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
 	request('http://random.cat/meow', function(error, response, body) {
@@ -475,7 +475,7 @@ bot.dialog('/cat', function (session) {
 	});
 });
 
-bot.beginDialogAction("snake", "/snake", { matches: /^( \/|\/)snake/g});
+bot.beginDialogAction("snake", "/snake", { matches: /^( \/|\/|Metagon \/)snake/g});
 bot.dialog('/snake', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
 	request('http://fur.im/snek/snek.php', function(error, response, body) {
@@ -508,7 +508,7 @@ bot.dialog('/snake', function (session) {
 	});
 });
 
-bot.beginDialogAction("bunny", "/bunny", { matches: /^( \/|\/)bunny/g});
+bot.beginDialogAction("bunny", "/bunny", { matches: /^( \/|\/|Metagon \/)bunny/g});
 bot.dialog('/bunny', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
 	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', function(error, response, body) {
@@ -564,7 +564,7 @@ bot.dialog('/bunny', function (session) {
 	});
 });
 
-bot.beginDialogAction("imgur", "/imgur2", { matches: /^( \/|\/)imgur/g});
+bot.beginDialogAction("imgur", "/imgur2", { matches: /^( \/|\/|Metagon \/)imgur/g});
 bot.dialog('/imgur1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -628,7 +628,7 @@ bot.dialog('/imgur2', function (session) {
 	}
 });
 
-bot.beginDialogAction("flickr", "/flickr2", { matches: /^( \/|\/)flickr/g});
+bot.beginDialogAction("flickr", "/flickr2", { matches: /^( \/|\/|Metagon \/)flickr/g});
 bot.dialog('/flickr1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -724,7 +724,7 @@ bot.dialog('/flickr2', function (session) {
 	}
 });
 
-bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/)ibsearch/g});
+bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/|Metagon \/)ibsearch/g});
 bot.dialog('/ibsearch1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -860,7 +860,7 @@ bot.dialog('/ibsearch2',[
     }
 ]);
 
-bot.beginDialogAction("pixiv", "/pixiv2", { matches: /^( \/|\/)pixiv/g});
+bot.beginDialogAction("pixiv", "/pixiv2", { matches: /^( \/|\/|Metagon \/)pixiv/g});
 bot.dialog('/pixiv1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -1055,7 +1055,7 @@ bot.dialog('/pixiv2',[
 ]);
 
 // Utility
-bot.beginDialogAction("shorten", "/shorten2", { matches: /^( \/|\/)shorten/g});
+bot.beginDialogAction("shorten", "/shorten2", { matches: /^( \/|\/|Metagon \/)shorten/g});
 bot.dialog('/shorten1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -1131,7 +1131,7 @@ bot.dialog('/shorten2', function (session) {
 	});
 });
 
-bot.beginDialogAction("expand", "/expand2", { matches: /^( \/|\/)expand/g});
+bot.beginDialogAction("expand", "/expand2", { matches: /^( \/|\/|Metagon \/)expand/g});
 bot.dialog('/expand1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -1207,7 +1207,7 @@ bot.dialog('/expand2', function (session){
 	});
 });
 
-bot.beginDialogAction("mcuser", "/mcuser2", { matches: /^( \/|\/)mcuser/g});
+bot.beginDialogAction("mcuser", "/mcuser2", { matches: /^( \/|\/|Metagon \/)mcuser/g});
 bot.dialog('/mcuser1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -1298,7 +1298,7 @@ bot.dialog('/mcuser2', function (session) {
 	});
 });
 
-bot.beginDialogAction("mcserver", "/mcserver2", { matches: /^( \/|\/)mcserver/g});
+bot.beginDialogAction("mcserver", "/mcserver2", { matches: /^( \/|\/|Metagon \/)mcserver/g});
 bot.dialog('/mcserver1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -1392,7 +1392,7 @@ bot.dialog('/mcserver2', function (session) {
 	});
 });
 
-bot.beginDialogAction("paste", "/paste2", { matches: /^( \/|\/)paste/g});
+bot.beginDialogAction("paste", "/paste2", { matches: /^( \/|\/|Metagon \/)paste/g});
 bot.dialog('/paste1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -1444,7 +1444,7 @@ bot.dialog('/paste2', function (session) {
 	});
 });
 
-bot.beginDialogAction("weather", "/weather2", { matches: /^( \/|\/)weather/g});
+bot.beginDialogAction("weather", "/weather2", { matches: /^( \/|\/|Metagon \/)weather/g});
 bot.dialog('/weather1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -1495,7 +1495,7 @@ bot.dialog('/weather2', function (session) {
 });
 
 // Fun
-bot.beginDialogAction("ud", "/ud2", { matches: /^( \/|\/)ud/g});
+bot.beginDialogAction("ud", "/ud2", { matches: /^( \/|\/|Metagon \/)ud/g});
 bot.dialog('/ud1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -1550,7 +1550,7 @@ bot.dialog('/ud2', function (session) {
 	});
 });
 
-bot.beginDialogAction("joke", "/joke", { matches: /^( \/|\/)joke/g});
+bot.beginDialogAction("joke", "/joke", { matches: /^( \/|\/|Metagon \/)joke/g});
 bot.dialog('/joke', function (session) {
 	if (session.message.source === "kik") {
 		request('http://api.icndb.com/jokes/random?escape=javascript?exclude=[explicit]', function(error, response, body) {
@@ -1586,7 +1586,7 @@ bot.dialog('/joke', function (session) {
 	}
 });
 
-bot.beginDialogAction("yoda", "/yoda", { matches: /^( \/|\/)yoda/g});
+bot.beginDialogAction("yoda", "/yoda", { matches: /^( \/|\/|Metagon \/)yoda/g});
 bot.dialog('/yoda', function (session) {
 		if (session.message.text === "/yoda") {
 			session.send(yoda_said[Math.floor(Math.random() * yoda_said.length)]);
@@ -1597,7 +1597,7 @@ bot.dialog('/yoda', function (session) {
 		}
 });
 
-bot.beginDialogAction("design", "/design", { matches: /^( \/|\/)design/g});
+bot.beginDialogAction("design", "/design", { matches: /^( \/|\/|Metagon \/)design/g});
 bot.dialog('/design', function (session) {
 	request('http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1', function(error, response, body) {
 		if (!error && response.statusCode === 200 && session.message.text === "/design") {
@@ -1615,7 +1615,7 @@ bot.dialog('/design', function (session) {
 	});
 });
 
-bot.beginDialogAction("9gag", "/9gag2", { matches: /^( \/|\/)9gag/g});
+bot.beginDialogAction("9gag", "/9gag2", { matches: /^( \/|\/|Metagon \/)9gag/g});
 bot.dialog('/9gag1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
