@@ -9,9 +9,7 @@ Metagon does a lot. From bringing you the nicest pictures, to providing you the 
 
 and more coming up!
 
-[![Uptime Robot status](https://img.shields.io/uptimerobot/status/m779086466-6bca943c1fe4a5b743ed0a9a.svg?style=for-the-badge)](https://0131.statuspage.io) [![GitHub issues](https://img.shields.io/github/issues/austinhuang0131/metagon.svg?style=for-the-badge)](https://github.com/austinhuang0131/metagon/issues) [![Codacy grade](https://img.shields.io/codacy/grade/d481eda7342f4258a99cf30122acbc90.svg?style=for-the-badge)](https://www.codacy.com/app/austinhuang0131/metagon-telegram) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](http://makeapullrequest.com) [![license](https://img.shields.io/github/license/austinhuang0131/metagon.svg?style=for-the-badge)]()
-
-[![Open Source Love](https://badges.frapsoft.com/os/v3/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+[![Uptime Robot status](https://img.shields.io/uptimerobot/status/m779086466-6bca943c1fe4a5b743ed0a9a.svg)](https://0131.statuspage.io) [![GitHub issues](https://img.shields.io/github/issues/austinhuang0131/metagon.svg)](https://github.com/austinhuang0131/metagon/issues) [![Codacy grade](https://img.shields.io/codacy/grade/d481eda7342f4258a99cf30122acbc90.svg)](https://www.codacy.com/app/austinhuang0131/metagon-telegram) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com) [![license](https://img.shields.io/github/license/austinhuang0131/metagon.svg)]() [![Open Source Love](https://badges.frapsoft.com/os/v3/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
 [![forthebadge](https://forthebadge.com/images/badges/contains-cat-gifs.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/uses-badges.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/uses-js.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)
 
