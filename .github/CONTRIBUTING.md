@@ -6,6 +6,7 @@
 * Without the template
 
 ## Pull Request
+* **Working on your first Pull Request?** You can learn how from this *free* series [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github). (This is just an AD)
 * **Please [test it](https://docs.microsoft.com/en-us/bot-framework/debug-bots-emulator) before you request.**
 
 Thank you for contributing.
