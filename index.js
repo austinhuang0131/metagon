@@ -262,7 +262,12 @@ bot.dialog('/menu', [
 			session.send();
 		}
 	}, function (session, results) {
-		if (results.response.entity.endsWith("Images")) {
+		switch (results.response.entity) {
+			case "Images":
+				session.replaceDialog("/image");
+			break;
+		}
+		/*if (results.response.entity.endsWith("Images")) {
 			session.replaceDialog("/image");
 		}
 		else if (results.response.entity.endsWith("Utility")) {
@@ -279,7 +284,7 @@ bot.dialog('/menu', [
 		}
 		else if (results.response.entity.endsWith("Feedback")) {
 			session.replaceDialog("/feedback");
-		}
+		}*/
 	}
 ]);
 bot.dialog('/image', [
