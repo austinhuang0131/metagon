@@ -286,40 +286,44 @@ bot.dialog('/menu', [
 ]);
 bot.dialog('/image', [
 	function (session) {
-		if (session.message.source === "kik") {
-			builder.Prompts.choice(session, "What would you like to do right now?", "Cat|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
-		}
-		else {
-			builder.Prompts.choice(session, "What would you like to do right now?", "Imgur (General)|Flickr (Photo)|IbSearch (Anime)|Pixiv (Anime)|Cat|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
+		switch (session.message.source === "kik") {
+			case true:
+				builder.Prompts.choice(session, "What would you like to do right now?", "Cat|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
+			break;
+			case false:
+				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|IbSearch (Anime)|Pixiv (Anime)|Cat|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
+			break;
 		}
 	},
 	function (session, results) {
-		if (results.response.entity.endsWith("Cat")) {
-			session.replaceDialog("/cat");
-		}
-		else if (results.response.entity.endsWith("Snake")) {
-			session.replaceDialog("/snake");
-		}
-		else if (results.response.entity.endsWith("Bunny")) {
-			session.replaceDialog("/bunny");
-		}
-		else if (results.response.entity.startsWith("Imgur") || results.response.entity.toLowerCase().startsWith("@metagon imgur")) {
-			session.replaceDialog("/imgur1");
-		}
-		else if (results.response.entity.startsWith("Flickr") || results.response.entity.toLowerCase().startsWith("@metagon flickr")) {
-			session.replaceDialog("/flickr1");
-		}
-		else if (results.response.entity.startsWith("IbSearch") || results.response.entity.toLowerCase().startsWith("@metagon ibsearch")) {
-			session.replaceDialog("/ibsearch1");
-		}
-		else if (results.response.entity.startsWith("Pixiv") || results.response.entity.toLowerCase().startsWith("@metagon pixiv")) {
-			session.replaceDialog("/pixiv1");
-		}
-		else if (results.response.entity.endsWith("Quit")) {
-			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
-		}
-		else if (results.response.entity.endsWith("Back to Start Menu")) {
-			session.beginDialog("/menu");
+		switch (results.response.entity) {
+			case "Cat":
+				session.replaceDialog("/cat");
+			break;
+			case "Snake":
+				session.replaceDialog("/snake");
+			break;
+			case "Bunny":
+				session.replaceDialog("/bunny");
+			break;
+			case "Imgur":
+				session.replaceDialog("/imgur1");
+			break;
+			case "Flickr":
+				session.replaceDialog("/flickr1");
+			break;
+			case "IbSearch (Anime)":
+				session.replaceDialog("/ibsearch1");
+			break;
+			case "Pixiv (Anime)":
+				session.replaceDialog("/pixiv1");
+			break;
+			case "Back to Start Menu":
+				session.beginDialog("/menu");
+			break;
+			case "Quit":
+				session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
+			break;
 		}
 	}
 ]);
@@ -328,29 +332,31 @@ bot.dialog('/utility', [
 		builder.Prompts.choice(session, "What would you like to do right now?", "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
 	}, 
 	function (session, results) {
-		if (results.response.entity.endsWith("Weather")) {
-			session.replaceDialog("/weather1");
-		}
-		else if (results.response.entity.endsWith("Shorten URLs")) {
-			session.replaceDialog("/shorten1");
-		}
-		else if (results.response.entity.endsWith("Expand Bitly URLs")) {
-			session.replaceDialog("/expand1");
-		}
-		else if (results.response.entity.endsWith("Minecraft User Lookup")) {
-			session.replaceDialog("/mcuser1");
-		}
-		else if (results.response.entity.endsWith("Minecraft Server Status")) {
-			session.replaceDialog("/mcserver1");
-		}
-		else if (results.response.entity.startsWith("Pastebin") || results.response.entity.toLowerCase().startsWith("@metagon pastebin")) {
-			session.replaceDialog("/paste1");
-		}
-		else if (results.response.entity.endsWith("Quit")) {
-			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
-		}
-		else if (results.response.entity.endsWith("Back to Start Menu")) {
-			session.beginDialog("/menu");
+		switch (results.response.entity) {
+			case "Weather":
+				session.replaceDialog("/weather1");
+			break;
+			case "Shorten URLs":
+				session.replaceDialog("/shorten1");
+			break;
+			case "Expand Bitly URLs":
+				session.replaceDialog("/expand1");
+			break;
+			case "Minecraft User Lookup":
+				session.replaceDialog("/mcuser1");
+			break;
+			case "Minecraft Server Status":
+				session.replaceDialog("/mcserver1");
+			break;
+			case "Pastebin":
+				session.replaceDialog("/paste1");
+			break;
+			case "Back to Start Menu":
+				session.beginDialog("/menu");
+			break;
+			case "Quit":
+				session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
+			break;
 		}
 	}
 ]);
@@ -359,26 +365,28 @@ bot.dialog('/fun', [
 		builder.Prompts.choice(session, "What would you like to do right now?", "9gag|Urban Dictionary|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit", { listStyle: 3 });
 	},
 	function (session, results) {
-		if (results.response.entity.endsWith("Yoda Quote")) {
-			session.replaceDialog("/yoda");
-		}
-		else if (results.response.entity.endsWith("Norris")) {
-			session.replaceDialog("/joke");
-		}
-		else if (results.response.entity.endsWith("Design")) {
-			session.replaceDialog("/design");
-		}
-		else if (results.response.entity.endsWith("9gag")) {
-			session.replaceDialog("/9gag1");
-		}
-		else if (results.response.entity.endsWith("Urban Dictionary")) {
-			session.replaceDialog("/ud1");
-		}
-		else if (results.response.entity.endsWith("Quit")) {
-			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
-		}
-		else if (results.response.entity.endsWith("Back to Start Menu")) {
-			session.beginDialog("/menu");
+		switch (results.response.entity) {
+			case "9gag":
+				session.replaceDialog("/9gag1");
+			break;
+			case "Urban Dictionary":
+				session.replaceDialog("/ud1");
+			break;
+			case "Chuck Norris":
+				session.replaceDialog("/joke");
+			break;
+			case "Yoda Quote":
+				session.replaceDialog("/yoda");
+			break;
+			case "Quote on Design":
+				session.replaceDialog("/design");
+			break;
+			case "Back to Start Menu":
+				session.beginDialog("/menu");
+			break;
+			case "Quit":
+				session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
+			break;
 		}
 	}
 ]);
@@ -1755,7 +1763,6 @@ bot.dialog('/unstuck', function (session) {
 	session.endConversation("Your session data should be cleared. You can now safely re`start` the bot. That means:\n* If you typed something wrong in the last step and I started to hate you, your sin has been forgiven.\n* If you found a bug but can't get out after I was fixed, sorry for the inconvenience.");
 	session.clearDialogStack();
 });
-
 bot.dialog('/', function (session) {
 	if (session.message.source !== "directline" && session.message.source !== "slack") {
 		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
