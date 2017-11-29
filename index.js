@@ -262,23 +262,25 @@ bot.dialog('/menu', [
 			session.send();
 		}
 	}, function (session, results) {
-		if (results.response.entity.endsWith("Images")) {
-			session.replaceDialog("/image");
-		}
-		else if (results.response.entity.endsWith("Utility")) {
-			session.replaceDialog("/utility");
-		}
-		else if (results.response.entity.endsWith("Fun")) {
-			session.replaceDialog("/fun");
-		}
-		else if (results.response.entity.endsWith("Quit")) {
-			session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
-		}
-		else if (results.response.entity.endsWith("About")) {
-			session.replaceDialog("/about");
-		}
-		else if (results.response.entity.endsWith("Feedback")) {
-			session.replaceDialog("/feedback");
+		switch (results.response.entity) {
+			case "Images":
+				session.replaceDialog("/image");
+			break;
+			case "Utility":
+				session.replaceDialog("/utility");
+			break;
+			case "Fun":
+				session.replaceDialog("/fun");
+			break;
+			case "About":
+				session.replaceDialog("/about");
+			break;
+			case "Feedback":
+				session.replaceDialog("/feedback");
+			break;
+			case "Quit":
+				session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
+			break;
 		}
 	}
 ]);
