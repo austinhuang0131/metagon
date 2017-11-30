@@ -453,8 +453,9 @@ bot.dialog('/feedback', [
 bot.beginDialogAction("cat", "/cat", { matches: /^( \/|\/|Metagon \/)cat/g});
 bot.dialog('/cat', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
-	request('http://random.cat/meow', {json: true}, function(error, response, body) {
+	request('http://random.cat/meow', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
+			body = JSON.parse(body);
 			session.send({
 				attachments: [
 					{
@@ -479,8 +480,9 @@ bot.dialog('/cat', function (session) {
 bot.beginDialogAction("snake", "/snake", { matches: /^( \/|\/|Metagon \/)snake/g});
 bot.dialog('/snake', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
-	request('http://fur.im/snek/snek.php', {json: true}, function(error, response, body) {
+	request('http://fur.im/snek/snek.php', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
+			body = JSON.parse(body);
 			session.send({
   				attachments: [
   					{
@@ -507,6 +509,7 @@ bot.dialog('/bunny', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
 	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', {json: true}, function(error, response, body) {
 		if (!error && response.statusCode === 200 && session.message.source.includes("skype")) {
+			body = JSON.parse(body);
 			session.send({
   				attachments: [
   					{
@@ -523,6 +526,7 @@ bot.dialog('/bunny', function (session) {
 			}
   		}
 		else if (!error && response.statusCode === 200) {
+			body = JSON.parse(body);
 			session.send({
 				attachments: [
 					{
