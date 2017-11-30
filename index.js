@@ -453,9 +453,8 @@ bot.dialog('/feedback', [
 bot.beginDialogAction("cat", "/cat", { matches: /^( \/|\/|Metagon \/)cat/g});
 bot.dialog('/cat', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
-	request('http://random.cat/meow', function(error, response, body) {
-		if (!error && response.statusCode === 200 && session.message.text === "/cat") {
-			body = JSON.parse(body);
+	request('http://random.cat/meow', {json: true}, function(error, response, body) {
+		if (!error && response.statusCode === 200) {
 			session.send({
 				attachments: [
 					{
@@ -464,18 +463,12 @@ bot.dialog('/cat', function (session) {
 					}
 				]
 			});
-		}
-		else if (!error && response.statusCode === 200) {
-			body = JSON.parse(body);
-			session.endDialog({
-				attachments: [
-					{
-						contentType: "image/*",
-						contentUrl: body.file
-					}
-				]
-			});
-			session.replaceDialog("/image");
+			if (!session.message.text.includes("/cat")) {
+				session.replaceDialog("/image");
+			}
+			else {
+				session.endDialog();
+			}
 		}
 		else {
 			session.endDialog("ERROR! I could not connect to http://random.cat/meow. Please retry. If the problem persists, leave an issue at http://metagon.cf");
@@ -486,9 +479,8 @@ bot.dialog('/cat', function (session) {
 bot.beginDialogAction("snake", "/snake", { matches: /^( \/|\/|Metagon \/)snake/g});
 bot.dialog('/snake', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
-	request('http://fur.im/snek/snek.php', function(error, response, body) {
-		if (!error && response.statusCode === 200 && session.message.text === "/snake") {
-			body = JSON.parse(body);
+	request('http://fur.im/snek/snek.php', {json: true}, function(error, response, body) {
+		if (!error && response.statusCode === 200) {
 			session.send({
   				attachments: [
   					{
@@ -497,18 +489,12 @@ bot.dialog('/snake', function (session) {
  					}
   				]
   			});
-  		}
-		else if (!error && response.statusCode === 200) {
-			body = JSON.parse(body);
-			session.endDialog({
-  				attachments: [
-  					{
- 						contentType: "image/*",
-						contentUrl: body.file
- 					}
-  				]
-  			});
-			session.replaceDialog("/image");
+			if (!session.message.text.includes("/snake")) {
+				session.replaceDialog("/image");
+			}
+			else {
+				session.endDialog();
+			}
   		}
 		else {
 			session.endDialog("ERROR! I could not connect to http://fur.im/snek/snek.php. Please retry. If the problem persists, leave an issue at http://metagon.cf");
@@ -519,9 +505,8 @@ bot.dialog('/snake', function (session) {
 bot.beginDialogAction("bunny", "/bunny", { matches: /^( \/|\/|Metagon \/)bunny/g});
 bot.dialog('/bunny', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
-	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', function(error, response, body) {
-		if (!error && response.statusCode === 200 && session.message.text === "/bunny" && session.message.source.includes("skype")) {
-			body = JSON.parse(body);
+	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', {json: true}, function(error, response, body) {
+		if (!error && response.statusCode === 200 && session.message.source.includes("skype")) {
 			session.send({
   				attachments: [
   					{
@@ -530,9 +515,14 @@ bot.dialog('/bunny', function (session) {
  					}
   				]
   			});
+			if (!session.message.text.includes("/cat")) {
+				session.replaceDialog("/image");
+			}
+			else {
+				session.endDialog();
+			}
   		}
-		else if (!error && response.statusCode === 200 && session.message.text === "/bunny") {
-			body = JSON.parse(body);
+		else if (!error && response.statusCode === 200) {
 			session.send({
 				attachments: [
 					{
@@ -541,30 +531,12 @@ bot.dialog('/bunny', function (session) {
 					}
 				]
 			});
-		}
-		else if (!error && response.statusCode === 200 && session.message.source.includes("skype")) {
-			body = JSON.parse(body);
-			session.endDialog({
-  				attachments: [
-  					{
-  						contentType: "video/mp4",
- 						contentUrl: body.media.mp4
- 					}
-  				]
-  			});
-			session.replaceDialog("/image");
-  		}
-		else if (!error && response.statusCode === 200) {
-			body = JSON.parse(body);
-			session.endDialog({
-  				attachments: [
-  					{
-  						contentType: "image/gif",
- 						contentUrl: body.media.gif
- 					}
-  				]
-  			});
-			session.replaceDialog("/image");
+			if (!session.message.text.includes("/bunny")) {
+				session.replaceDialog("/image");
+			}
+			else {
+				session.endDialog();
+			}
   		}
 		else {
 			session.send("ERROR! I could not connect to https://api.bunnies.io/v2/loop/random/?media=gif,mp4 . Please retry. If the problem persists, leave an issue at http://metagon.cf");
@@ -576,7 +548,7 @@ bot.beginDialogAction("imgur", "/imgur2", { matches: /^( \/|\/|Metagon \/)imgur/
 bot.dialog('/imgur1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\" after typing \"Quit\".\n`/imgur (Query)`");
+			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\" after typing \"Quit\".\n`/imgur (Query)`");
 			session.replaceDialog("/image");
 			return;
 		}
@@ -598,16 +570,16 @@ bot.dialog('/imgur1',[
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
 					if (body.data === []) {
-						session.endDialog("No results. Change your query?");
+						session.send("No results. Change your query?");
 						session.replaceDialog("/image");
 					}
 					else {
-						session.endDialog(body.data[Math.floor(Math.random() * body.data.length)].link);
+						session.send(body.data[Math.floor(Math.random() * body.data.length)].link);
 						session.replaceDialog("/image");
 					}
 				}
 				else {
-					session.endDialog("Failed to connect to http://imgur.com");
+					session.send("Failed to connect to http://imgur.com");
 					session.replaceDialog("/image");
 				}
 			});
@@ -640,12 +612,12 @@ bot.beginDialogAction("flickr", "/flickr2", { matches: /^( \/|\/|Metagon \/)flic
 bot.dialog('/flickr1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/flickr (Query)`");
+			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/flickr (Query)`");
 			session.replaceDialog("/image");
 			return;
 		}
 		if (session.message.source === "kik") {
-			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
 			session.replaceDialog("/image");
 			return;
 		}
@@ -670,7 +642,7 @@ bot.dialog('/flickr1',[
 					request("https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key="+process.env.flickr+"&photo_id="+photo.id+"&format=json&nojsoncallback=1", function(error, response, body) {
 						if (!error && response.statusCode === 200) {
 							body = JSON.parse(body);
-							session.endDialog({
+							session.send({
 								text: photo.title,
 								attachments: [
 									{
@@ -682,13 +654,13 @@ bot.dialog('/flickr1',[
 							session.replaceDialog("/image");
 					}
 						else {
-							session.endDialog("Failed to connect to http://flickr.com");
+							session.send("Failed to connect to http://flickr.com");
 							session.replaceDialog("/image");
 						}
 					});
 				}
 				else {
-					session.endDialog("Failed to connect to http://flickr.com");
+					session.send("Failed to connect to http://flickr.com");
 					session.replaceDialog("/image");
 				}
 			});
@@ -736,12 +708,12 @@ bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/|Metagon \/)
 bot.dialog('/ibsearch1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/ibsearch (Query)`");
+			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/ibsearch (Query)`");
 			session.replaceDialog("/image");
 			return;
 		}
 		if (session.message.source === "kik") {
-			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
 			session.replaceDialog("/image");
 			return;
 		}
@@ -781,7 +753,7 @@ bot.dialog('/ibsearch1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Image Menu")) {
-			session.endDialog();
+			
 			session.replaceDialog("/image");
 			return;
 		}
@@ -801,7 +773,7 @@ bot.dialog('/ibsearch1',[
 					session.replaceDialog("/image");
 				}
 				else {
-					session.endDialog("No result. Change your query?");
+					session.send("No result. Change your query?");
 					session.replaceDialog("/image");
 				}
 			}
@@ -872,12 +844,12 @@ bot.beginDialogAction("pixiv", "/pixiv2", { matches: /^( \/|\/|Metagon \/)pixiv/
 bot.dialog('/pixiv1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/pixiv (Query)`");
+			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/pixiv (Query)`");
 			session.replaceDialog("/image");
 			return;
 		}
 		if (session.message.source === "kik") {
-			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
 			session.replaceDialog("/image");
 			return;
 		}
@@ -916,7 +888,7 @@ bot.dialog('/pixiv1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Image Menu")) {
-			session.endDialog();
+			
 			session.replaceDialog("/image");
 			return;
 		}
@@ -924,7 +896,7 @@ bot.dialog('/pixiv1',[
 		pixiv.search(results.response+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
 			var illust = json.response[Math.floor(Math.random() * json.response.length)];
 			if (illust === undefined) {
-				session.endDialog("No results.");
+				session.send("No results.");
 				session.replaceDialog("/image");
 			}
 			else {
@@ -1067,7 +1039,7 @@ bot.beginDialogAction("shorten", "/shorten2", { matches: /^( \/|\/|Metagon \/)sh
 bot.dialog('/shorten1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/shorten (Url)`");
+			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/shorten (Url)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1085,7 +1057,7 @@ bot.dialog('/shorten1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Utility Menu")) {
-			session.endDialog();
+			
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1143,7 +1115,7 @@ bot.beginDialogAction("expand", "/expand2", { matches: /^( \/|\/|Metagon \/)expa
 bot.dialog('/expand1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/expand (Url)`");
+			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/expand (Url)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1161,7 +1133,7 @@ bot.dialog('/expand1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Utility Menu")) {
-			session.endDialog();
+			
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1219,7 +1191,7 @@ bot.beginDialogAction("mcuser", "/mcuser2", { matches: /^( \/|\/|Metagon \/)mcus
 bot.dialog('/mcuser1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/mcuser (Username/UUID)`");
+			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/mcuser (Username/UUID)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1236,7 +1208,7 @@ bot.dialog('/mcuser1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Utility Menu")) {
-			session.endDialog();
+			
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1252,7 +1224,7 @@ bot.dialog('/mcuser1',[
 							session.replaceDialog("/utility");
 						}
 						else {
-							session.endDialog();
+							
 							session.replaceDialog("/utility");
 						}
 					});
@@ -1310,7 +1282,7 @@ bot.beginDialogAction("mcserver", "/mcserver2", { matches: /^( \/|\/|Metagon \/)
 bot.dialog('/mcserver1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/mcserver (Address)`");
+			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/mcserver (Address)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1327,7 +1299,7 @@ bot.dialog('/mcserver1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Utility Menu")) {
-			session.endDialog();
+			
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1404,7 +1376,7 @@ bot.beginDialogAction("paste", "/paste2", { matches: /^( \/|\/|Metagon \/)paste/
 bot.dialog('/paste1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/paste (content)`");
+			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/paste (content)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1421,7 +1393,7 @@ bot.dialog('/paste1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Utility Menu")) {
-			session.endDialog();
+			
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1456,7 +1428,7 @@ bot.beginDialogAction("weather", "/weather2", { matches: /^( \/|\/|Metagon \/)we
 bot.dialog('/weather1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/paste (content)`");
+			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/paste (content)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1473,7 +1445,7 @@ bot.dialog('/weather1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Utility Menu")) {
-			session.endDialog();
+			
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1507,7 +1479,7 @@ bot.beginDialogAction("ud", "/ud2", { matches: /^( \/|\/|Metagon \/)ud/g});
 bot.dialog('/ud1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/paste (content)`");
+			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/paste (content)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1524,7 +1496,7 @@ bot.dialog('/ud1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Fun Menu")) {
-			session.endDialog();
+			
 			session.replaceDialog("/fun");
 			return;
 		}
@@ -1534,7 +1506,7 @@ bot.dialog('/ud1',[
 				session.replaceDialog("/fun");
 			}
 			else if (!error && response.statusCode === 200) {
-				session.endDialog("No results!");
+				session.send("No results!");
 				session.replaceDialog("/fun");
 			}
 			else {
@@ -1550,7 +1522,7 @@ bot.dialog('/ud2', function (session) {
 			session.endDialog("Top UD result for "+session.message.text.replace("/ud", "").replace(" ", "")+"\n\n== Definition ==\n\n"+body.list[0].definition+"\n\n == Example ==\n\n"+body.list[0].example+"\n\n* "+body.list[0].thumbs_up+"\uD83D\uDC4D / "+body.list[0].thumbs_down+"\uD83D\uDC4E");
 		}
 		else if (!error && response.statusCode === 200) {
-			session.endDialog("No results!");
+			session.send("No results!");
 		}
 		else {
 			session.endDialog("An error occurred.");
@@ -1627,7 +1599,7 @@ bot.beginDialogAction("9gag", "/9gag2", { matches: /^( \/|\/|Metagon \/)9gag/g})
 bot.dialog('/9gag1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.endDialog("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/9gag (Section) (Hot/Fresh)` or `/9gag search (Query)`");
+			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/9gag (Section) (Hot/Fresh)` or `/9gag search (Query)`");
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1635,11 +1607,11 @@ bot.dialog('/9gag1',[
 	},
 	function (session, results) {
 		if (results.response.entity.endsWith("Back to Fun Menu")) {
-			session.endDialog();
+			
 			session.replaceDialog("/fun");
 		}
 		else if (results.response.entity.endsWith("nsfw") && session.message.source === "kik") {
-			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
 			session.replaceDialog("/fun");
 			return;
 		}
@@ -1670,7 +1642,7 @@ bot.dialog('/9gag1',[
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 				else if (res.result[Math.floor(Math.random() * res.result.length)] === undefined) {
-					session.endDialog("No results. Retry?");
+					session.send("No results. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
@@ -1710,7 +1682,7 @@ bot.dialog('/9gag1',[
 			});
 		}
 		else if (results.response.endsWith("Back to Fun Menu")) {
-			session.endDialog();
+			
 			session.replaceDialog("/fun");
 			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 		}
