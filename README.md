@@ -53,9 +53,8 @@ Also visit [my developer's site](http://austinhuang.me)! *Let me also tell you a
 # Rate me
 Thanks!
 
-* [BotList.co](https://botlist.co/bots/metagon)
+* [<img src="http://groot.botlist.co/images/BotList-badge-white.svg" alt="BotList.co" width="135">](https://botlist.co/bots/metagon)
 * ChatBottle.co ([Kik](https://chatbottle.co/bots/metagon-for-kik), [Skype](https://chatbottle.co/bots/metagon-for-skype), [Slack](https://chatbottle.co/bots/metagon-for-slack), [Telegram](https://chatbottle.co/bots/metagon-for-telegram))
-* [Inten.to](https://inten.to/telegram/bot-metagon_bot-metagon) (Telegram)
 * [Product Hunt](https://www.producthunt.com/posts/metagon)
 * [StoreBot.me](https://storebot.me/bot/metagon_bot) (Telegram)
 * [ThereIsABotForThat.com](https://thereisabotforthat.com/bots/metagon)
