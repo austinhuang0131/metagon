@@ -43,12 +43,7 @@ In most situations you can just use the startup menu. However, if you're on Disc
 
 # Contact Us
 * [GitHub](http://github.com/austinhuang0131/metagon) (Suggested)
-* [Email](mailto:austinhuang0131@gmail.com)
-* [Kik](http://kik.me/austinhuang0131) 
-* [Telegram](http://t.me/austinhuang)
-* Skype `live:austin.0131`
-
-Also visit [my developer's site](http://austinhuang.me)! *Let me also tell you a secret: He's only 15.*
+* [Other methods](https://austinhuang.me/contact)
 
 # Rate me
 Thanks!
@@ -61,6 +56,4 @@ Thanks!
 
 
 # Donate
-More thanks! Click [here](http://austinhuang.me/donate) or use the widget below.
-
-<script src="https://liberapay.com/~18025/widgets/receiving.js"></script> (Euros only)
+More thanks! Click [here](http://austinhuang.me/donate).
