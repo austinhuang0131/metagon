@@ -507,7 +507,7 @@ bot.dialog('/snake', function (session) {
 bot.beginDialogAction("bunny", "/bunny", { matches: /^( \/|\/|Metagon \/)bunny/g});
 bot.dialog('/bunny', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
-	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', {json: true}, function(error, response, body) {
+	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', function(error, response, body) {
 		if (!error && response.statusCode === 200 && session.message.source.includes("skype")) {
 			body = JSON.parse(body);
 			session.send({
@@ -1079,11 +1079,11 @@ bot.dialog('/shorten1',[
 		}
 		request("https://api-ssl.bitly.com/v3/shorten?access_token="+process.env.bitly_token+"&longUrl="+site+"&format=txt", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
-				session.endDialog("Done! "+body);
+				session.send("Done! "+body);
 				session.replaceDialog("/utility");
 			}
 			else {
-				session.endDialog("An error occured. Invalid address, or retry?");
+				session.send("An error occured. Invalid address, or retry?");
 				session.replaceDialog("/utility");
 			}
 		});
@@ -1155,11 +1155,11 @@ bot.dialog('/expand1',[
 		}
 		request("https://api-ssl.bitly.com/v3/expand?access_token="+process.env.bitly_token+"&shortUrl="+site+"&format=txt", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
-				session.endDialog("Done! "+body);
+				session.send("Done! "+body);
 				session.replaceDialog("/utility");
 			}
 			else {
-				session.endDialog("An error occured. Invalid address, or retry?");
+				session.send("An error occured. Invalid address, or retry?");
 				session.replaceDialog("/utility");
 			}
 		});
@@ -1212,7 +1212,6 @@ bot.dialog('/mcuser1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Utility Menu")) {
-			
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1220,11 +1219,11 @@ bot.dialog('/mcuser1',[
 			if (!error) {
 				var mcapi = JSON.parse(body);
 				if (mcapi.result.status === "Ok") {
-					session.endDialog(mcapi.username+" (UUID: "+mcapi.uuid+")\n* Name history: "+mcapi.history.map(h => h.name).splice(mcapi.history.length - 1, 1).join(", ")+"\n\n== Appearance ==\n* Body: https://crafatar.com/renders/body/"+mcapi.uuid+"\n* Skin: https://crafatar.com/skins/"+mcapi.uuid+"\n* Cape: https://crafatar.com/cape/"+mcapi.uuid);
+					session.send(mcapi.username+" (UUID: "+mcapi.uuid+")\n* Name history: "+mcapi.history.map(h => h.name).splice(mcapi.history.length - 1, 1).join(", ")+"\n\n== Appearance ==\n* Body: https://crafatar.com/renders/body/"+mcapi.uuid+"\n* Skin: https://crafatar.com/skins/"+mcapi.uuid+"\n* Cape: https://crafatar.com/cape/"+mcapi.uuid);
 					request('http://mcapi.de/api/user/'+mcapi.uuid+'/reputation', function(error, response, body) {
 						var mcrep = JSON.parse(body);
 						if (!body.includes('"services":[]')) {
-							session.endDialog("Reputation: "+mcrep.reputation+"/10\n\nRecorded bans:\n\nMCBans: "+mcrep.services.mcbans[0].amount+" / Glizer: "+mcrep.services.glizer[0].amount+" / MCBouncer: "+mcrep.services.mcbouncer[0].amount);
+							session.send("Reputation: "+mcrep.reputation+"/10\n\nRecorded bans:\n\nMCBans: "+mcrep.services.mcbans[0].amount+" / Glizer: "+mcrep.services.glizer[0].amount+" / MCBouncer: "+mcrep.services.mcbouncer[0].amount);
 							session.replaceDialog("/utility");
 						}
 						else {
@@ -1234,16 +1233,16 @@ bot.dialog('/mcuser1',[
 					});
 				}
 				else if (mcapi.result.status === "The service is currently cooling down and cannot perform any requests. Please try it later again.") {
-					session.endDialog("The user should be cracked (Not registered with Mojang). Or the Mojang server broke. Who knows.");
+					session.send("The user should be cracked (Not registered with Mojang). Or the Mojang server broke. Who knows.");
 					session.replaceDialog("/utility");
 				}
 				else {
-					session.endDialog("An error occurred.");
+					session.send("An error occurred.");
 					session.replaceDialog("/utility");
 				}
 			}
 			else {
-				session.endDialog("An error occurred.");
+				session.send("An error occurred.");
 				session.replaceDialog("/utility");
 			}
 		});
@@ -1303,7 +1302,6 @@ bot.dialog('/mcserver1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Utility Menu")) {
-			
 			session.replaceDialog("/utility");
 			return;
 		}
@@ -1317,7 +1315,7 @@ bot.dialog('/mcserver1',[
 		request.post('https://mcapi.de/api/server/', {json: ip}, function(error, response, body) {
 			if (!error) {
 				if (body.result.status === "success") {
-					session.endDialog({
+					session.send({
 						text: results.response+" ("+body.hostname+")\n* Players: "+body.players.online+"/"+body.players.max+"\n* Blocked by Mojang: "+body.blocked.status+"\n* Software: "+body.software.name+", MC Version "+body.software.version+"\n* Ping: "+body.list.ping+"ms",
 						attachments: [
 							{
@@ -1329,12 +1327,12 @@ bot.dialog('/mcserver1',[
 					session.replaceDialog("/utility");
 				}
 				else {
-					session.endDialog('Your input is invalid, or the server you requested is offline, or maybe you just need a retry.\nYour input is '+results.response);
+					session.send('Your input is invalid, or the server you requested is offline, or maybe you just need a retry.\nYour input is '+results.response);
 					session.replaceDialog("/utility");
 				}
 			}
 			else {
-				session.endDialog("An error occurred.");
+				session.send("An error occurred.");
 				session.replaceDialog("/utility");
 			}
 		});
@@ -1397,17 +1395,16 @@ bot.dialog('/paste1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Utility Menu")) {
-			
 			session.replaceDialog("/utility");
 			return;
 		}
 		request.post('https://pastebin.com/api/api_post.php', {form: {api_dev_key: process.env.pastebin, api_option: "paste", api_paste_code: results.response}}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
-				session.endDialog("Done! "+body);
+				session.send("Done! "+body);
 				session.replaceDialog("/utility");
 			}
 			else {
-				session.endDialog("An error occurred.");
+				session.send("An error occurred.");
 				session.replaceDialog("/utility");
 			}
 		});
@@ -1449,18 +1446,17 @@ bot.dialog('/weather1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Utility Menu")) {
-			
 			session.replaceDialog("/utility");
 			return;
 		}
 		request('https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22'+results.response+'%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys', {json: true}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				var weather = body.query.results.channel.item;
-				session.endDialog(weather.title+"\n\n== Condition ==\n\n"+weather.condition.text+", "+weather.condition.temp+"ºF ("+f2c(weather.condition.temp)+"ºC)\n\n== Forecast ==\n\n* Today: "+weather.forecast[0].text+", "+weather.forecast[0].low+"ºF ("+f2c(weather.forecast[0].low)+"ºC) ~ "+weather.forecast[0].high+"ºF ("+f2c(weather.forecast[0].high)+"ºC)\n* Tomorrow: "+weather.forecast[1].text+", "+weather.forecast[1].low+"ºF ("+f2c(weather.forecast[1].low)+"ºC) ~ "+weather.forecast[1].high+"ºF ("+f2c(weather.forecast[1].high)+"ºC)\n* "+weather.forecast[2].day+": "+weather.forecast[2].text+", "+weather.forecast[2].low+"ºF ("+f2c(weather.forecast[2].low)+"ºC) ~ "+weather.forecast[2].high+"ºF ("+f2c(weather.forecast[2].high)+"ºC)\n== Misc ==\n\n* Sunrise: "+body.query.results.channel.astronomy.sunrise+", Sunset: "+body.query.results.channel.astronomy.sunset);
+				session.send(weather.title+"\n\n== Condition ==\n\n"+weather.condition.text+", "+weather.condition.temp+"ºF ("+f2c(weather.condition.temp)+"ºC)\n\n== Forecast ==\n\n* Today: "+weather.forecast[0].text+", "+weather.forecast[0].low+"ºF ("+f2c(weather.forecast[0].low)+"ºC) ~ "+weather.forecast[0].high+"ºF ("+f2c(weather.forecast[0].high)+"ºC)\n* Tomorrow: "+weather.forecast[1].text+", "+weather.forecast[1].low+"ºF ("+f2c(weather.forecast[1].low)+"ºC) ~ "+weather.forecast[1].high+"ºF ("+f2c(weather.forecast[1].high)+"ºC)\n* "+weather.forecast[2].day+": "+weather.forecast[2].text+", "+weather.forecast[2].low+"ºF ("+f2c(weather.forecast[2].low)+"ºC) ~ "+weather.forecast[2].high+"ºF ("+f2c(weather.forecast[2].high)+"ºC)\n== Misc ==\n\n* Sunrise: "+body.query.results.channel.astronomy.sunrise+", Sunset: "+body.query.results.channel.astronomy.sunset);
 				session.replaceDialog("/utility");
 			}
 			else {
-				session.endDialog("An error occurred.");
+				session.send("An error occurred.");
 				session.replaceDialog("/utility");
 			}
 		});
@@ -1506,7 +1502,7 @@ bot.dialog('/ud1',[
 		}
 		request('http://api.urbandictionary.com/v0/define?term='+results.response, {json: true}, function(error, response, body) {
 			if (!error && response.statusCode === 200 && body.list.length !== 0) {
-				session.endDialog("Top UD result for "+results.response+"\n\n== Definition ==\n\n"+body.list[0].definition+"\n\n == Example ==\n\n"+body.list[0].example+"\n\n* "+body.list[0].thumbs_up+"\uD83D\uDC4D / "+body.list[0].thumbs_down+"\uD83D\uDC4E");
+				session.send("Top UD result for "+results.response+"\n\n== Definition ==\n\n"+body.list[0].definition+"\n\n == Example ==\n\n"+body.list[0].example+"\n\n* "+body.list[0].thumbs_up+"\uD83D\uDC4D / "+body.list[0].thumbs_down+"\uD83D\uDC4E");
 				session.replaceDialog("/fun");
 			}
 			else if (!error && response.statusCode === 200) {
@@ -1514,7 +1510,7 @@ bot.dialog('/ud1',[
 				session.replaceDialog("/fun");
 			}
 			else {
-				session.endDialog("An error occurred.");
+				session.send("An error occurred.");
 				session.replaceDialog("/fun");
 			}
 		});
@@ -1544,7 +1540,7 @@ bot.dialog('/joke', function (session) {
 			}
 			else if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
-				session.endDialog(body.value.joke);
+				session.send(body.value.joke);
 				session.replaceDialog("/fun");
 			}
 			else {
@@ -1560,7 +1556,7 @@ bot.dialog('/joke', function (session) {
 			}
 			else if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
-				session.endDialog(body.value.joke);
+				session.send(body.value.joke);
 				session.replaceDialog("/fun");
 			}
 			else {
@@ -1576,7 +1572,7 @@ bot.dialog('/yoda', function (session) {
 			session.send(yoda_said[Math.floor(Math.random() * yoda_said.length)]);
 		}
 		else {
-			session.endDialog(yoda_said[Math.floor(Math.random() * yoda_said.length)]);
+			session.send(yoda_said[Math.floor(Math.random() * yoda_said.length)]);
 			session.replaceDialog("/fun");
 		}
 });
@@ -1641,7 +1637,7 @@ bot.dialog('/9gag1',[
 		if (nsfw.find(i => {return i.user === session.message.address.user.id;}).gag === "search") {
 			gag.find(results.response, function(err, res) {
 				if (err) {
-					session.endDialog("An error occured. Retry?");
+					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
@@ -1651,7 +1647,7 @@ bot.dialog('/9gag1',[
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 				else {
-					session.endDialog(res.result[Math.floor(Math.random() * res.result.length)].url);
+					session.send(res.result[Math.floor(Math.random() * res.result.length)].url);
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
@@ -1660,12 +1656,12 @@ bot.dialog('/9gag1',[
 		else if (results.response.entity.endsWith("Hot")) {
 			gag.section(nsfw.find(i => {return i.user === session.message.address.user.id;}).gag, "hot", function(err, res) {
 				if (err) {
-					session.endDialog("An error occured. Retry?");
+					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 				else {
-					session.endDialog(res[Math.floor(Math.random() * res.length)].url);
+					session.send(res[Math.floor(Math.random() * res.length)].url);
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
@@ -1674,19 +1670,18 @@ bot.dialog('/9gag1',[
 		else if (results.response.entity.endsWith("Fresh")) {
 			gag.section(nsfw.find(i => {return i.user === session.message.address.user.id;}).gag, "fresh", function(err, res) {
 				if (err) {
-					session.endDialog("An error occured. Retry?");
+					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 				else {
-					session.endDialog(res[Math.floor(Math.random() * res.length)].url);
+					session.send(res[Math.floor(Math.random() * res.length)].url);
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 			});
 		}
 		else if (results.response.endsWith("Back to Fun Menu")) {
-			
 			session.replaceDialog("/fun");
 			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 		}
