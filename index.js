@@ -250,16 +250,13 @@ bot.dialog('/menu', [
 		if (session.message.text === "/start" && session.message.source === "directline") {
 			session.send("Keyboard Mode is not available on GroupMe / Skype for Business / Discord. Please use only commands.\nFor more information, type \"help\".");
 		}
-		else if (session.message.text.endsWith("start") || session.message.text.endsWith("Start") || session.message.text.endsWith("Back to Start Menu")) {
+		else {
 			if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
 				session.send("Keyboard Mode is not available on GroupMe / Skype for Business / Discord. Please use only commands.\nFor more information, type \"help\".");
 			}
 			else {
 				builder.Prompts.choice(session, "What would you like to do right now?", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
 			}
-		}
-		else {
-			session.send();
 		}
 	}, function (session, results) {
 		switch (results.response.entity) {
@@ -766,7 +763,7 @@ bot.dialog('/ibsearch1',[
 			if (!error && response.statusCode === 200) {
 				if (body !== "[]") {
 					body = JSON.parse(body);
-					session.endDialog({
+					session.send({
 						attachments: [
 							{
 								contentType: "image/*",
@@ -782,7 +779,7 @@ bot.dialog('/ibsearch1',[
 				}
 			}
 			else {
-				session.endDialog("Failed to connect to http://ibsearch.xxx");
+				session.send("Failed to connect to http://ibsearch.xxx");
 				session.replaceDialog("/image");
 			}
 		});
