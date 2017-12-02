@@ -570,7 +570,7 @@ bot.dialog('/imgur1',[
 			request({url:"https://api.imgur.com/3/gallery/search?q="+results.response, headers:{'Authorization': 'Client-ID '+process.env.imgur}}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
-					if (body.data === []) {
+					if (body.data.length === 0) {
 						session.send("No results. Change your query?");
 						session.replaceDialog("/image");
 					}
@@ -598,7 +598,7 @@ bot.dialog('/imgur2', function (session) {
 		request({url:"https://api.imgur.com/3/gallery/search?q="+session.message.text.substring(7), headers:{'Authorization': 'Client-ID '+process.env.imgur}}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
-				if (body.data === []) {session.send("No results. Change your query?");}
+				if (body.data.length === 0) {session.send("No results. Change your query?");}
 				else {session.send(body.data[Math.floor(Math.random() * body.data.length)].link);}
 			}
 			else {session.send("Failed to connect to http://imgur.com");}
