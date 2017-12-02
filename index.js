@@ -1583,7 +1583,7 @@ bot.dialog('/design', function (session) {
 		}
 		else if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
-			session.endDialog(body[0].content.replace("<p>", "").replace("</p>", "")+"\n\n--- "+body[0].title);
+			session.send(body[0].content.replace("<p>", "").replace("</p>", "")+"\n\n--- "+body[0].title);
 			session.replaceDialog("/fun");
 		}
 		else {
