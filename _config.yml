@@ -1,4 +1,2 @@
-plugins:
-  - jekyll-remote-theme
-remote_theme: nandomoreirame/end2end
+remote_theme: broccolini/swiss
 title: Metagon
