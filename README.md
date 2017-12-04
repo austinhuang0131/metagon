@@ -43,6 +43,21 @@ In most situations you can just use the startup menu. However, if you're on Disc
 
 # Contact Us
 * [GitHub](http://github.com/austinhuang0131/metagon) (Suggested)
+* [Slack](https://metagon-slack.glitch.me/) (You'll be able to generate an invite)
+* [Telegram](http://t.me/austinhuang)
+* [Kik](http://kik.me/austinhuang0131)
+* <script type="text/javascript" src="https://secure.skypeassets.com/i/scom/js/skype-uri.js"></script>
+<div id="SkypeButton_Call_live:austin.0131_1">
+ <script type="text/javascript">
+ Skype.ui({
+ "name": "chat",
+ "element": "SkypeButton_Call_live:austin.0131_1",
+ "participants": ["live:austin.0131"],
+ "imageSize": 24
+ });
+ </script>
+</div>
+* [Discord](http://discord.gg/8uFr3J3)
 * [Other methods](https://austinhuang.me/contact)
 
 # Rate me
