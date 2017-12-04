@@ -38,7 +38,7 @@ In most situations you can just use the startup menu. However, if you're on Disc
 # IMPORTANT! Per-Platform Issues
 * There is **no keyboard mode** on <u>Discord, GroupMe and Skype for Business</u>. **Commands only.**
 * Keyboard mode functions that requires further input are not available on <u>Telegram group chats</u>.
-* On <u>Skype and Slack</u>, **a space is required before `/` commands in the command mode**.
+* On <u>Skype and Slack</u>, **a <kbd>  SPACE  </kbd> is required before `/` commands in the command mode**.
 * To comply with <u>Kik</u> regulations, some commands are [not available](/kik-disabled) for good.
 
 # Contact Us
