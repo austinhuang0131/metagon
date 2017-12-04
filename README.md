@@ -45,7 +45,7 @@ In most situations you can just use the startup menu. However, if you're on Disc
 * [GitHub](https://github.com/austinhuang0131/metagon) (Suggested)
 * [Slack](https://metagon-slack.glitch.me/) (You'll be able to generate an invite)
 * [Telegram](https://t.me/austinhuang)
-* [Kik](http://kik.me/austinhuang0131)
+* [Kik](https://kik.me/austinhuang0131)
 * Skype `live:austin.0131`
 * [Discord](https://discord.gg/8uFr3J3)
 * [Other methods](https://austinhuang.me/contact)
@@ -53,7 +53,7 @@ In most situations you can just use the startup menu. However, if you're on Disc
 # Rate me
 Thanks!
 
-* [<img src="http://groot.botlist.co/images/BotList-badge-white.svg" alt="BotList.co" width="135">](https://botlist.co/bots/metagon)
+* [<img src="/BotList-badge-white.svg" alt="BotList.co" width="135">](https://botlist.co/bots/metagon)
 * ChatBottle.co ([Kik](https://chatbottle.co/bots/metagon-for-kik), [Skype](https://chatbottle.co/bots/metagon-for-skype), [Slack](https://chatbottle.co/bots/metagon-for-slack), [Telegram](https://chatbottle.co/bots/metagon-for-telegram))
 * [Product Hunt](https://www.producthunt.com/posts/metagon)
 * [StoreBot.me](https://storebot.me/bot/metagon_bot) (Telegram)
@@ -61,4 +61,4 @@ Thanks!
 
 
 # Donate
-More thanks! Click [here](http://austinhuang.me/donate).
+More thanks! Click [here](https://austinhuang.me/donate).
