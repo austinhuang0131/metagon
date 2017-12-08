@@ -43,6 +43,7 @@ In most situations you can just use the startup menu. However, if you're on Disc
 
 # Contact Us
 * [GitHub](https://github.com/austinhuang0131/metagon) (Suggested)
+* `im@austinhuang.me`
 * [Slack](https://metagon-slack.glitch.me/) (You'll be able to generate an invite)
 * [Telegram](https://t.me/austinhuang)
 * [Kik](https://kik.me/austinhuang0131)
