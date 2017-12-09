@@ -686,6 +686,10 @@ bot.dialog('/flickr2', function (session) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
 				var photo = body.photos.photo[Math.floor(Math.random() * body.photos.photo.length)];
+				if (photo === undefined) {
+					session.send("No results.");
+					return;
+				}
 				request("https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key="+process.env.flickr+"&photo_id="+photo.id+"&format=json&nojsoncallback=1", function(error, response, body) {
 					if (!error && response.statusCode === 200) {
 						body = JSON.parse(body);
