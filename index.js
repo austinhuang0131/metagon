@@ -127,20 +127,6 @@ var lineConnector = new LineConnector.LineConnector({
     channelAccessToken: process.env.line3
 });*/
 
-var discord = require('discordconnector');
-var TCS = require('discordconnector/TestConnectorStorage');
-var dc = new discord.DiscordConnector({ 
-    discordSecret: process.env.DISCORD_SECRET, 
-    dlSecret: process.env.DIRECTLINE_SECRET,
-    botName: "Metagon",
-    botId: process.env.BOT_ID
-});
-var storage = new TCS.TestConnectorStorage();
-storage.initialize();
-dc.addStorageClient(storage);
-dc.enableBasicRelay();
-dc.conversationUpdate();
-
 function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;
 	return c.toFixed();
@@ -189,12 +175,6 @@ setInterval(function(){
 }, 5000);
 
 bot.on('incoming', message => {
-	if (message.source === "directline" && message.text.startsWith("/")) {
-		dd.postEvent({
-		   title: 'discord message received',
-		   text: 'User '+message.address.user.name+': '+message.text
-		});
-	}
 	else if (message.source !== "directline") {
 		dd.postEvent({
 		   title: message.source + ' message received',
