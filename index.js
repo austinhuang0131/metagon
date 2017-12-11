@@ -175,12 +175,10 @@ setInterval(function(){
 }, 5000);
 
 bot.on('incoming', message => {
-	else if (message.source !== "directline") {
-		dd.postEvent({
-		   title: message.source + ' message received',
-		   text: 'User '+message.address.user.name+': '+message.text
-		});
-	}
+	dd.postEvent({
+	   title: message.source + ' message received',
+	   text: 'User '+message.address.user.name+': '+message.text
+	});
 });
 bot.on('error', err => {
 	dd.postEvent({
