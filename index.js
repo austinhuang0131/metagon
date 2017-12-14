@@ -1644,6 +1644,11 @@ bot.dialog('/9gag1',[
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
+				else if (res[Math.floor(Math.random() * res.length)] === undefined) {
+					session.send("An error occured (No result). Retry?");
+					session.replaceDialog("/fun");
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
+				}
 				else {
 					session.send(res[Math.floor(Math.random() * res.length)].url);
 					session.replaceDialog("/fun");
@@ -1655,6 +1660,11 @@ bot.dialog('/9gag1',[
 			gag.section(nsfw.find(i => {return i.user === session.message.address.user.id;}).gag, "fresh", function(err, res) {
 				if (err) {
 					session.send("An error occured. Retry?");
+					session.replaceDialog("/fun");
+					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
+				}
+				else if (res[Math.floor(Math.random() * res.length)] === undefined) {
+					session.send("An error occured (No result). Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
