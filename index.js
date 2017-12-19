@@ -115,6 +115,7 @@ var yoda_said = [
 var gag = require("node-9gag");
 var DataDog = require('datadog');
 var dd = new DataDog(process.env.datadog1, process.env.datadog2);
+var incomes = {skype: 0, telegram: 0, slack: 0, kik: 0, total: 0};
 /*var Dictionary = require('mw-dictionary'),
 	dict = new Dictionary({
 		key: process.env.dictionary
@@ -173,12 +174,29 @@ setInterval(function(){
 		}]
 	});
 }, 5000);
+setInterval(function(){
+	for(var attributename in incomes){
+		dd.postSeries({
+			"series": [{
+				"metric": "messages.incoming",
+				"points": [
+					[Date.now()/1000, incomes[attributename]]
+				],
+				"type": "gauge",
+				"tags": [attributename]
+			}]
+		});
+		incomes[attributename] = 0;
+	}
+}, 300000);
 
 bot.on('incoming', message => {
 	dd.postEvent({
 	   title: message.source + ' message received',
 	   text: 'User '+message.address.user.name+': '+message.text
 	});
+	if (incomes[message.source] !== undefined) {incomes[message.source] += 1;}
+	incomes.total += 1;
 });
 bot.on('error', err => {
 	dd.postEvent({
