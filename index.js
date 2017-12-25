@@ -251,7 +251,7 @@ bot.dialog('/menu', [
 				session.send("Keyboard Mode is not available on GroupMe / Skype for Business / Discord. Please use only commands.\nFor more information, type \"help\".");
 			}
 			else {
-				builder.Prompts.choice(session, "What would you like to do right now?", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, "What would you like to do right now?\n\n**NEW FUNCTIONS!** Images => Anime actions", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
 			}
 		}
 	}, function (session, results) {
