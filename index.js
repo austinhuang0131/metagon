@@ -542,7 +542,7 @@ bot.dialog('/bunny', function (session) {
 });
 
 bot.beginDialogAction("kph", "/kph", { matches: /^( \/|\/|Metagon \/)(kiss|pat|hug)/g});
-bot.dialog('/kiss', function (session) {
+bot.dialog('/kph', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
 	var endpoint = "hug";
 	if (session.message.text.includes(/kiss/gi)) {endpoint = "kiss";}
