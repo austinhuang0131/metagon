@@ -281,10 +281,10 @@ bot.dialog('/image', [
 	function (session) {
 		switch (session.message.source === "kik") {
 			case true:
-				builder.Prompts.choice(session, "What would you like to do right now?", "Cat|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, "What would you like to do right now?", "Cat|Snake|Bunny|Anime actions|Back to Start Menu|Quit", { listStyle: 3 });
 			break;
 			case false:
-				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|IbSearch (Anime)|Pixiv (Anime)|Cat|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|IbSearch (Anime)|Pixiv (Anime)|Anime actions|Cat|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
 			break;
 		}
 	},
@@ -310,6 +310,9 @@ bot.dialog('/image', [
 			break;
 			case "Pixiv (Anime)":
 				session.replaceDialog("/pixiv1");
+			break;
+			case "Anime actions":
+				session.replaceDialog("/anime");
 			break;
 			case "Back to Start Menu":
 				session.beginDialog("/menu");
@@ -542,8 +545,25 @@ bot.dialog('/bunny', function (session) {
 });
 
 bot.beginDialogAction("kph", "/kph", { matches: /^( \/|\/|Metagon \/)(kiss|pat|hug)/g});
+bot.dialog('/anime', function (session) [
+	function (session) {
+		builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Back to Image Menu|Quit", { listStyle: 3 });
+	},
+	function (session, results) {
+		switch (results.response.entity) {
+			case "Back to Image Menu":
+				session.beginDialog("/image");
+			break;
+			case "Quit":
+				session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
+			break;
+			default:
+				session.beginDialog("/"+results.response.entity);
+			break;
+		}
+	}
+]);
 bot.dialog('/kph', function (session) {
-	if (session.message.source !== "directline") {session.sendTyping();}
 	var endpoint = "hug";
 	if (session.message.text.search(/kiss/gi) > -1) {endpoint = "kiss";}
 	else if (session.message.text.search(/pat/gi) > -1) {endpoint = "pat"}
