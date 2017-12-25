@@ -561,9 +561,6 @@ bot.dialog('/kph', function (session) {
 			if (!session.message.text.includes("/")) {
 				session.replaceDialog("/image");
 			}
-			else {
-				session.endDialog();
-			}
 		}
 		else {
 			session.endDialog("ERROR! I could not connect to https://nekos.life/api. Please retry. If the problem persists, leave an issue at http://metagon.cf");
