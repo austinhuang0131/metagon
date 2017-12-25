@@ -545,9 +545,8 @@ bot.beginDialogAction("kph", "/kph", { matches: /^( \/|\/|Metagon \/)(kiss|pat|h
 bot.dialog('/kph', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
 	var endpoint = "hug";
-	if (session.message.text.includes(/kiss/gi)) {endpoint = "kiss";}
-	else if (session.message.text.includes(/pat/gi)) {endpoint = "pat"}
-	// The API key is public
+	if (session.message.text.search(/kiss/gi) > -1) {endpoint = "kiss";}
+	else if (session.message.text.search(/pat/gi) > -1) {endpoint = "pat"}
 	request('https://nekos.life/api/'+endpoint, {headers: {'Key': 'dnZ4fFJbjtch56pNbfrZeSRfgWqdPDgf'}}, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
