@@ -7,9 +7,9 @@ I don't think I need to explain it.
 * Command Entry: `/cat` `/snake` `/bunny`
 
 ## Anime actions
-Kiss/Pat/Hug yourself or your buddy.
+Kiss/Pat/Hug yourself or your buddy. Or give them a smug.
 
-* Command Entry: `/kiss` `/pat` `/hug`
+* Command Entry: `/kiss` `/pat` `/hug` `/smug`
 
 ## Anime Images
 ### Pixiv
