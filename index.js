@@ -545,7 +545,7 @@ bot.dialog('/bunny', function (session) {
 });
 
 bot.beginDialogAction("kph", "/kph", { matches: /^( \/|\/|Metagon \/)(kiss|pat|hug)/g});
-bot.dialog('/anime', function (session) [
+bot.dialog('/anime', [
 	function (session) {
 		builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Back to Image Menu|Quit", { listStyle: 3 });
 	},
