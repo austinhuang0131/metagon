@@ -545,14 +545,18 @@ bot.dialog('/bunny', function (session) {
 });
 
 bot.beginDialogAction("kph", "/kph", { matches: /^( \/|\/|Metagon \/)(kiss|pat|hug)/g});
+bot.beginDialogAction("smug", "/smug", { matches: /^( \/|\/|Metagon \/)smug/g});
 bot.dialog('/anime', [
 	function (session) {
-		builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Back to Image Menu|Quit", { listStyle: 3 });
+		builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Smug|Back to Image Menu|Quit", { listStyle: 3 });
 	},
 	function (session, results) {
 		switch (results.response.entity) {
 			case "Back to Image Menu":
 				session.beginDialog("/image");
+			break;
+			case "Smug":
+				session.beginDialog("/smug");
 			break;
 			case "Quit":
 				session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
@@ -584,6 +588,26 @@ bot.dialog('/kph', function (session) {
 		}
 		else {
 			session.endDialog("ERROR! I could not connect to https://nekos.life/api. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+		}
+	});
+});
+bot.dialog('/smug', function (session) {
+	request("https://smug.z0ne.moe/", function(error, response, body) {
+		if (!error && response.statusCode === 200) {
+			session.send({
+				attachments: [
+					{
+						contentType: "image/*",
+						contentUrl: body.replace("<img src=\"", "").replace("\">", "")
+					}
+				]
+			});
+			if (!session.message.text.includes("/")) {
+				session.replaceDialog("/image");
+			}
+		}
+		else {
+			session.endDialog("ERROR! I could not connect to https://smug.z0ne.moe/. Please retry. If the problem persists, leave an issue at http://metagon.cf");
 		}
 	});
 });
