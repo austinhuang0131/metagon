@@ -558,7 +558,7 @@ bot.dialog('/anime', [
 				session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
 			break;
 			default:
-				session.beginDialog("/"+results.response.entity);
+				session.beginDialog("/kph");
 			break;
 		}
 	}
