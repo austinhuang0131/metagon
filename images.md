@@ -6,6 +6,11 @@ I don't think I need to explain it.
 
 * Command Entry: `/cat` `/snake` `/bunny`
 
+## Anime actions
+Kiss/Pat/Hug yourself or your buddy.
+
+* Command Entry: `/kiss` `/pat` `/hug`
+
 ## Anime Images
 ### Pixiv
 Searches images from [pixiv](http://pixiv.net).
