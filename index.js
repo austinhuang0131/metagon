@@ -541,6 +541,37 @@ bot.dialog('/bunny', function (session) {
 	});
 });
 
+bot.beginDialogAction("kph", "/kph", { matches: /^( \/|\/|Metagon \/)(kiss|pat|hug)/g});
+bot.dialog('/kiss', function (session) {
+	if (session.message.source !== "directline") {session.sendTyping();}
+	var endpoint = "hug";
+	if (session.message.text.includes(/kiss/gi)) {endpoint = "kiss";}
+	else if (session.message.text.includes(/pat/gi)) {endpoint = "pat"}
+	// The API key is public
+	request('https://nekos.life/api/'+endpoint, {headers: {'Key': 'dnZ4fFJbjtch56pNbfrZeSRfgWqdPDgf'}}, function(error, response, body) {
+		if (!error && response.statusCode === 200) {
+			body = JSON.parse(body);
+			session.send({
+				attachments: [
+					{
+						contentType: "image/*",
+						contentUrl: body.url
+					}
+				]
+			});
+			if (!session.message.text.includes("/")) {
+				session.replaceDialog("/image");
+			}
+			else {
+				session.endDialog();
+			}
+		}
+		else {
+			session.endDialog("ERROR! I could not connect to https://nekos.life/api. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+		}
+	});
+});
+
 bot.beginDialogAction("imgur", "/imgur2", { matches: /^( \/|\/|Metagon \/)imgur/g});
 bot.dialog('/imgur1',[
 	function (session) {
@@ -694,15 +725,20 @@ bot.dialog('/flickr2', function (session) {
 				request("https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key="+process.env.flickr+"&photo_id="+photo.id+"&format=json&nojsoncallback=1", function(error, response, body) {
 					if (!error && response.statusCode === 200) {
 						body = JSON.parse(body);
-						session.send({
-							text: photo.title,
-							attachments: [
-								{
-									contentType: "image/*",
-									contentUrl: body.sizes.size[body.sizes.size.length - 1].source
-								}
-							]
-						});
+						if (!body.sizes.size) {
+							session.send("A persisting error occured. Please report this with your whole dialog to https://github.com/austinhuang0131/metagon/issues or email \"im@austinhuang.me\".");
+						}
+						else {
+							session.send({
+								text: photo.title,
+								attachments: [
+									{
+										contentType: "image/*",
+										contentUrl: body.sizes.size[body.sizes.size.length - 1].source
+									}
+								]
+							});
+						}
 					}
 					else {session.send("Failed to connect to http://flickr.com");}
 				});
