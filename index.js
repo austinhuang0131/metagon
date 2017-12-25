@@ -644,15 +644,20 @@ bot.dialog('/flickr1',[
 					request("https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key="+process.env.flickr+"&photo_id="+photo.id+"&format=json&nojsoncallback=1", function(error, response, body) {
 						if (!error && response.statusCode === 200) {
 							body = JSON.parse(body);
-							session.send({
-								text: photo.title,
-								attachments: [
-									{
-										contentType: "image/*",
-										contentUrl: body.sizes.size[body.sizes.size.length - 1].source
-									}
-								]
-							});
+							if (!body.sizes.size) {
+								session.send("A persisting error occured. Please report this with your whole dialog to https://github.com/austinhuang0131/metagon/issues or email \"im@austinhuang.me\".");
+							}
+							else {
+								session.send({
+									text: photo.title,
+									attachments: [
+										{
+											contentType: "image/*",
+											contentUrl: body.sizes.size[body.sizes.size.length - 1].source
+										}
+									]
+								});
+							}
 							session.replaceDialog("/image");
 					}
 						else {
