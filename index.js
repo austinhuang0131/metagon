@@ -598,7 +598,7 @@ bot.dialog('/smug', function (session) {
 				attachments: [
 					{
 						contentType: "image/*",
-						contentUrl: body.replace("<img src=\"", "").replace("\">", "")
+						contentUrl: "https://smug.z0ne.moe"+body.replace("<img src=\"", "").replace("\">", "")
 					}
 				]
 			});
