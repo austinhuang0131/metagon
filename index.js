@@ -715,7 +715,7 @@ bot.dialog('/flickr1',[
 					request("https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key="+process.env.flickr+"&photo_id="+photo.id+"&format=json&nojsoncallback=1", function(error, response, body) {
 						if (!error && response.statusCode === 200) {
 							body = JSON.parse(body);
-							if (!body.sizes.size) {
+							if (!body.sizes) {
 								session.send("A persisting error occured. Please report this with your whole dialog to https://github.com/austinhuang0131/metagon/issues or email \"im@austinhuang.me\".");
 							}
 							else {
@@ -765,7 +765,7 @@ bot.dialog('/flickr2', function (session) {
 				request("https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key="+process.env.flickr+"&photo_id="+photo.id+"&format=json&nojsoncallback=1", function(error, response, body) {
 					if (!error && response.statusCode === 200) {
 						body = JSON.parse(body);
-						if (!body.sizes.size) {
+						if (!body.sizes) {
 							session.send("A persisting error occured. Please report this with your whole dialog to https://github.com/austinhuang0131/metagon/issues or email \"im@austinhuang.me\".");
 						}
 						else {
