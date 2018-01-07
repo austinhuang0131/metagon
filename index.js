@@ -1841,6 +1841,7 @@ bot.dialog('/', function (session) {
 
 // Setup Restify Server
 var server = restify.createServer();
+server.use(restify.plugins.queryParser());
 server.post('/api/messages', connector.listen());
 /*server.post('/viber', viberChannel.listen());*/
 server.post('/linebot', lineConnector.listen());
