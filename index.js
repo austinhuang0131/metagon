@@ -121,12 +121,12 @@ var incomes = {skype: 0, telegram: 0, slack: 0, kik: 0, total: 0};
 		key: process.env.dictionary
 	});*/
 
-/*var LineConnector = require("botbuilder-linebot-connector");
+var LineConnector = require("botbuilder-linebot-connector");
 var lineConnector = new LineConnector.LineConnector({
     channelId: process.env.line1,
     channelSecret: process.env.line2,
     channelAccessToken: process.env.line3
-});*/
+});
 
 function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;

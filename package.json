@@ -22,7 +22,7 @@
     "botbuilder-viber": "^0.0.2",
     "viber-bot": "austinhuang0131/viber-bot-node",
     "datadog": "HashGo/node-datadog",
-    "botbuilder-linebot-connector": "austinhuang0131/botbuilder-linebot-connector",
+    "botbuilder-linebot-connector": "austinhuang0131/botbuilder-linebot-connector#patch-1",
     "pixiv.js": "^0.18.0",
     "pixiv-img": "^0.3.1"
   },
