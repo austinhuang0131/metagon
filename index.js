@@ -1690,7 +1690,6 @@ bot.dialog('/9gag1',[
 	},
 	function (session, results) {
 		if (results.response.entity.endsWith("Back to Fun Menu")) {
-			
 			session.replaceDialog("/fun");
 		}
 		else if (results.response.entity.endsWith("nsfw") && session.message.source === "kik") {
@@ -1718,57 +1717,63 @@ bot.dialog('/9gag1',[
     },
 	function (session, results) {
 		if (nsfw.find(i => {return i.user === session.message.address.user.id;}).gag === "search") {
-			gag.find(results.response, function(err, res) {
+			request("https://9gag.com/search?query="+results.response, function(err, response, body) {
 				if (err) {
 					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
+					return;
 				}
-				else if (res.result[Math.floor(Math.random() * res.result.length)] === undefined) {
+				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);".).data;
+				if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
 					session.send("No results. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 				else {
-					session.send(res.result[Math.floor(Math.random() * res.result.length)].url);
+					session.send(res.posts[Math.floor(Math.random() * res.posts.length)].url);
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 			});
 		}
 		else if (results.response.entity.endsWith("Hot")) {
-			gag.section(nsfw.find(i => {return i.user === session.message.address.user.id;}).gag, "hot", function(err, res) {
+			request("https://9gag.com/"+nsfw.find(i => {return i.user === session.message.address.user.id;}).gag+"/hot", function(err, response, body) {
 				if (err) {
 					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
+					return;
 				}
-				else if (res[Math.floor(Math.random() * res.length)] === undefined) {
-					session.send("An error occured (No result). Retry?");
+				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);".).data;
+				if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
+					session.send("No results. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 				else {
-					session.send(res[Math.floor(Math.random() * res.length)].url);
+					session.send(res.posts[Math.floor(Math.random() * res.posts.length)].url);
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 			});
 		}
 		else if (results.response.entity.endsWith("Fresh")) {
-			gag.section(nsfw.find(i => {return i.user === session.message.address.user.id;}).gag, "fresh", function(err, res) {
+			request("https://9gag.com/"+nsfw.find(i => {return i.user === session.message.address.user.id;}).gag+"/fresh", function(err, response, body) {
 				if (err) {
 					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
+					return;
 				}
-				else if (res[Math.floor(Math.random() * res.length)] === undefined) {
-					session.send("An error occured (No result). Retry?");
+				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);".).data;
+				if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
+					session.send("No results. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
 				else {
-					session.send(res[Math.floor(Math.random() * res.length)].url);
+					session.send(res.posts[Math.floor(Math.random() * res.posts.length)].url);
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				}
@@ -1790,28 +1795,43 @@ bot.dialog('/9gag2', function (session) {
 			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
 			return;
 		}
-		gag.section(args[0], args[1], function(err, res) {
+		request("https://9gag.com/"+args[0]"/"+args[1], function(err, response, body) {
 			if (err) {
 				session.send("An error occured. Retry?");
+				session.replaceDialog("/fun");
+				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
+				return;
+			}
+			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);".).data;
+			if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
+				session.send("No results. Retry?");
+				session.replaceDialog("/fun");
+				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 			else {
-				session.send(res[Math.floor(Math.random() * res.length)].url);
+				session.send(res.posts[Math.floor(Math.random() * res.posts.length)].url);
+				session.replaceDialog("/fun");
+				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 		});
 	}
 	else if (args[0] === "search" && args[1] !== undefined) {
-		gag.find(args[1], function(err, res) {
-			console.log(res);
+		request("https://9gag.com/search?query="+args[1], function(err, response, body) {
 			if (err) {
 				session.send("An error occured. Retry?");
+				session.replaceDialog("/fun");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
+				return;
 			}
-			else if (res.result[Math.floor(Math.random() * res.result.length)] === undefined) {
+			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);".).data;
+			if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
 				session.send("No results. Retry?");
+				session.replaceDialog("/fun");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 			else {
-				session.send(res.result[Math.floor(Math.random() * res.result.length)].url);
+				session.send(res.posts[Math.floor(Math.random() * res.posts.length)].url);
+				session.replaceDialog("/fun");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 		});
