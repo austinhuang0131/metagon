@@ -1794,7 +1794,7 @@ bot.dialog('/9gag2', function (session) {
 			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
 			return;
 		}
-		request("https://9gag.com/"+args[0]"/"+args[1], function(err, response, body) {
+		request("https://9gag.com/"+args[0]+"/"+args[1], function(err, response, body) {
 			if (err) {
 				session.send("An error occured. Retry?");
 				session.replaceDialog("/fun");
