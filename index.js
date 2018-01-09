@@ -112,7 +112,6 @@ var yoda_said = [
   '"To the Force, look for guidance. Accept what fate has placed before us." -- Yoda\n',
   '"Yoda, you seek?" -- Yoda\n', '"My ally is the Force" -- Yoda\n'
 ];
-var gag = require("node-9gag");
 var DataDog = require('datadog');
 var dd = new DataDog(process.env.datadog1, process.env.datadog2);
 var incomes = {skype: 0, telegram: 0, slack: 0, kik: 0, total: 0};
@@ -1724,7 +1723,7 @@ bot.dialog('/9gag1',[
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 					return;
 				}
-				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);".).data;
+				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 				if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
 					session.send("No results. Retry?");
 					session.replaceDialog("/fun");
@@ -1745,7 +1744,7 @@ bot.dialog('/9gag1',[
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 					return;
 				}
-				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);".).data;
+				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 				if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
 					session.send("No results. Retry?");
 					session.replaceDialog("/fun");
@@ -1766,7 +1765,7 @@ bot.dialog('/9gag1',[
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 					return;
 				}
-				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);".).data;
+				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 				if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
 					session.send("No results. Retry?");
 					session.replaceDialog("/fun");
@@ -1802,7 +1801,7 @@ bot.dialog('/9gag2', function (session) {
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				return;
 			}
-			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);".).data;
+			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 			if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
 				session.send("No results. Retry?");
 				session.replaceDialog("/fun");
@@ -1823,7 +1822,7 @@ bot.dialog('/9gag2', function (session) {
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				return;
 			}
-			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);".).data;
+			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 			if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
 				session.send("No results. Retry?");
 				session.replaceDialog("/fun");
