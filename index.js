@@ -1717,13 +1717,13 @@ bot.dialog('/9gag1',[
 	function (session, results) {
 		if (nsfw.find(i => {return i.user === session.message.address.user.id;}).gag === "search") {
 			request("https://9gag.com/search?query="+results.response, function(err, response, body) {
-				if (err) {
+				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
+				if (err || !res) {
 					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 					return;
 				}
-				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 				if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
 					session.send("No results. Retry?");
 					session.replaceDialog("/fun");
@@ -1738,14 +1738,14 @@ bot.dialog('/9gag1',[
 		}
 		else if (results.response.entity.endsWith("Hot")) {
 			request("https://9gag.com/"+nsfw.find(i => {return i.user === session.message.address.user.id;}).gag+"/hot", function(err, response, body) {
-				if (err) {
+				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
+				if (err || !res) {
 					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 					return;
 				}
-				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
-				if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
+				if (res.posts.length === 0) {
 					session.send("No results. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
@@ -1759,14 +1759,14 @@ bot.dialog('/9gag1',[
 		}
 		else if (results.response.entity.endsWith("Fresh")) {
 			request("https://9gag.com/"+nsfw.find(i => {return i.user === session.message.address.user.id;}).gag+"/fresh", function(err, response, body) {
-				if (err) {
+				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
+				if (err || !res) {
 					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 					return;
 				}
-				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
-				if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
+				if (res.posts.length === 0) {
 					session.send("No results. Retry?");
 					session.replaceDialog("/fun");
 					nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
@@ -1795,14 +1795,14 @@ bot.dialog('/9gag2', function (session) {
 			return;
 		}
 		request("https://9gag.com/"+args[0]+"/"+args[1], function(err, response, body) {
-			if (err) {
+			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
+			if (err || !res) {
 				session.send("An error occured. Retry?");
 				session.replaceDialog("/fun");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				return;
 			}
-			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
-			if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
+			if (res.posts.length === 0) {
 				session.send("No results. Retry?");
 				session.replaceDialog("/fun");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
@@ -1816,14 +1816,14 @@ bot.dialog('/9gag2', function (session) {
 	}
 	else if (args[0] === "search" && args[1] !== undefined) {
 		request("https://9gag.com/search?query="+args[1], function(err, response, body) {
-			if (err) {
+			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
+			if (err || !res) {
 				session.send("An error occured. Retry?");
 				session.replaceDialog("/fun");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				return;
 			}
-			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
-			if (res.posts[Math.floor(Math.random() * res.posts.length)] === undefined) {
+			if (res.posts.length === 0) {
 				session.send("No results. Retry?");
 				session.replaceDialog("/fun");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
