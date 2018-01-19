@@ -1,4 +1,7 @@
-# Category: Fun
+---
+title: Category: Fun
+---
+
 These commands are located in the Fun category of the startup menu.
 
 ## Urban Dictionary
