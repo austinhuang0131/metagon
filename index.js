@@ -786,8 +786,8 @@ bot.dialog('/flickr2', function (session) {
 		return;
 	}
 	if (session.message.source !== "directline") {session.sendTyping();}
-	if (session.message.text.replace("/flickr", "").replace(" ", "") !== "") {
-		request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+session.message.text.split(" ").slice(1).join(" ")+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
+	if (session.message.text.replace(/( |)\/flickr/, "") !== "") {
+		request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+session.message.text.replace(/( |)\/flickr/, "")+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
 				var photo = body.photos.photo[Math.floor(Math.random() * body.photos.photo.length)];
@@ -882,8 +882,8 @@ bot.dialog('/deviantart2', function (session) {
 		return;
 	}
 	if (session.message.source !== "directline") {session.sendTyping();}
-	if (session.message.text.replace("/deviantart", "").replace(" ", "") !== "") {
-		request("https://backend.deviantart.com/rss.xml?type=deviation&q="+session.message.text.split(" ").slice(1).join(" "), function(error, response, body) {
+	if (session.message.text.replace(/( |)\/deviantart/, "") !== "") {
+		request("https://backend.deviantart.com/rss.xml?type=deviation&q="+session.message.text.replace(/( |)\/deviantart/, ""), function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				parseString(body, function (err, result) {
 					session.send({
