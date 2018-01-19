@@ -975,12 +975,12 @@ bot.dialog('/pixiv1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Image Menu")) {
-			
 			session.replaceDialog("/image");
 			return;
 		}
 		if (session.message.source !== "directline") {session.sendTyping();}
 		pixiv.search(results.response+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
+			console.log(json);
 			var illust = json.response[Math.floor(Math.random() * json.response.length)];
 			if (illust === undefined) {
 				session.send("No results.");
