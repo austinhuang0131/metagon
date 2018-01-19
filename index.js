@@ -283,7 +283,8 @@ bot.dialog('/image', [
 				builder.Prompts.choice(session, "What would you like to do right now?", "Cat|Snake|Bunny|Anime actions|Back to Start Menu|Quit", { listStyle: 3 });
 			break;
 			case false:
-				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|IbSearch (Anime)|Pixiv (Anime)|Anime actions|Cat|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|Pixiv (Anime)|Anime actions|Cat|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
+				// IbSearch (Anime) should be added to the list whenever the function comes back
 			break;
 		}
 	},
@@ -304,9 +305,9 @@ bot.dialog('/image', [
 			case "Flickr":
 				session.replaceDialog("/flickr1");
 			break;
-			case "IbSearch (Anime)":
+			/*case "IbSearch (Anime)":
 				session.replaceDialog("/ibsearch1");
-			break;
+			break;*/
 			case "Pixiv (Anime)":
 				session.replaceDialog("/pixiv1");
 			break;
@@ -475,7 +476,7 @@ bot.dialog('/cat', function (session) {
 bot.beginDialogAction("snake", "/snake", { matches: /^( \/|\/|Metagon \/)snake/g});
 bot.dialog('/snake', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
-	request('http://fur.im/snek/snek.php', function(error, response, body) {
+	request('http://fur.im/snek', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
 			session.send({
@@ -790,7 +791,7 @@ bot.dialog('/flickr2', function (session) {
 	}
 });
 
-bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/|Metagon \/)ibsearch/g});
+/*bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/|Metagon \/)ibsearch/g});
 bot.dialog('/ibsearch1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
@@ -924,7 +925,7 @@ bot.dialog('/ibsearch2',[
 		});
 		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
     }
-]);
+]);*/
 
 bot.beginDialogAction("pixiv", "/pixiv2", { matches: /^( \/|\/|Metagon \/)pixiv/g});
 bot.dialog('/pixiv1',[
