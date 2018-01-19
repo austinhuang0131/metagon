@@ -286,7 +286,7 @@ bot.dialog('/image', [
 				builder.Prompts.choice(session, "What would you like to do right now?", "Cat|Dog|Snake|Bunny|Anime actions|Back to Start Menu|Quit", { listStyle: 3 });
 			break;
 			case false:
-				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|Pixiv (Anime)|Anime actions|Cat|Dog|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|Pixiv (Anime)|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
 				// IbSearch (Anime) should be added to the list whenever the function comes back
 			break;
 		}
@@ -316,6 +316,9 @@ bot.dialog('/image', [
 			break;*/
 			case "Pixiv (Anime)":
 				session.replaceDialog("/pixiv1");
+			break;
+			case "DeviantArt":
+				session.replaceDialog("/deviantart1");
 			break;
 			case "Anime actions":
 				session.replaceDialog("/anime");
@@ -854,12 +857,13 @@ bot.dialog('/deviantart1',[
 			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response.entity, {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					parseString(body, function (err, result) {
+						var thing = result.rss.channel[0].item[Math.floor(Math.random() * result.rss.channel[0].item.length)];
 						session.send({
-							text: result.rss.channel[0].item[0].title[0],
+							text: thing.title[0],
 							attachments: [
 								{
 									contentType: "image/*",
-									contentUrl: result.rss.channel[0].item[0]["media:content"][0]["$"].url
+									contentUrl: thing["media:content"][0]["$"].url
 								}
 							]
 						});
@@ -886,12 +890,13 @@ bot.dialog('/deviantart2', function (session) {
 		request("https://backend.deviantart.com/rss.xml?type=deviation&q="+session.message.text.replace(/( |)\/deviantart/, ""), {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				parseString(body, function (err, result) {
+					var thing = result.rss.channel[0].item[Math.floor(Math.random() * result.rss.channel[0].item.length)];
 					session.send({
-						text: result.rss.channel[0].item[0].title[0],
+						text: thing.title[0],
 						attachments: [
 							{
 								contentType: "image/*",
-								contentUrl: result.rss.channel[0].item[0]["media:content"][0]["$"].url
+								contentUrl: thing["media:content"][0]["$"].url
 							}
 						]
 					});
