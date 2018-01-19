@@ -14,7 +14,7 @@ cloudinary.config({
 });
 var bot = new builder.UniversalBot(connector);
 var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
-const Pixiv = require('pixiv.js');
+const Pixiv = require('pixiv-app-api');
 const pixiv = new Pixiv(process.env.pixiv_username, process.env.pixiv_password);
 const pixivImg = require('pixiv-img');
 var gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "politics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf"];
@@ -791,8 +791,8 @@ bot.dialog('/flickr2', function (session) {
 	}
 });
 
-/*bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/|Metagon \/)ibsearch/g});
-bot.dialog('/ibsearch1',[
+bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/|Metagon \/)ibsearch/g});
+/*bot.dialog('/ibsearch1',[
 	function (session) {
 		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
 			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/ibsearch (Query)`");
@@ -871,10 +871,11 @@ bot.dialog('/ibsearch1',[
 		});
 		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
     }
-]);
+]);*/
 bot.dialog('/ibsearch2',[
 	function (session) {
-		if (session.message.source === "kik") {
+		session.send("Due to IbSearch's temporary closure, this command is not available.");
+		/*if (session.message.source === "kik") {
 			session.send('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
 			return;
 		}
@@ -923,9 +924,9 @@ bot.dialog('/ibsearch2',[
 				session.send("Failed to connect to http://ibsearch.xxx");
 			}
 		});
-		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
+		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);*/
     }
-]);*/
+]);
 
 bot.beginDialogAction("pixiv", "/pixiv2", { matches: /^( \/|\/|Metagon \/)pixiv/g});
 bot.dialog('/pixiv1',[
@@ -979,15 +980,17 @@ bot.dialog('/pixiv1',[
 			return;
 		}
 		if (session.message.source !== "directline") {session.sendTyping();}
-		pixiv.search(results.response+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
+		pixiv.searchIllust(results.response+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
 			console.log(json);
-			var illust = json.response[Math.floor(Math.random() * json.response.length)];
+			var illust = json.illusts[Math.floor(Math.random() * json.illusts.length)];
 			if (illust === undefined) {
 				session.send("No results.");
 				session.replaceDialog("/image");
 			}
 			else {
-				pixivImg(illust.image_urls.large).then(output => {
+				var url = illust.imageUrls.large;
+				if (illust.metaSinglePage) {url = illust.metaSinglePage.originalImageUrl;}
+				pixivImg(url).then(output => {
 					cloudinary.uploader.upload(output, urls => {
 						session.send({
 							attachments: [
@@ -1023,15 +1026,15 @@ bot.dialog('/pixiv1',[
 		}
 		else if (results.response.entity === "View all pages") {
 			session.sendTyping();
-			pixiv.works(nsfw.find(i => {return i.user === session.message.address.user.id;}).illust).then(json => {
+			pixiv.illustDetail(nsfw.find(i => {return i.user === session.message.address.user.id;}).illust).then(json => {
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 				var idx = 0;
 				function doNext() {
-					var p = json.response[0].metadata.pages[idx];
-					pixivImg(p.image_urls.large).then(output => {
+					var p = json.illust.metaPages[idx];
+					pixivImg(p.imageUrls.original).then(output => {
 						cloudinary.uploader.upload(output, urls => {
-							const order = json.response[0].metadata.pages.indexOf(p) + 1;
+							const order = json.illust.metaPages.indexOf(p) + 1;
 							session.send({
 								text: "Page "+order,
 								attachments: [
@@ -1045,7 +1048,7 @@ bot.dialog('/pixiv1',[
 						});
 					});
 					idx++;
-					if (idx < json.response[0].metadata.pages.length) {
+					if (idx < json.illust.metaPages.length) {
 						setTimeout(doNext, 1000);
 					}
 					else {
@@ -1093,15 +1096,17 @@ bot.dialog('/pixiv2',[
 		if (session.message.source !== "directline") {session.sendTyping();}
 		var rating = "";
 		if (results.response === false) {rating = " -R-18 -R-18G";}
-		pixiv.search(nsfw.find(i => {return i.user === session.message.address.user.id;}).query+rating, {per_page: 100, mode: "tag"}).then(json => {
-			var illust = json.response[Math.floor(Math.random() * json.response.length)];
+		pixiv.searchIllust(nsfw.find(i => {return i.user === session.message.address.user.id;}).query+rating, {per_page: 100, mode: "tag"}).then(json => {
+			var illust = json.illusts[Math.floor(Math.random() * json.illusts.length)];
 			if (illust === undefined) {
 				session.send("No results.");
 			}
 			else {
 				var msg = "";
 				if (illust.is_manga === true) {msg += "\nThis is a multiple-page illustration, so only the first page is shown. View the full content at http://www.pixiv.net/member_illust.php?mode=medium&illust_id="+illust.id;}
-				pixivImg(illust.image_urls.large).then(output => {
+				var url = illust.imageUrls.large;
+				if (illust.metaSinglePage) {url = illust.metaSinglePage.originalImageUrl;}
+				pixivImg(url).then(output => {
 					cloudinary.uploader.upload(output, urls => {
 						session.send({
 							text: msg,
