@@ -851,7 +851,7 @@ bot.dialog('/deviantart1',[
 	function (session, results) {
 		if (results.response !== "Back to Image Menu") {
 			if (session.message.source !== "directline") {session.sendTyping();}
-			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response.entity, function(error, response, body) {
+			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response.entity, {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					parseString(body, function (err, result) {
 						session.send({
@@ -883,7 +883,7 @@ bot.dialog('/deviantart2', function (session) {
 	}
 	if (session.message.source !== "directline") {session.sendTyping();}
 	if (session.message.text.replace(/( |)\/deviantart/, "") !== "") {
-		request("https://backend.deviantart.com/rss.xml?type=deviation&q="+session.message.text.replace(/( |)\/deviantart/, ""), function(error, response, body) {
+		request("https://backend.deviantart.com/rss.xml?type=deviation&q="+session.message.text.replace(/( |)\/deviantart/, ""), {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				parseString(body, function (err, result) {
 					session.send({
