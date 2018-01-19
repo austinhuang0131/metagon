@@ -132,14 +132,14 @@ function f2c(f) {
 	return c.toFixed();
 }
 
-/*var viber = require('botbuilder-viber');
+var viber = require('botbuilder-viber');
 var viberChannel = new viber.ViberEnabledConnector({
 	Token: process.env.VIBER_TOKEN,
 	Name: 'Metagon',  
 	AvatarUrl: 'https://cdn.discordapp.com/avatars/376786742579298306/813b2b57849c91610fb6b4e74fa758b1.png',
 	Webhook: "https://discoin.herokuapp.com/viber"
 });
-bot.connector("viber", viberChannel);*/
+bot.connector("viber", viberChannel);
 
 setInterval(function(){
 	dd.postSeries({
@@ -1896,7 +1896,7 @@ bot.dialog('/', function (session) {
 // Setup Restify Server
 var server = express();
 server.post('/api/messages', connector.listen());
-/*server.post('/viber', viberChannel.listen());*/
+server.post('/viber', viberChannel.listen());
 server.post('/linebot', lineConnector.listen());
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
