@@ -980,6 +980,7 @@ bot.dialog('/pixiv1',[
 			return;
 		}
 		if (session.message.source !== "directline") {session.sendTyping();}
+		console.log("yes");
 		pixiv.searchIllust(results.response+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
 			console.log(json);
 			var illust = json.illusts[Math.floor(Math.random() * json.illusts.length)];
