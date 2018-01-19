@@ -112,7 +112,7 @@ var yoda_said = [
   '"To the Force, look for guidance. Accept what fate has placed before us." -- Yoda\n',
   '"Yoda, you seek?" -- Yoda\n', '"My ally is the Force" -- Yoda\n'
 ];
-var parseString = require('xml2js').parseString;
+
 var DataDog = require('datadog');
 var dd = new DataDog(process.env.datadog1, process.env.datadog2);
 var incomes = {skype: 0, telegram: 0, slack: 0, kik: 0, total: 0};
@@ -899,6 +899,7 @@ bot.dialog('/deviantart2', function (session) {
 				});
 			}
 			else {
+				console.log(body);
 				session.send("Failed to connect to https://backend.deviantart.com/rss.xml");
 			}
 		});
