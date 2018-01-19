@@ -122,15 +122,12 @@ var incomes = {skype: 0, telegram: 0, slack: 0, kik: 0, total: 0};
 
 var LineConnector = require("botbuilder-linebot-connector");
 var lineConnector = new LineConnector.LineConnector({
+    hasPushApi: false,
     channelId: process.env.line1,
     channelSecret: process.env.line2,
     channelAccessToken: process.env.line3
 });
-
-function f2c(f) {
-	var c = (parseInt(f) - 32) / 1.8;
-	return c.toFixed();
-}
+bot.connector("line", lineConnector);
 
 var viber = require('botbuilder-viber');
 var viberChannel = new viber.ViberEnabledConnector({
@@ -140,6 +137,11 @@ var viberChannel = new viber.ViberEnabledConnector({
 	Webhook: "https://discoin.herokuapp.com/viber"
 });
 bot.connector("viber", viberChannel);
+
+function f2c(f) {
+	var c = (parseInt(f) - 32) / 1.8;
+	return c.toFixed();
+}
 
 setInterval(function(){
 	dd.postSeries({
