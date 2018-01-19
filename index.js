@@ -280,10 +280,10 @@ bot.dialog('/image', [
 	function (session) {
 		switch (session.message.source === "kik") {
 			case true:
-				builder.Prompts.choice(session, "What would you like to do right now?", "Cat|Snake|Bunny|Anime actions|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, "What would you like to do right now?", "Cat|Dog|Snake|Bunny|Anime actions|Back to Start Menu|Quit", { listStyle: 3 });
 			break;
 			case false:
-				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|Pixiv (Anime)|Anime actions|Cat|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|Pixiv (Anime)|Anime actions|Cat|Dog|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
 				// IbSearch (Anime) should be added to the list whenever the function comes back
 			break;
 		}
@@ -295,6 +295,9 @@ bot.dialog('/image', [
 			break;
 			case "Snake":
 				session.replaceDialog("/snake");
+			break;
+			case "Dog":
+				session.replaceDialog("/dog");
 			break;
 			case "Bunny":
 				session.replaceDialog("/bunny");
@@ -496,6 +499,33 @@ bot.dialog('/snake', function (session) {
   		}
 		else {
 			session.endDialog("ERROR! I could not connect to http://fur.im/snek/snek.php. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+		}
+	});
+});
+
+bot.beginDialogAction("dog", "/dog", { matches: /^( \/|\/|Metagon \/)dog/g});
+bot.dialog('/dog', function (session) {
+	if (session.message.source !== "directline") {session.sendTyping();}
+	request('https://random.dog/woof.json', function(error, response, body) {
+		if (!error && response.statusCode === 200) {
+			body = JSON.parse(body);
+			session.send({
+  				attachments: [
+  					{
+						contentType: "image/*",
+						contentUrl: body.url
+ 					}
+  				]
+  			});
+			if (!session.message.text.includes("/dog")) {
+				session.replaceDialog("/image");
+			}
+			else {
+				session.endDialog();
+			}
+  		}
+		else {
+			session.endDialog("ERROR! I could not connect to https://random.dog/woof.json. Please retry. If the problem persists, leave an issue at http://metagon.cf");
 		}
 	});
 });
@@ -980,9 +1010,7 @@ bot.dialog('/pixiv1',[
 			return;
 		}
 		if (session.message.source !== "directline") {session.sendTyping();}
-		console.log("yes");
 		pixiv.searchIllust(results.response+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
-			console.log(json);
 			var illust = json.illusts[Math.floor(Math.random() * json.illusts.length)];
 			if (illust === undefined) {
 				session.send("No results.");

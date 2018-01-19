@@ -13,7 +13,7 @@
   "dependencies": {
     "botbuilder": "^3.11.0",
     "request": "^2.83.0",
-    "restify": "^5.0.1",
+    "express": "^4.16.2",
     "cloudinary": "^1.9.1",
     "uws": "^8.14.1",
     "winston": "^2.3.0",
@@ -21,7 +21,7 @@
     "botbuilder-viber": "^0.0.2",
     "viber-bot": "austinhuang0131/viber-bot-node",
     "datadog": "HashGo/node-datadog",
-    "botbuilder-linebot-connector": "austinhuang0131/botbuilder-linebot-connector#metagon",
+    "botbuilder-linebot-connector": "^2.0.6",
     "pixiv-app-api": "^0.11.0",
     "pixiv-img": "^0.3.1"
   },
