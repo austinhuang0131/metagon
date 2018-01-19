@@ -4,7 +4,7 @@ These commands are located in the Images category of the startup menu.
 ## Animal Images
 I don't think I need to explain it.
 
-* Command Entry: `/cat` `/snake` `/bunny`
+* Command Entry: `/cat` `/snake` `/bunny` `/dog`
 
 ## Anime actions
 Kiss/Pat/Hug yourself or your buddy. Or give them a smug.
@@ -28,6 +28,17 @@ For users who chose not to display NSFW content, `-R-18 -R-18G` is automatically
 Japanese tags are suggested, as the majority pixiv users are Japanese (But there are also a lot of Chinese which is sometimes considered as a majority too, as well as some Koreans and Americans. Chinese users use Japanese tags to label their work for more traffic, but Koreans and Americans don't. *Who knows.*).
 
 ### IbSearch
+**Unavailable due to IbSearch closure.**
+
+> IbSearch's main server has suffered a failure of both RAID drives and repairing the damage from backups requires more time than I can afford to spend right now.
+>
+> Thus, sadly, the site has to be put offline until I can get back to development.
+>
+> Sorry everyone who has continued to visit it despite lack of updates for the last few years.
+>
+> I promise this is not the end.
+
+<!--
 Searches images from [IbSearch.xxx](http://ibsearch.xxx) which covers most boorus (gelbooru, danbooru, rule34, furrybo, yandere, konachan, safebooru, xbooru, e621, Überbooru).
 
 For users who chose not to display NSFW content, `rating:s` is automatically enabled at the end of your query.
@@ -42,6 +53,7 @@ For all queries, `random: ` is added before your query to increase randomness of
 * Space separates tags.
 * There's no tags with space. However when you need them, use `_`, for example `animal_ears`.
 * For other rules click [here](https://ibsearch.xxx/api/v1/images#qtags). However, most of them are unnecessary.
+-->
 
 ## Imgur
 Search Imgur images.
