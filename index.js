@@ -900,7 +900,6 @@ bot.dialog('/deviantart2', function (session) {
 							}
 						]
 					});
-					session.replaceDialog("/image");
 				});
 			}
 			else {
