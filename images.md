@@ -1,4 +1,7 @@
-# Category: Images
+---
+title: Category: Images
+---
+
 These commands are located in the Images category of the startup menu.
 
 ## Animal Images
