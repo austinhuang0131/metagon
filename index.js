@@ -17,7 +17,7 @@ var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 const Pixiv = require('pixiv-app-api');
 const pixiv = new Pixiv(process.env.pixiv_username, process.env.pixiv_password);
 const pixivImg = require('pixiv-img');
-var gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "politics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf"];
+var gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "pol3itics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf"];
 var gagsubs = ["hot", "fresh"];
 var yoda_said = [
   '"Fear is the path to the dark side. Fear leads to anger, anger leads to hate, hate leads to suffering." -- Yoda \n',
@@ -112,6 +112,7 @@ var yoda_said = [
   '"To the Force, look for guidance. Accept what fate has placed before us." -- Yoda\n',
   '"Yoda, you seek?" -- Yoda\n', '"My ally is the Force" -- Yoda\n'
 ];
+var parseString = require('xml2js').parseString;
 var DataDog = require('datadog');
 var dd = new DataDog(process.env.datadog1, process.env.datadog2);
 var incomes = {skype: 0, telegram: 0, slack: 0, kik: 0, total: 0};
@@ -129,14 +130,14 @@ var lineConnector = new LineConnector.LineConnector({
 });
 bot.connector("line", lineConnector);
 
-var viber = require('botbuilder-viber');
+/*var viber = require('botbuilder-viber');
 var viberChannel = new viber.ViberEnabledConnector({
 	Token: process.env.VIBER_TOKEN,
 	Name: 'Metagon',  
 	AvatarUrl: 'https://cdn.discordapp.com/avatars/376786742579298306/813b2b57849c91610fb6b4e74fa758b1.png',
 	Webhook: "https://discoin.herokuapp.com/viber"
 });
-bot.connector("viber", viberChannel);
+bot.connector("viber", viberChannel);*/
 
 function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;
@@ -820,6 +821,90 @@ bot.dialog('/flickr2', function (session) {
 	}
 	else {
 		session.send("Missing search query! Correct usage: \"/flickr (Query)\"");
+	}
+});
+
+bot.beginDialogAction("deviantart", "/deviantart2", { matches: /^( \/|\/|Metagon \/)deviantart/g});
+bot.dialog('/deviantart1',[
+	function (session) {
+		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
+			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/flickr (Query)`");
+			session.replaceDialog("/image");
+			return;
+		}
+		if (session.message.source === "kik") {
+			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			session.replaceDialog("/image");
+			return;
+		}
+		var msg = new builder.Message(session);
+		msg.attachmentLayout(builder.AttachmentLayout.list);
+		msg.attachments([
+			new builder.HeroCard(session)
+			.title("Input a search query.")
+			.buttons([
+				builder.CardAction.imBack(session, "Back to Image Menu", "Back to Image Menu")
+			])
+		]);
+		builder.Prompts.text(session, msg);
+	},
+	function (session, results) {
+		if (results.response !== "Back to Image Menu") {
+			if (session.message.source !== "directline") {session.sendTyping();}
+			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response.entity, function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					parseString(body, function (err, result) {
+						session.send({
+							text: result.rss.channel[0].item[0].title[0],
+							attachments: [
+								{
+									contentType: "image/*",
+									contentUrl: result.rss.channel[0].item[0]["media:content"][0]["$"].url
+								}
+							]
+						});
+						session.replaceDialog("/image");
+    				});
+				}
+				else {
+					session.send("Failed to connect to https://backend.deviantart.com/rss.xml");
+					session.replaceDialog("/image");
+				}
+			});
+		}
+		else {
+			session.replaceDialog("/image");
+		}
+    }]);
+bot.dialog('/deviantart2', function (session) {
+	if (session.message.source === "kik") {
+		session.send('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
+		return;
+	}
+	if (session.message.source !== "directline") {session.sendTyping();}
+	if (session.message.text.replace("/deviantart", "").replace(" ", "") !== "") {
+		request("https://backend.deviantart.com/rss.xml?type=deviation&q="+session.message.text.split(" ").slice(1).join(" "), function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				parseString(body, function (err, result) {
+					session.send({
+						text: result.rss.channel[0].item[0].title[0],
+						attachments: [
+							{
+								contentType: "image/*",
+								contentUrl: result.rss.channel[0].item[0]["media:content"][0]["$"].url
+							}
+						]
+					});
+					session.replaceDialog("/image");
+				});
+			}
+			else {
+				session.send("Failed to connect to https://backend.deviantart.com/rss.xml");
+			}
+		});
+	}
+	else {
+		session.send("Missing search query! Correct usage: \"/deviantart (Query)\"");
 	}
 });
 
@@ -1898,7 +1983,7 @@ bot.dialog('/', function (session) {
 // Setup Restify Server
 var server = express();
 server.post('/api/messages', connector.listen());
-server.post('/viber', viberChannel.listen());
+/*server.post('/viber', viberChannel.listen());*/
 server.post('/linebot', lineConnector.listen());
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
