@@ -1,4 +1,7 @@
-# Category: Utility
+---
+title: Category: Utility
+---
+
 These commands are located in the Utility category of the startup menu.
 
 ## Bitly
