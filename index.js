@@ -854,7 +854,7 @@ bot.dialog('/deviantart1',[
 	function (session, results) {
 		if (results.response !== "Back to Image Menu") {
 			if (session.message.source !== "directline") {session.sendTyping();}
-			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response.entity, {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
+			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response, {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					parseString(body, function (err, result) {
 						var thing = result.rss.channel[0].item[Math.floor(Math.random() * result.rss.channel[0].item.length)];
