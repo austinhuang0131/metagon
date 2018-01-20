@@ -857,6 +857,11 @@ bot.dialog('/deviantart1',[
 			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response, {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					parseString(body, function (err, result) {
+						if (!result.rss.channel[0].item) {
+							session.send("No results!");
+							session.replaceDialog("/image");
+							return;
+						}
 						var thing = result.rss.channel[0].item[Math.floor(Math.random() * result.rss.channel[0].item.length)];
 						session.send({
 							text: thing.title[0],
@@ -890,6 +895,11 @@ bot.dialog('/deviantart2', function (session) {
 		request("https://backend.deviantart.com/rss.xml?type=deviation&q="+session.message.text.replace(/( |)\/deviantart/, ""), {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				parseString(body, function (err, result) {
+					if (!result.rss.channel[0].item) {
+						session.send("No results!");
+						session.replaceDialog("/image");
+						return;
+					}
 					var thing = result.rss.channel[0].item[Math.floor(Math.random() * result.rss.channel[0].item.length)];
 					session.send({
 						text: thing.title[0],
