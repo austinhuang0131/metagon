@@ -17,7 +17,7 @@
     "cloudinary": "^1.9.1",
     "botbuilder-viber": "^0.0.2",
     "datadog": "HashGo/node-datadog",
-    "botbuilder-linebot-connector": "^2.0.6",
+    "botbuilder-linebot-connector": "^2.1.10",
     "pixiv-app-api": "^0.11.0",
     "pixiv-img": "^0.3.1",
     "viber-bot": "1.0.12",

@@ -248,6 +248,10 @@ bot.dialog('/menu', [
 		if (session.message.text === "/start" && session.message.source === "directline") {
 			session.send("Keyboard Mode is not available on GroupMe / Skype for Business / Discord. Please use only commands.\nFor more information, type \"help\".");
 		}
+		else if (session.message.text === "/start" && session.message.source === "line") {
+			console.log("received");
+			session.send("OOOOOOOOO");
+		}
 		else {
 			if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
 				session.send("Keyboard Mode is not available on GroupMe / Skype for Business / Discord. Please use only commands.\nFor more information, type \"help\".");
