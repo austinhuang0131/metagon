@@ -553,7 +553,7 @@ bot.dialog('/bunny', function (session) {
 			session.send({
   				attachments: [
   					{
-  						contentType: "video/mp4",
+  						contentType: "video/*",
  						contentUrl: body.media.mp4
  					}
   				]
