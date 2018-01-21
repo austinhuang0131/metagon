@@ -18,6 +18,7 @@
     "botbuilder-viber": "^0.0.2",
     "datadog": "HashGo/node-datadog",
     "botbuilder-linebot-connector": "^2.0.10",
+    "botbuilder-vk": "^0.2.4",
     "pixiv-app-api": "^0.11.0",
     "pixiv-img": "^0.3.1",
     "viber-bot": "1.0.12",
