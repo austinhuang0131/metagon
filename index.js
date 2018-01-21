@@ -408,7 +408,7 @@ bot.dialog('/about', function (session) {
 	else {
 		session.send();
 	}
-	if (session.message.source !== "groupme" && session.message.source !== "directline" && session.message session.message.text.endsWith("support")) {
+	if (session.message.source !== "groupme" && session.message.source !== "directline" && session.message.source !== vk.channelId && session.message.text.endsWith("support")) {
 		session.replaceDialog("/menu");
 	}
 	else {
