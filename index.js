@@ -463,7 +463,7 @@ bot.dialog('/cat', function (session) {
 				attachments: [
 					{
 						contentType: "image/*",
-						contentUrl: body.file
+						contentUrl: body.file.replace("http://", "https://")
 					}
 				]
 			});
@@ -490,7 +490,7 @@ bot.dialog('/snake', function (session) {
   				attachments: [
   					{
 						contentType: "image/*",
-						contentUrl: body.file
+						contentUrl: body.file.replace("http://", "https://")
  					}
   				]
   			});
@@ -513,7 +513,16 @@ bot.dialog('/dog', function (session) {
 	request('https://random.dog/woof.json', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
-			session.send({
+			if (body.url.endsWith("mp4") || body.url.endsWith("webm")) { session.send({
+  				attachments: [
+  					{
+						contentType: "video/*",
+						contentUrl: body.url
+ 					}
+  				]
+  			});
+			}
+			else { session.send({
   				attachments: [
   					{
 						contentType: "image/*",
@@ -521,6 +530,7 @@ bot.dialog('/dog', function (session) {
  					}
   				]
   			});
+			}
 			if (!session.message.text.includes("/dog")) {
 				session.replaceDialog("/image");
 			}
