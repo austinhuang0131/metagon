@@ -1,12 +1,12 @@
-var express = require('express');
-var builder = require('botbuilder');
-var fs = require('fs');
+const express = require('express'),
+      builder = require('botbuilder'),
+      fs = require('fs'),
+      request = require('request'),
+      cloudinary = require('cloudinary');
 var connector = new builder.ChatConnector({
     appId: process.env.appid,
     appPassword: process.env.appkey
 });
-var request = require('request');
-var cloudinary = require('cloudinary');
 cloudinary.config({ 
   cloud_name: 'metagon', 
   api_key: process.env.cloudinary1, 
@@ -14,12 +14,12 @@ cloudinary.config({
 });
 var bot = new builder.UniversalBot(connector);
 var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
-const Pixiv = require('pixiv-app-api');
-const pixiv = new Pixiv(process.env.pixiv_username, process.env.pixiv_password);
-const pixivImg = require('pixiv-img');
-var gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "pol3itics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf"];
-var gagsubs = ["hot", "fresh"];
-var yoda_said = [
+const Pixiv = require('pixiv-app-api'),
+      pixiv = new Pixiv(process.env.pixiv_username, process.env.pixiv_password),
+      pixivImg = require('pixiv-img');
+const gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "pol3itics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf"],
+      gagsubs = ["hot", "fresh"],
+      yoda_said = [
   '"Fear is the path to the dark side. Fear leads to anger, anger leads to hate, hate leads to suffering." -- Yoda \n',
   '"Confer on you, the level of Jedi Knight, the Council does. But, agree with your taking this boy as your Padawan Learner, I do not." -- Yoda to Obi-Wan Kenobi\n',
   '"Qui-Gon\'s defiance I sense in you. Need that you do not. Agree with you, the Council does. Your apprentice young Skywalker will be." -- Yoda to Obi-Wan Kenobi\n',
@@ -111,24 +111,31 @@ var yoda_said = [
   '"From the dark path, no returning there is. Forever, the direction of your life it dominates." -- Yoda\n',
   '"To the Force, look for guidance. Accept what fate has placed before us." -- Yoda\n',
   '"Yoda, you seek?" -- Yoda\n', '"My ally is the Force" -- Yoda\n'
-];
-var parseString = require('xml2js').parseString;
-var DataDog = require('datadog');
-var dd = new DataDog(process.env.datadog1, process.env.datadog2);
+],
+      parseString = require('xml2js').parseString,
+      DataDog = require('datadog'),
+      dd = new DataDog(process.env.datadog1, process.env.datadog2);
 var incomes = {skype: 0, telegram: 0, slack: 0, kik: 0, total: 0};
 /*var Dictionary = require('mw-dictionary'),
 	dict = new Dictionary({
 		key: process.env.dictionary
 	});*/
 
-var LineConnector = require("botbuilder-linebot-connector");
-var lineConnector = new LineConnector.LineConnector({
+const LineConnector = require("botbuilder-linebot-connector"),
+lineConnector = new LineConnector.LineConnector({
     hasPushApi: false,
     channelId: process.env.line1,
     channelSecret: process.env.line2,
     channelAccessToken: process.env.line3
 });
 bot.connector("line", lineConnector);
+
+const vk = require('botbuilder-vk')({
+        access_token: process.env.vk1,
+        callback_key: process.env.vk2,
+        group_id: process.env.vk3
+    });
+bot.connector(vk.channelId, vk);
 
 /*var viber = require('botbuilder-viber');
 var viberChannel = new viber.ViberEnabledConnector({
@@ -2004,7 +2011,7 @@ var server = express();
 server.post('/api/messages', connector.listen());
 /*server.post('/viber', viberChannel.listen());*/
 server.post('/linebot', lineConnector.listen());
-server.post('/vk', (req, res) => {res.send("600f70a5");})
+server.post('/vk', vk.listen());
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
 });
