@@ -208,7 +208,8 @@ bot.on('incoming', message => {
 	incomes.total += 1;
 });
 bot.on('send', message => {
-	console.log(String(message.attachments));
+	console.log(JSON.stringify(message.attachments));
+	console.log(message.attachments);
 });
 bot.on('conversationUpdate', function (message) {
     if (message.address.conversation.isGroup) {
