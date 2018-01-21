@@ -257,7 +257,7 @@ bot.dialog('/menu', [
 			}
 		}
 	}, function (session, results) {
-		switch (results.response.replace("Metagon ", "").entity) {
+		switch (results.response.replace(/^Metagon /g, "").entity) {
 			case "Images":
 				session.replaceDialog("/image");
 			break;
@@ -292,7 +292,7 @@ bot.dialog('/image', [
 		}
 	},
 	function (session, results) {
-		switch (results.response.replace("Metagon ", "").entity) {
+		switch (results.response.replace(/^Metagon /g, "").entity) {
 			case "Cat":
 				session.replaceDialog("/cat");
 			break;
@@ -337,7 +337,7 @@ bot.dialog('/utility', [
 		builder.Prompts.choice(session, "What would you like to do right now?", "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
 	}, 
 	function (session, results) {
-		switch (results.response.replace("Metagon ", "").entity) {
+		switch (results.response.replace(/^Metagon /g, "").entity) {
 			case "Weather":
 				session.replaceDialog("/weather1");
 			break;
@@ -370,7 +370,7 @@ bot.dialog('/fun', [
 		builder.Prompts.choice(session, "What would you like to do right now?", "9gag|Urban Dictionary|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit", { listStyle: 3 });
 	},
 	function (session, results) {
-		switch (results.response.replace("Metagon ", "").entity) {
+		switch (results.response.replace(/^Metagon /g, "").entity) {
 			case "9gag":
 				session.replaceDialog("/9gag1");
 			break;
@@ -436,8 +436,8 @@ bot.dialog('/feedback', [
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "") !== "Back to Start Menu") {
-			request.post("https://maker.ifttt.com/trigger/feedback/with/key/kDnVlmQo6Z_Py2bwvlCGyLNh2y05mL_rL0CF7cAflOE", {json: {value1: session.message.address.user.name + " (" + session.message.address.user.id + ")", value2: session.message.source, value3: results.response.replace("Metagon ", "")}}, function(error, response, body) {
+		if (results.response.replace(/^Metagon /g, "") !== "Back to Start Menu") {
+			request.post("https://maker.ifttt.com/trigger/feedback/with/key/kDnVlmQo6Z_Py2bwvlCGyLNh2y05mL_rL0CF7cAflOE", {json: {value1: session.message.address.user.name + " (" + session.message.address.user.id + ")", value2: session.message.source, value3: results.response.replace(/^Metagon /g, "")}}, function(error, response, body) {
 				// This URL is public. If you guys spam it, I'll remove it. This webhook connects to my Telegram.
 				if (!error && response.statusCode === 200 && body === "Congratulations! You've fired the feedback event") {
 					session.send("Your message is sent successfully.\n* If you are a Telegram/Kik/Skype user, or you provided your email: I'll get you in touch within 48 hours.");
@@ -587,7 +587,7 @@ bot.dialog('/anime', [
 		builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Smug|Back to Image Menu|Quit", { listStyle: 3 });
 	},
 	function (session, results) {
-		switch (results.response.replace("Metagon ", "").entity) {
+		switch (results.response.replace(/^Metagon /g, "").entity) {
 			case "Back to Image Menu":
 				session.beginDialog("/image");
 			break;
@@ -669,8 +669,8 @@ bot.dialog('/imgur1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "") !== "Back to Image Menu") {
-			request({url:"https://api.imgur.com/3/gallery/search?q="+results.response.replace("Metagon ", ""), headers:{'Authorization': 'Client-ID '+process.env.imgur}}, function(error, response, body) {
+		if (results.response.replace(/^Metagon /g, "") !== "Back to Image Menu") {
+			request({url:"https://api.imgur.com/3/gallery/search?q="+results.response.replace(/^Metagon /g, ""), headers:{'Authorization': 'Client-ID '+process.env.imgur}}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
 					if (body.data.length === 0) {
@@ -737,9 +737,9 @@ bot.dialog('/flickr1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results, next) {
-		if (results.response.replace("Metagon ", "") !== "Back to Image Menu") {
+		if (results.response.replace(/^Metagon /g, "") !== "Back to Image Menu") {
 			if (session.message.source !== "directline") {session.sendTyping();}
-			request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+results.response.replace("Metagon ", "")+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
+			request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+results.response.replace(/^Metagon /g, "")+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
 					var photo = body.photos.photo[Math.floor(Math.random() * body.photos.photo.length)];
@@ -852,9 +852,9 @@ bot.dialog('/deviantart1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "") !== "Back to Image Menu") {
+		if (results.response.replace(/^Metagon /g, "") !== "Back to Image Menu") {
 			if (session.message.source !== "directline") {session.sendTyping();}
-			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response.replace("Metagon ", ""), {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
+			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response.replace(/^Metagon /g, ""), {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					parseString(body, function (err, result) {
 						if (!result.rss.channel[0].item) {
@@ -950,11 +950,11 @@ bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/|Metagon \/)
 		builder.Prompts.confirm(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "") === false) {
+		if (results.response.replace(/^Metagon /g, "") === false) {
 			nsfw.push({user: session.message.address.user.id, nsfw: "+rating:s"});
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		}
-		else if (results.response.replace("Metagon ", "") === true) {
+		else if (results.response.replace(/^Metagon /g, "") === true) {
 			nsfw.push({user: session.message.address.user.id, nsfw: ""});
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		}
@@ -962,7 +962,7 @@ bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/|Metagon \/)
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
-			.title("You chose "+results.response.replace("Metagon ", "")+" for NSFW visibility. Input a search query.")
+			.title("You chose "+results.response.replace(/^Metagon /g, "")+" for NSFW visibility. Input a search query.")
 			.subtitle("After your input, wait patiently as it takes time to send the image!")
 			.buttons([
 				builder.CardAction.imBack(session, "Back to Image Menu", "Back to Image Menu")
@@ -971,13 +971,13 @@ bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/|Metagon \/)
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "").endsWith("Back to Image Menu")) {
+		if (results.response.replace(/^Metagon /g, "").endsWith("Back to Image Menu")) {
 			
 			session.replaceDialog("/image");
 			return;
 		}
 		if (session.message.source !== "directline") {session.sendTyping();}
-		request("https://ibsearch.xxx/api/v1/images.json?key="+process.env.ibsearch+"&limit=1&q=random:+"+results.response.replace("Metagon ", "")+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, function(error, response, body) {
+		request("https://ibsearch.xxx/api/v1/images.json?key="+process.env.ibsearch+"&limit=1&q=random:+"+results.response.replace(/^Metagon /g, "")+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				if (body !== "[]") {
 					body = JSON.parse(body);
@@ -1034,7 +1034,7 @@ bot.dialog('/ibsearch2',[
 	},
 	function (session, results) {
 		var rating = "";
-		if (results.response.replace("Metagon ", "") === false) {rating = "rating:s";}
+		if (results.response.replace(/^Metagon /g, "") === false) {rating = "rating:s";}
 		request("https://ibsearch.xxx/api/v1/images.json?key="+process.env.ibsearch+"&limit=1&q=random:+"+nsfw.find(i => {return i.user === session.message.address.user.id;}).query+"+"+rating, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				if (body !== "[]") {
@@ -1087,11 +1087,11 @@ bot.dialog('/pixiv1',[
 		builder.Prompts.confirm(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "") === false) {
+		if (results.response.replace(/^Metagon /g, "") === false) {
 			nsfw.push({user: session.message.address.user.id, nsfw: " -R-18 -R-18G"});
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		}
-		else if (results.response.replace("Metagon ", "") === true) {
+		else if (results.response.replace(/^Metagon /g, "") === true) {
 			nsfw.push({user: session.message.address.user.id, nsfw: ""});
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		}
@@ -1099,7 +1099,7 @@ bot.dialog('/pixiv1',[
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
-			.title("You chose "+results.response.replace("Metagon ", "")+" for NSFW visibility. Input a search query.")
+			.title("You chose "+results.response.replace(/^Metagon /g, "")+" for NSFW visibility. Input a search query.")
 			.buttons([
 				builder.CardAction.imBack(session, "Back to Image Menu", "Back to Image Menu")
 			])
@@ -1107,12 +1107,12 @@ bot.dialog('/pixiv1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "").endsWith("Back to Image Menu")) {
+		if (results.response.replace(/^Metagon /g, "").endsWith("Back to Image Menu")) {
 			session.replaceDialog("/image");
 			return;
 		}
 		if (session.message.source !== "directline") {session.sendTyping();}
-		pixiv.searchIllust(results.response.replace("Metagon ", "")+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
+		pixiv.searchIllust(results.response.replace(/^Metagon /g, "")+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
 			var illust = json.illusts[Math.floor(Math.random() * json.illusts.length)];
 			if (illust === undefined) {
 				session.send("No results.");
@@ -1147,15 +1147,15 @@ bot.dialog('/pixiv1',[
 		});
     },
 	function (session, results) {
-		if (results.response.replace("Metagon ", "").entity === "Restart a Search") {
+		if (results.response.replace(/^Metagon /g, "").entity === "Restart a Search") {
 			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			session.reset("/pixiv1");
 		}
-		else if (results.response.replace("Metagon ", "").entity === "Back to Image Menu") {
+		else if (results.response.replace(/^Metagon /g, "").entity === "Back to Image Menu") {
 			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			session.replaceDialog("/image");
 		}
-		else if (results.response.replace("Metagon ", "").entity === "View all pages") {
+		else if (results.response.replace(/^Metagon /g, "").entity === "View all pages") {
 			session.sendTyping();
 			pixiv.illustDetail(nsfw.find(i => {return i.user === session.message.address.user.id;}).illust).then(json => {
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
@@ -1226,7 +1226,7 @@ bot.dialog('/pixiv2',[
 	function (session, results) {
 		if (session.message.source !== "directline") {session.sendTyping();}
 		var rating = "";
-		if (results.response.replace("Metagon ", "") === false) {rating = " -R-18 -R-18G";}
+		if (results.response.replace(/^Metagon /g, "") === false) {rating = " -R-18 -R-18G";}
 		pixiv.searchIllust(nsfw.find(i => {return i.user === session.message.address.user.id;}).query+rating, {per_page: 100, mode: "tag"}).then(json => {
 			var illust = json.illusts[Math.floor(Math.random() * json.illusts.length)];
 			if (illust === undefined) {
@@ -1279,22 +1279,22 @@ bot.dialog('/shorten1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "").endsWith("Back to Utility Menu")) {
+		if (results.response.replace(/^Metagon /g, "").endsWith("Back to Utility Menu")) {
 			
 			session.replaceDialog("/utility");
 			return;
 		}
-		if (results.response.replace("Metagon ", "").startsWith("<") && results.response.replace("Metagon ", "").includes("|")) {
-			var site = results.response.replace("Metagon ", "").split("|")[0].replace("<", "");
+		if (results.response.replace(/^Metagon /g, "").startsWith("<") && results.response.replace(/^Metagon /g, "").includes("|")) {
+			var site = results.response.replace(/^Metagon /g, "").split("|")[0].replace("<", "");
 		}
-		else if (results.response.replace("Metagon ", "").startsWith("<")) {
-			var site = results.response.replace("Metagon ", "").replace("<", "").replace(">", "").replace(";", "");
+		else if (results.response.replace(/^Metagon /g, "").startsWith("<")) {
+			var site = results.response.replace(/^Metagon /g, "").replace("<", "").replace(">", "").replace(";", "");
 		}
 		else {
-			var site = results.response.replace("Metagon ", "");
+			var site = results.response.replace(/^Metagon /g, "");
 		}
 		if (!site.startsWith("http")) {
-			site = "http://"+results.response.replace("Metagon ", "");
+			site = "http://"+results.response.replace(/^Metagon /g, "");
 		}
 		request("https://api-ssl.bitly.com/v3/shorten?access_token="+process.env.bitly_token+"&longUrl="+site+"&format=txt", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
@@ -1355,22 +1355,22 @@ bot.dialog('/expand1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "").endsWith("Back to Utility Menu")) {
+		if (results.response.replace(/^Metagon /g, "").endsWith("Back to Utility Menu")) {
 			
 			session.replaceDialog("/utility");
 			return;
 		}
-		if (results.response.replace("Metagon ", "").startsWith("<") && results.response.replace("Metagon ", "").includes("|")) {
-			var site = results.response.replace("Metagon ", "").split("|")[0].replace("<", "");
+		if (results.response.replace(/^Metagon /g, "").startsWith("<") && results.response.replace(/^Metagon /g, "").includes("|")) {
+			var site = results.response.replace(/^Metagon /g, "").split("|")[0].replace("<", "");
 		}
-		else if (results.response.replace("Metagon ", "").startsWith("<")) {
-			var site = results.response.replace("Metagon ", "").replace("<", "").replace(">", "").replace(";", "");
+		else if (results.response.replace(/^Metagon /g, "").startsWith("<")) {
+			var site = results.response.replace(/^Metagon /g, "").replace("<", "").replace(">", "").replace(";", "");
 		}
 		else {
-			var site = results.response.replace("Metagon ", "");
+			var site = results.response.replace(/^Metagon /g, "");
 		}
 		if (!site.startsWith("http")) {
-			site = "http://"+results.response.replace("Metagon ", "");
+			site = "http://"+results.response.replace(/^Metagon /g, "");
 		}
 		request("https://api-ssl.bitly.com/v3/expand?access_token="+process.env.bitly_token+"&shortUrl="+site+"&format=txt", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
@@ -1430,11 +1430,11 @@ bot.dialog('/mcuser1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "").endsWith("Back to Utility Menu")) {
+		if (results.response.replace(/^Metagon /g, "").endsWith("Back to Utility Menu")) {
 			session.replaceDialog("/utility");
 			return;
 		}
-		request('http://mcapi.de/api/user/' + results.response.replace("Metagon ", ""), function(error, response, body) {
+		request('http://mcapi.de/api/user/' + results.response.replace(/^Metagon /g, ""), function(error, response, body) {
 			if (!error) {
 				var mcapi = JSON.parse(body);
 				if (mcapi.result.status === "Ok") {
@@ -1520,33 +1520,33 @@ bot.dialog('/mcserver1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "").endsWith("Back to Utility Menu")) {
+		if (results.response.replace(/^Metagon /g, "").endsWith("Back to Utility Menu")) {
 			session.replaceDialog("/utility");
 			return;
 		}
 		var ip = {};
-		if (results.response.replace("Metagon ", "").split(":")[1] === undefined) {
-			ip = {ip: results.response.replace("Metagon ", "")};
+		if (results.response.replace(/^Metagon /g, "").split(":")[1] === undefined) {
+			ip = {ip: results.response.replace(/^Metagon /g, "")};
 		}
 		else {
-			ip = {ip: results.response.replace("Metagon ", "").split(":")[0], port: results.response.replace("Metagon ", "").split(":")[1]};
+			ip = {ip: results.response.replace(/^Metagon /g, "").split(":")[0], port: results.response.replace(/^Metagon /g, "").split(":")[1]};
 		}
 		request.post('https://mcapi.de/api/server/', {json: ip}, function(error, response, body) {
 			if (!error) {
 				if (body.result.status === "success") {
 					session.send({
-						text: results.response.replace("Metagon ", "")+" ("+body.hostname+")\n* Players: "+body.players.online+"/"+body.players.max+"\n* Blocked by Mojang: "+body.blocked.status+"\n* Software: "+body.software.name+", MC Version "+body.software.version+"\n* Ping: "+body.list.ping+"ms",
+						text: results.response.replace(/^Metagon /g, "")+" ("+body.hostname+")\n* Players: "+body.players.online+"/"+body.players.max+"\n* Blocked by Mojang: "+body.blocked.status+"\n* Software: "+body.software.name+", MC Version "+body.software.version+"\n* Ping: "+body.list.ping+"ms",
 						attachments: [
 							{
 								contentType: "image/*",
-								contentUrl: "https://api.minetools.eu/favicon/"+results.response.replace("Metagon ", "").replace(":", "/")
+								contentUrl: "https://api.minetools.eu/favicon/"+results.response.replace(/^Metagon /g, "").replace(":", "/")
 							}
 						]
 					});
 					session.replaceDialog("/utility");
 				}
 				else {
-					session.send('Your input is invalid, or the server you requested is offline, or maybe you just need a retry.\nYour input is '+results.response.replace("Metagon ", ""));
+					session.send('Your input is invalid, or the server you requested is offline, or maybe you just need a retry.\nYour input is '+results.response.replace(/^Metagon /g, ""));
 					session.replaceDialog("/utility");
 				}
 			}
@@ -1613,11 +1613,11 @@ bot.dialog('/paste1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "").endsWith("Back to Utility Menu")) {
+		if (results.response.replace(/^Metagon /g, "").endsWith("Back to Utility Menu")) {
 			session.replaceDialog("/utility");
 			return;
 		}
-		request.post('https://pastebin.com/api/api_post.php', {form: {api_dev_key: process.env.pastebin, api_option: "paste", api_paste_code: results.response.replace("Metagon ", "")}}, function(error, response, body) {
+		request.post('https://pastebin.com/api/api_post.php', {form: {api_dev_key: process.env.pastebin, api_option: "paste", api_paste_code: results.response.replace(/^Metagon /g, "")}}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				session.send("Done! "+body);
 				session.replaceDialog("/utility");
@@ -1664,11 +1664,11 @@ bot.dialog('/weather1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "").endsWith("Back to Utility Menu")) {
+		if (results.response.replace(/^Metagon /g, "").endsWith("Back to Utility Menu")) {
 			session.replaceDialog("/utility");
 			return;
 		}
-		request('https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22'+results.response.replace("Metagon ", "")+'%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys', {json: true}, function(error, response, body) {
+		request('https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22'+results.response.replace(/^Metagon /g, "")+'%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys', {json: true}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				var weather = body.query.results.channel.item;
 				session.send(weather.title+"\n\n== Condition ==\n\n"+weather.condition.text+", "+weather.condition.temp+"ºF ("+f2c(weather.condition.temp)+"ºC)\n\n== Forecast ==\n\n* Today: "+weather.forecast[0].text+", "+weather.forecast[0].low+"ºF ("+f2c(weather.forecast[0].low)+"ºC) ~ "+weather.forecast[0].high+"ºF ("+f2c(weather.forecast[0].high)+"ºC)\n* Tomorrow: "+weather.forecast[1].text+", "+weather.forecast[1].low+"ºF ("+f2c(weather.forecast[1].low)+"ºC) ~ "+weather.forecast[1].high+"ºF ("+f2c(weather.forecast[1].high)+"ºC)\n* "+weather.forecast[2].day+": "+weather.forecast[2].text+", "+weather.forecast[2].low+"ºF ("+f2c(weather.forecast[2].low)+"ºC) ~ "+weather.forecast[2].high+"ºF ("+f2c(weather.forecast[2].high)+"ºC)\n== Misc ==\n\n* Sunrise: "+body.query.results.channel.astronomy.sunrise+", Sunset: "+body.query.results.channel.astronomy.sunset);
@@ -1714,13 +1714,13 @@ bot.dialog('/ud1',[
 		builder.Prompts.text(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "").endsWith("Back to Fun Menu")) {
+		if (results.response.replace(/^Metagon /g, "").endsWith("Back to Fun Menu")) {
 			session.replaceDialog("/fun");
 			return;
 		}
-		request('http://api.urbandictionary.com/v0/define?term='+results.response.replace("Metagon ", ""), {json: true}, function(error, response, body) {
+		request('http://api.urbandictionary.com/v0/define?term='+results.response.replace(/^Metagon /g, ""), {json: true}, function(error, response, body) {
 			if (!error && response.statusCode === 200 && body.list.length !== 0) {
-				session.send("Top UD result for "+results.response.replace("Metagon ", "")+"\n\n== Definition ==\n\n"+body.list[0].definition+"\n\n == Example ==\n\n"+body.list[0].example+"\n\n* "+body.list[0].thumbs_up+"\uD83D\uDC4D / "+body.list[0].thumbs_down+"\uD83D\uDC4E");
+				session.send("Top UD result for "+results.response.replace(/^Metagon /g, "")+"\n\n== Definition ==\n\n"+body.list[0].definition+"\n\n == Example ==\n\n"+body.list[0].example+"\n\n* "+body.list[0].thumbs_up+"\uD83D\uDC4D / "+body.list[0].thumbs_down+"\uD83D\uDC4E");
 				session.replaceDialog("/fun");
 			}
 			else if (!error && response.statusCode === 200) {
@@ -1824,15 +1824,15 @@ bot.dialog('/9gag1',[
 		builder.Prompts.choice(session, "Select a section to visit, or \"Search\" to search for posts.\n\n* \"got\" = Game of Thrones\n* \"imadedis\" = I made dis\n* \"pcmr\" = PC Master Race", "Search|"+gagbrds.join("|")+"|Back to Fun Menu", { listStyle: 3 });
 	},
 	function (session, results) {
-		if (results.response.replace("Metagon ", "").entity.endsWith("Back to Fun Menu")) {
+		if (results.response.replace(/^Metagon /g, "").entity.endsWith("Back to Fun Menu")) {
 			session.replaceDialog("/fun");
 		}
-		else if (results.response.replace("Metagon ", "").entity.endsWith("nsfw") && session.message.source === "kik") {
+		else if (results.response.replace(/^Metagon /g, "").entity.endsWith("nsfw") && session.message.source === "kik") {
 			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
 			session.replaceDialog("/fun");
 			return;
 		}
-		else if (results.response.replace("Metagon ", "").entity.endsWith("Search")) {
+		else if (results.response.replace(/^Metagon /g, "").entity.endsWith("Search")) {
 			nsfw.push({user: session.message.address.user.id, gag: "search"});
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.list);
@@ -1845,14 +1845,14 @@ bot.dialog('/9gag1',[
 			]);
 			builder.Prompts.text(session, msg);
 		}
-		else if (gagbrds.indexOf(results.response.replace("Metagon ", "").entity) > -1) {
-			nsfw.push({user: session.message.address.user.id, gag: results.response.replace("Metagon ", "").entity});
+		else if (gagbrds.indexOf(results.response.replace(/^Metagon /g, "").entity) > -1) {
+			nsfw.push({user: session.message.address.user.id, gag: results.response.replace(/^Metagon /g, "").entity});
 			builder.Prompts.choice(session, "Select a subsection to visit.", "Hot|Fresh", { listStyle: 3 });
 		}
     },
 	function (session, results) {
 		if (nsfw.find(i => {return i.user === session.message.address.user.id;}).gag === "search") {
-			request("https://9gag.com/search?query="+results.response.replace("Metagon ", ""), function(err, response, body) {
+			request("https://9gag.com/search?query="+results.response.replace(/^Metagon /g, ""), function(err, response, body) {
 				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 				if (err || !res) {
 					session.send("An error occured. Retry?");
@@ -1872,7 +1872,7 @@ bot.dialog('/9gag1',[
 				}
 			});
 		}
-		else if (results.response.replace("Metagon ", "").entity.endsWith("Hot")) {
+		else if (results.response.replace(/^Metagon /g, "").entity.endsWith("Hot")) {
 			request("https://9gag.com/"+nsfw.find(i => {return i.user === session.message.address.user.id;}).gag+"/hot", function(err, response, body) {
 				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 				if (err || !res) {
@@ -1893,7 +1893,7 @@ bot.dialog('/9gag1',[
 				}
 			});
 		}
-		else if (results.response.replace("Metagon ", "").entity.endsWith("Fresh")) {
+		else if (results.response.replace(/^Metagon /g, "").entity.endsWith("Fresh")) {
 			request("https://9gag.com/"+nsfw.find(i => {return i.user === session.message.address.user.id;}).gag+"/fresh", function(err, response, body) {
 				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 				if (err || !res) {
@@ -1914,7 +1914,7 @@ bot.dialog('/9gag1',[
 				}
 			});
 		}
-		else if (results.response.replace("Metagon ", "").endsWith("Back to Fun Menu")) {
+		else if (results.response.replace(/^Metagon /g, "").endsWith("Back to Fun Menu")) {
 			session.replaceDialog("/fun");
 			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 		}
