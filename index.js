@@ -131,10 +131,10 @@ lineConnector = new LineConnector.LineConnector({
 bot.connector("directline", lineConnector);
 
 const vk = require('botbuilder-vk')({
-        access_token: process.env.vk1,
-        callback_key: process.env.vk2,
-        group_id: process.env.vk3
-    });
+	access_token: process.env.vk1,
+	callback_key: process.env.vk2,
+	group_id: process.env.vk3
+});
 bot.connector(vk.channelId, vk);
 
 /*var viber = require('botbuilder-viber');
@@ -245,16 +245,11 @@ bot.on('contactRelationUpdate', function (message) {
 bot.beginDialogAction("menu", "/menu", { matches: /(\/|Metagon |)start/gi});
 bot.dialog('/menu', [
 	function (session) {
-		if (session.message.text === "/start" && session.message.source === "directline") {
-			session.send("Keyboard Mode is not available on GroupMe / Skype for Business / Discord. Please use only commands.\nFor more information, type \"help\".");
+		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness" || session.message.source === vk.channelId) {
+			session.send("Keyboard Mode is not available on GroupMe / Skype for Business / VK. Please use only commands.\nFor more information, type \"help\".");
 		}
 		else {
-			if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
-				session.send("Keyboard Mode is not available on GroupMe / Skype for Business / Discord. Please use only commands.\nFor more information, type \"help\".");
-			}
-			else {
-				builder.Prompts.choice(session, "What would you like to do right now?\n\nDiscovered a bug? Press the \"Feedback\" button to contact the owner. You can also check out our update log at <https://github.com/austinhuang0131/metagon/releases>.", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
-			}
+			builder.Prompts.choice(session, "What would you like to do right now?\n\nDiscovered a bug? Press the \"Feedback\" button to contact the owner. You can also check out our update log at <https://github.com/austinhuang0131/metagon/releases>.", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
 		}
 	}, function (session, results) {
 		switch (results.response.entity) {
@@ -407,17 +402,17 @@ bot.dialog('/about', function (session) {
 	else if (session.message.source === "skype") {
 		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at \"live:austin.0131\".\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
-	else if (session.message.source === "directline" && session.message.text === "/help") {
-		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at Discord invite `8uFr3J3`.\n**Commands:** `/9gag`, `/bunny`, `/cat`, `/flickr`, `/ibsearch`, `/imgur`, `/mcuser`, `/mcserver`, `/pastebin`, `/pixiv`, `/snake`, etc.\n\n* Do I help you a lot? Consider a small donation (Detail in documentation)!");
-	}
 	else if (session.message.source !== "directline") {
 		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation/Contact Us: http://metagon.cf\n\nDo I help you a lot? Consider a small donation (Detail in documentation)! The simplest way to use this bot is by typing \"start\".");
 	}
 	else {
 		session.send();
 	}
-	if (session.message.source !== "groupme" && session.message.source !== "directline" && session.message.text.endsWith("support")) {
+	if (session.message.source !== "groupme" && session.message.source !== "directline" && session.message session.message.text.endsWith("support")) {
 		session.replaceDialog("/menu");
+	}
+	else {
+		session.endDialog();
 	}
 });
 
@@ -458,7 +453,7 @@ bot.dialog('/feedback', [
 bot.beginDialogAction("cat", "/cat", { matches: /^( \/|\/|Metagon \/)cat/g});
 bot.dialog('/cat', function (session) {
 	if (session.message.source !== "directline") {session.sendTyping();}
-	request('http://random.cat/meow', function(error, response, body) {
+	request('https://random.cat/meow', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
 			session.send({
@@ -694,21 +689,21 @@ bot.dialog('/imgur1',[
     }]);
 bot.dialog('/imgur2', function (session) {
 	if (session.message.source === "kik") {
-		session.send('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
+		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
 		return;
 	}
 	if (session.message.text.replace("/imgur", "").replace(" ", "") !== "") {
 		request({url:"https://api.imgur.com/3/gallery/search?q="+session.message.text.substring(7), headers:{'Authorization': 'Client-ID '+process.env.imgur}}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
-				if (body.data.length === 0) {session.send("No results. Change your query?");}
-				else {session.send(body.data[Math.floor(Math.random() * body.data.length)].link);}
+				if (body.data.length === 0) {session.endDialog("No results. Change your query?");}
+				else {session.endDialog(body.data[Math.floor(Math.random() * body.data.length)].link);}
 			}
-			else {session.send("Failed to connect to http://imgur.com");}
+			else {session.endDialog("Failed to connect to http://imgur.com");}
 		});
 	}
 	else {
-		session.send("Missing search query! Correct usage: \"/imgur (Query)\"");
+		session.endDialog("Missing search query! Correct usage: \"/imgur (Query)\"");
 	}
 });
 
@@ -785,27 +780,27 @@ bot.dialog('/flickr1',[
     }]);
 bot.dialog('/flickr2', function (session) {
 	if (session.message.source === "kik") {
-		session.send('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
+		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
 		return;
 	}
-	if (session.message.source !== "directline") {session.sendTyping();}
+	if (session.message.source !== "directline") {session.endDialogTyping();}
 	if (session.message.text.replace(/( |)\/flickr/, "") !== "") {
 		request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+session.message.text.replace(/( |)\/flickr/, "")+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
 				var photo = body.photos.photo[Math.floor(Math.random() * body.photos.photo.length)];
 				if (photo === undefined) {
-					session.send("No results.");
+					session.endDialog("No results.");
 					return;
 				}
 				request("https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key="+process.env.flickr+"&photo_id="+photo.id+"&format=json&nojsoncallback=1", function(error, response, body) {
 					if (!error && response.statusCode === 200) {
 						body = JSON.parse(body);
 						if (!body.sizes) {
-							session.send("A persisting error occured. Please report this with your whole dialog to https://github.com/austinhuang0131/metagon/issues or email \"im@austinhuang.me\".");
+							session.endDialog("A persisting error occured. Please report this with your whole dialog to https://github.com/austinhuang0131/metagon/issues or email \"im@austinhuang.me\".");
 						}
 						else {
-							session.send({
+							session.endDialog({
 								text: photo.title,
 								attachments: [
 									{
@@ -816,14 +811,14 @@ bot.dialog('/flickr2', function (session) {
 							});
 						}
 					}
-					else {session.send("Failed to connect to http://flickr.com");}
+					else {session.endDialog("Failed to connect to http://flickr.com");}
 				});
 			}
-			else {session.send("Failed to connect to http://flickr.com");}
+			else {session.endDialog("Failed to connect to http://flickr.com");}
 		});
 	}
 	else {
-		session.send("Missing search query! Correct usage: \"/flickr (Query)\"");
+		session.endDialog("Missing search query! Correct usage: \"/flickr (Query)\"");
 	}
 });
 
@@ -1927,22 +1922,22 @@ bot.dialog('/9gag2', function (session) {
 	}
 	if (gagbrds.indexOf(args[0]) > -1 && gagsubs.indexOf(args[1]) > -1) {
 		if (args[0] === "nsfw" && session.message.source === "kik") {
-			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
 			return;
 		}
 		request("https://9gag.com/"+args[0]+"/"+args[1], function(err, response, body) {
 			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 			if (err || !res) {
-				session.send("An error occured. Retry?");
+				session.endDialog("An error occured. Retry?");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				return;
 			}
 			if (res.posts.length === 0) {
-				session.send("No results. Retry?");
+				session.endDialog("No results. Retry?");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 			else {
-				session.send(res.posts[Math.floor(Math.random() * res.posts.length)].url);
+				session.endDialog(res.posts[Math.floor(Math.random() * res.posts.length)].url);
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 		});
@@ -1951,22 +1946,22 @@ bot.dialog('/9gag2', function (session) {
 		request("https://9gag.com/search?query="+args[1], function(err, response, body) {
 			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 			if (err || !res) {
-				session.send("An error occured. Retry?");
+				session.endDialog("An error occured. Retry?");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				return;
 			}
 			if (res.posts.length === 0) {
-				session.send("No results. Retry?");
+				session.endDialog("No results. Retry?");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 			else {
-				session.send(res.posts[Math.floor(Math.random() * res.posts.length)].url);
+				session.endDialog(res.posts[Math.floor(Math.random() * res.posts.length)].url);
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 		});
 	}
 	else {
-		session.send("Invalid arguments!\n* /9gag (section) (hot/fresh)\n* /9gag search (Query)");
+		session.endDialog("Invalid arguments!\n* /9gag (section) (hot/fresh)\n* /9gag search (Query)");
 	}
 });
 
