@@ -128,7 +128,7 @@ lineConnector = new LineConnector.LineConnector({
     channelSecret: process.env.line2,
     channelAccessToken: process.env.line3
 });
-bot.connector("line", lineConnector);
+bot.connector("skypeforbusiness", lineConnector);
 
 const vk = require('botbuilder-vk')({
         access_token: process.env.vk1,
