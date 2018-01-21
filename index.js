@@ -207,13 +207,6 @@ bot.on('incoming', message => {
 	if (incomes[message.source] !== undefined) {incomes[message.source] += 1;}
 	incomes.total += 1;
 });
-bot.on('error', err => {
-	dd.postEvent({
-	   title: 'ERROR!!!',
-	   text: err
-	});
-});
-
 bot.on('conversationUpdate', function (message) {
     if (message.address.conversation.isGroup) {
         if (message.membersAdded) {
@@ -1722,7 +1715,6 @@ bot.dialog('/ud1',[
 	},
 	function (session, results) {
 		if (results.response.endsWith("Back to Fun Menu")) {
-			
 			session.replaceDialog("/fun");
 			return;
 		}
@@ -1942,18 +1934,15 @@ bot.dialog('/9gag2', function (session) {
 			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 			if (err || !res) {
 				session.send("An error occured. Retry?");
-				session.replaceDialog("/fun");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				return;
 			}
 			if (res.posts.length === 0) {
 				session.send("No results. Retry?");
-				session.replaceDialog("/fun");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 			else {
 				session.send(res.posts[Math.floor(Math.random() * res.posts.length)].url);
-				session.replaceDialog("/fun");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 		});
@@ -1963,18 +1952,15 @@ bot.dialog('/9gag2', function (session) {
 			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 			if (err || !res) {
 				session.send("An error occured. Retry?");
-				session.replaceDialog("/fun");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				return;
 			}
 			if (res.posts.length === 0) {
 				session.send("No results. Retry?");
-				session.replaceDialog("/fun");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 			else {
 				session.send(res.posts[Math.floor(Math.random() * res.posts.length)].url);
-				session.replaceDialog("/fun");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			}
 		});
@@ -2005,6 +1991,16 @@ bot.dialog('/', function (session) {
 		session.endDialog();
 	}
 });
+
+bot.beginDialogAction("test", "/test", { matches: /test/g});
+bot.dialog('/test',[
+	function (session) {
+		builder.Prompts.text(session, "Type something?");
+	},
+	function (session, results) {
+		session.send("Response: "+results.response+"\n\nEntity: "+results.response.entity+"\n\nResults: "+results);
+    }
+]);
 
 // Setup Restify Server
 var server = express();
