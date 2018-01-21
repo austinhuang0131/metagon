@@ -207,6 +207,9 @@ bot.on('incoming', message => {
 	if (incomes[message.source] !== undefined) {incomes[message.source] += 1;}
 	incomes.total += 1;
 });
+bot.on('send', message => {
+	console.log(String(message.attachments));
+});
 bot.on('conversationUpdate', function (message) {
     if (message.address.conversation.isGroup) {
         if (message.membersAdded) {
