@@ -452,7 +452,7 @@ bot.dialog('/feedback', [
 // Image
 bot.beginDialogAction("cat", "/cat", { matches: /^( \/|\/|Metagon \/)cat/g});
 bot.dialog('/cat', function (session) {
-	if (session.message.source !== "directline") {session.sendTyping();}
+	if (session.message.source !== "directline" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('https://random.cat/meow', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
@@ -479,7 +479,7 @@ bot.dialog('/cat', function (session) {
 
 bot.beginDialogAction("snake", "/snake", { matches: /^( \/|\/|Metagon \/)snake/g});
 bot.dialog('/snake', function (session) {
-	if (session.message.source !== "directline") {session.sendTyping();}
+	if (session.message.source !== "directline" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('http://fur.im/snek', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
@@ -506,7 +506,7 @@ bot.dialog('/snake', function (session) {
 
 bot.beginDialogAction("dog", "/dog", { matches: /^( \/|\/|Metagon \/)dog/g});
 bot.dialog('/dog', function (session) {
-	if (session.message.source !== "directline") {session.sendTyping();}
+	if (session.message.source !== "directline" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('https://random.dog/woof.json', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
@@ -533,7 +533,7 @@ bot.dialog('/dog', function (session) {
 
 bot.beginDialogAction("bunny", "/bunny", { matches: /^( \/|\/|Metagon \/)bunny/g});
 bot.dialog('/bunny', function (session) {
-	if (session.message.source !== "directline") {session.sendTyping();}
+	if (session.message.source !== "directline" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', function(error, response, body) {
 		if (!error && response.statusCode === 200 && session.message.source.includes("skype")) {
 			body = JSON.parse(body);
@@ -733,7 +733,7 @@ bot.dialog('/flickr1',[
 	},
 	function (session, results, next) {
 		if (results.response.replace(/^Metagon /g, "") !== "Back to Image Menu") {
-			if (session.message.source !== "directline") {session.sendTyping();}
+			if (session.message.source !== "directline" && session.message.source !== vk.channelId) {session.sendTyping();}
 			request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+results.response.replace(/^Metagon /g, "")+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
@@ -848,7 +848,7 @@ bot.dialog('/deviantart1',[
 	},
 	function (session, results) {
 		if (results.response.replace(/^Metagon /g, "") !== "Back to Image Menu") {
-			if (session.message.source !== "directline") {session.sendTyping();}
+			if (session.message.source !== "directline" && session.message.source !== vk.channelId) {session.sendTyping();}
 			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response.replace(/^Metagon /g, ""), {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					parseString(body, function (err, result) {
@@ -885,7 +885,7 @@ bot.dialog('/deviantart2', function (session) {
 		session.send('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
 		return;
 	}
-	if (session.message.source !== "directline") {session.sendTyping();}
+	if (session.message.source !== "directline" && session.message.source !== vk.channelId) {session.sendTyping();}
 	if (session.message.text.replace(/( |)\/deviantart/, "") !== "") {
 		request("https://backend.deviantart.com/rss.xml?type=deviation&q="+session.message.text.replace(/( |)\/deviantart/, ""), {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
@@ -971,7 +971,7 @@ bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/|Metagon \/)
 			session.replaceDialog("/image");
 			return;
 		}
-		if (session.message.source !== "directline") {session.sendTyping();}
+		if (session.message.source !== "directline" && session.message.source !== vk.channelId) {session.sendTyping();}
 		request("https://ibsearch.xxx/api/v1/images.json?key="+process.env.ibsearch+"&limit=1&q=random:+"+results.response.replace(/^Metagon /g, "")+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				if (body !== "[]") {
@@ -1006,7 +1006,7 @@ bot.dialog('/ibsearch2',[
 			session.send('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
 			return;
 		}
-		if (session.message.source !== "directline") {session.sendTyping();}
+		if (session.message.source !== "directline" && session.message.source !== vk.channelId) {session.sendTyping();}
 		nsfw.push({user: session.message.address.user.id, query: session.message.text.substring(11)});
 		fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		if (session.message.source !== "groupme" && session.message.source !== "directline") {
@@ -1106,7 +1106,7 @@ bot.dialog('/pixiv1',[
 			session.replaceDialog("/image");
 			return;
 		}
-		if (session.message.source !== "directline") {session.sendTyping();}
+		if (session.message.source !== "directline" && session.message.source !== vk.channelId) {session.sendTyping();}
 		pixiv.searchIllust(results.response.replace(/^Metagon /g, "")+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
 			var illust = json.illusts[Math.floor(Math.random() * json.illusts.length)];
 			if (illust === undefined) {
@@ -1219,7 +1219,7 @@ bot.dialog('/pixiv2',[
 		}
 	},
 	function (session, results) {
-		if (session.message.source !== "directline") {session.sendTyping();}
+		if (session.message.source !== "directline" && session.message.source !== vk.channelId) {session.sendTyping();}
 		var rating = "";
 		if (results.response.replace(/^Metagon /g, "") === false) {rating = " -R-18 -R-18G";}
 		pixiv.searchIllust(nsfw.find(i => {return i.user === session.message.address.user.id;}).query+rating, {per_page: 100, mode: "tag"}).then(json => {
