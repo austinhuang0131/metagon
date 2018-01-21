@@ -1998,7 +1998,7 @@ bot.dialog('/test',[
 		builder.Prompts.text(session, "Type something?");
 	},
 	function (session, results) {
-		session.send("Response: "+results.response+"\n\nEntity: "+results.response.entity+"\n\nResults: "+results);
+		session.send("Response: "+results.response+"\n\nEntity: "+results.response.entity+"\n\nResults: "+String(results));
     }
 ]);
 
