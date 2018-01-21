@@ -257,7 +257,7 @@ bot.dialog('/menu', [
 			}
 		}
 	}, function (session, results) {
-		switch (results.response.replace(/^Metagon /g, "").entity) {
+		switch (results.response.entity) {
 			case "Images":
 				session.replaceDialog("/image");
 			break;
@@ -292,7 +292,7 @@ bot.dialog('/image', [
 		}
 	},
 	function (session, results) {
-		switch (results.response.replace(/^Metagon /g, "").entity) {
+		switch (results.response.entity) {
 			case "Cat":
 				session.replaceDialog("/cat");
 			break;
@@ -337,7 +337,7 @@ bot.dialog('/utility', [
 		builder.Prompts.choice(session, "What would you like to do right now?", "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
 	}, 
 	function (session, results) {
-		switch (results.response.replace(/^Metagon /g, "").entity) {
+		switch (results.response.entity) {
 			case "Weather":
 				session.replaceDialog("/weather1");
 			break;
@@ -370,7 +370,7 @@ bot.dialog('/fun', [
 		builder.Prompts.choice(session, "What would you like to do right now?", "9gag|Urban Dictionary|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit", { listStyle: 3 });
 	},
 	function (session, results) {
-		switch (results.response.replace(/^Metagon /g, "").entity) {
+		switch (results.response.entity) {
 			case "9gag":
 				session.replaceDialog("/9gag1");
 			break;
@@ -587,7 +587,7 @@ bot.dialog('/anime', [
 		builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Smug|Back to Image Menu|Quit", { listStyle: 3 });
 	},
 	function (session, results) {
-		switch (results.response.replace(/^Metagon /g, "").entity) {
+		switch (results.response.entity) {
 			case "Back to Image Menu":
 				session.beginDialog("/image");
 			break;
@@ -1147,15 +1147,15 @@ bot.dialog('/pixiv1',[
 		});
     },
 	function (session, results) {
-		if (results.response.replace(/^Metagon /g, "").entity === "Restart a Search") {
+		if (results.response.entity === "Restart a Search") {
 			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			session.reset("/pixiv1");
 		}
-		else if (results.response.replace(/^Metagon /g, "").entity === "Back to Image Menu") {
+		else if (results.response.entity === "Back to Image Menu") {
 			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 			session.replaceDialog("/image");
 		}
-		else if (results.response.replace(/^Metagon /g, "").entity === "View all pages") {
+		else if (results.response.entity === "View all pages") {
 			session.sendTyping();
 			pixiv.illustDetail(nsfw.find(i => {return i.user === session.message.address.user.id;}).illust).then(json => {
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
@@ -1824,15 +1824,15 @@ bot.dialog('/9gag1',[
 		builder.Prompts.choice(session, "Select a section to visit, or \"Search\" to search for posts.\n\n* \"got\" = Game of Thrones\n* \"imadedis\" = I made dis\n* \"pcmr\" = PC Master Race", "Search|"+gagbrds.join("|")+"|Back to Fun Menu", { listStyle: 3 });
 	},
 	function (session, results) {
-		if (results.response.replace(/^Metagon /g, "").entity.endsWith("Back to Fun Menu")) {
+		if (results.response.entity.endsWith("Back to Fun Menu")) {
 			session.replaceDialog("/fun");
 		}
-		else if (results.response.replace(/^Metagon /g, "").entity.endsWith("nsfw") && session.message.source === "kik") {
+		else if (results.response.entity.endsWith("nsfw") && session.message.source === "kik") {
 			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
 			session.replaceDialog("/fun");
 			return;
 		}
-		else if (results.response.replace(/^Metagon /g, "").entity.endsWith("Search")) {
+		else if (results.response.entity.endsWith("Search")) {
 			nsfw.push({user: session.message.address.user.id, gag: "search"});
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.list);
@@ -1845,8 +1845,8 @@ bot.dialog('/9gag1',[
 			]);
 			builder.Prompts.text(session, msg);
 		}
-		else if (gagbrds.indexOf(results.response.replace(/^Metagon /g, "").entity) > -1) {
-			nsfw.push({user: session.message.address.user.id, gag: results.response.replace(/^Metagon /g, "").entity});
+		else if (gagbrds.indexOf(results.response.entity) > -1) {
+			nsfw.push({user: session.message.address.user.id, gag: results.response.entity});
 			builder.Prompts.choice(session, "Select a subsection to visit.", "Hot|Fresh", { listStyle: 3 });
 		}
     },
@@ -1872,7 +1872,7 @@ bot.dialog('/9gag1',[
 				}
 			});
 		}
-		else if (results.response.replace(/^Metagon /g, "").entity.endsWith("Hot")) {
+		else if (results.response.entity.endsWith("Hot")) {
 			request("https://9gag.com/"+nsfw.find(i => {return i.user === session.message.address.user.id;}).gag+"/hot", function(err, response, body) {
 				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 				if (err || !res) {
@@ -1893,7 +1893,7 @@ bot.dialog('/9gag1',[
 				}
 			});
 		}
-		else if (results.response.replace(/^Metagon /g, "").entity.endsWith("Fresh")) {
+		else if (results.response.entity.endsWith("Fresh")) {
 			request("https://9gag.com/"+nsfw.find(i => {return i.user === session.message.address.user.id;}).gag+"/fresh", function(err, response, body) {
 				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
 				if (err || !res) {
