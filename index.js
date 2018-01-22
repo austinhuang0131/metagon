@@ -248,8 +248,29 @@ bot.dialog('/menu', [
 		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness" || session.message.source === vk.channelId) {
 			session.send("Keyboard Mode is not available on GroupMe / Skype for Business / VK. Please use only commands.\nFor more information, type \"help\".");
 		}
-		else {
+		else if (session.message.source !== "line") {
 			builder.Prompts.choice(session, "What would you like to do right now?\n\nDiscovered a bug? Press the \"Feedback\" button to contact the owner. You can also check out our update log at <https://github.com/austinhuang0131/metagon/releases>.", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
+		}
+		else {
+			var msg = new builder.Message(session);
+			msg.attachmentLayout(builder.AttachmentLayout.carousel);
+			msg.attachments([
+				new builder.HeroCard(session)
+					.text("What would you like to do right now?")
+					.buttons([
+						builder.CardAction.imBack(session, "Images", "Images"),
+						builder.CardAction.imBack(session, "Utility", "Utility"),
+						builder.CardAction.imBack(session, "Fun", "Fun")
+					]),
+				new builder.HeroCard(session)
+					.text("Discovered a bug? Press the \"Feedback\" button to contact the owner. You can also check out our update log at <https://github.com/austinhuang0131/metagon/releases>.")
+					.buttons([
+						builder.CardAction.imBack(session, "About", "About"),
+						builder.CardAction.imBack(session, "Feedback", "Feedback"),
+						builder.CardAction.imBack(session, "Quit", "Quit")
+					])
+			]);
+			builder.Prompts.choice(session, msg, "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
 		}
 	}, function (session, results) {
 		switch (results.response.entity) {
@@ -1983,15 +2004,11 @@ bot.dialog('/unstuck', function (session) {
 	session.clearDialogStack();
 });
 bot.dialog('/', function (session) {
-	if (session.message.source !== "line" && session.message.source !== "slack") {
+	if (session.message.source !== "slack") {
 		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
 	}
 	else if (session.message.source === "slack" && !message.address.conversation.isGroup) {
 		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');		
-	}
-	else if (session.message.source === "line") {
-		console.log("received");
-		session.endDialog("This is working.");
 	}
 	else {
 		session.endDialog();
