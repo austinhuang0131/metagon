@@ -263,7 +263,7 @@ bot.dialog('/menu', [
 						builder.CardAction.imBack(session, "Fun", "Fun")
 					]),
 				new builder.HeroCard(session)
-					.text("Discovered a bug? Press the \"Feedback\" button to contact the owner. You can also check out our update log at <https://github.com/austinhuang0131/metagon/releases>.")
+					.text("Discovered a bug? Press the \"Feedback\" button to contact the owner.")
 					.buttons([
 						builder.CardAction.imBack(session, "About", "About"),
 						builder.CardAction.imBack(session, "Feedback", "Feedback"),
