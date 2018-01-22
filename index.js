@@ -956,11 +956,11 @@ bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/|Metagon \/)
 		builder.Prompts.confirm(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace(/^Metagon /g, "") === false) {
+		if (results.response === false) {
 			nsfw.push({user: session.message.address.user.id, nsfw: "+rating:s"});
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		}
-		else if (results.response.replace(/^Metagon /g, "") === true) {
+		else if (results.response === true) {
 			nsfw.push({user: session.message.address.user.id, nsfw: ""});
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		}
@@ -1040,7 +1040,7 @@ bot.dialog('/ibsearch2',[
 	},
 	function (session, results) {
 		var rating = "";
-		if (results.response.replace(/^Metagon /g, "") === false) {rating = "rating:s";}
+		if (results.response === false) {rating = "rating:s";}
 		request("https://ibsearch.xxx/api/v1/images.json?key="+process.env.ibsearch+"&limit=1&q=random:+"+nsfw.find(i => {return i.user === session.message.address.user.id;}).query+"+"+rating, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				if (body !== "[]") {
@@ -1093,11 +1093,11 @@ bot.dialog('/pixiv1',[
 		builder.Prompts.confirm(session, msg);
 	},
 	function (session, results) {
-		if (results.response.replace(/^Metagon /g, "") === false) {
+		if (results.response === false) {
 			nsfw.push({user: session.message.address.user.id, nsfw: " -R-18 -R-18G"});
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		}
-		else if (results.response.replace(/^Metagon /g, "") === true) {
+		else if (results.response === true) {
 			nsfw.push({user: session.message.address.user.id, nsfw: ""});
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		}
@@ -1232,7 +1232,7 @@ bot.dialog('/pixiv2',[
 	function (session, results) {
 		if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
 		var rating = "";
-		if (results.response.replace(/^Metagon /g, "") === false) {rating = " -R-18 -R-18G";}
+		if (results.response === false) {rating = " -R-18 -R-18G";}
 		pixiv.searchIllust(nsfw.find(i => {return i.user === session.message.address.user.id;}).query+rating, {per_page: 100, mode: "tag"}).then(json => {
 			var illust = json.illusts[Math.floor(Math.random() * json.illusts.length)];
 			if (illust === undefined) {
