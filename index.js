@@ -297,11 +297,45 @@ bot.dialog('/menu', [
 ]);
 bot.dialog('/image', [
 	function (session) {
-		switch (session.message.source === "kik") {
-			case true:
+		switch (session.message.source) {
+			case "kik":
 				builder.Prompts.choice(session, "What would you like to do right now?", "Cat|Dog|Snake|Bunny|Anime actions|Back to Start Menu|Quit", { listStyle: 3 });
 			break;
-			case false:
+			case "line":
+				var msg = new builder.Message(session);
+				msg.attachmentLayout(builder.AttachmentLayout.carousel);
+				msg.attachments([
+					new builder.HeroCard(session)
+						.text("What would you like to do right now?")
+						.buttons([
+							builder.CardAction.imBack(session, "Imgur", "Imgur"),
+							builder.CardAction.imBack(session, "Flickr", "Flickr"),
+							builder.CardAction.imBack(session, "Pixiv (Anime)", "Pixiv (Anime)")
+						]),
+					new builder.HeroCard(session)
+						.text("What would you like to do right now?")
+						.buttons([
+							builder.CardAction.imBack(session, "DeviantArt", "DeviantArt"),
+							builder.CardAction.imBack(session, "Anime actions", "Anime actions"),
+							builder.CardAction.imBack(session, "Cat", "Cat")
+						]),
+					new builder.HeroCard(session)
+						.text("What would you like to do right now?")
+						.buttons([
+							builder.CardAction.imBack(session, "Dog", "Dog"),
+							builder.CardAction.imBack(session, "Snake", "Snake"),
+							builder.CardAction.imBack(session, "Bunny", "Bunny")
+						]),
+					new builder.HeroCard(session)
+						.text("What would you like to do right now?")
+						.buttons([
+							builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu"),
+							builder.CardAction.imBack(session, "Quit", "Quit")
+						])
+				]);
+				builder.Prompts.choice(session, msg, "Imgur|Flickr|Pixiv (Anime)|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
+			break;
+			default:
 				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|Pixiv (Anime)|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
 				// IbSearch (Anime) should be added to the list whenever the function comes back
 			break;
@@ -350,7 +384,38 @@ bot.dialog('/image', [
 ]);
 bot.dialog('/utility', [
 	function (session) {
-		builder.Prompts.choice(session, "What would you like to do right now?", "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
+		switch (session.message.source) {
+			case "line":
+				var msg = new builder.Message(session);
+				msg.attachmentLayout(builder.AttachmentLayout.carousel);
+				msg.attachments([
+					new builder.HeroCard(session)
+						.text("What would you like to do right now?")
+						.buttons([
+							builder.CardAction.imBack(session, "Weather", "Weather"),
+							builder.CardAction.imBack(session, "Shorten URLs", "Shorten URLs"),
+							builder.CardAction.imBack(session, "Expand Bitly URLs", "Expand Bitly URLs")
+						]),
+					new builder.HeroCard(session)
+						.text("What would you like to do right now?")
+						.buttons([
+							builder.CardAction.imBack(session, "Minecraft User Lookup", "Minecraft User Lookup"),
+							builder.CardAction.imBack(session, "Minecraft Server Status", "Minecraft Server Status"),
+							builder.CardAction.imBack(session, "Pastebin", "Pastebin")
+						]),
+					new builder.HeroCard(session)
+						.text("What would you like to do right now?")
+						.buttons([
+							builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu"),
+							builder.CardAction.imBack(session, "Quit", "Quit")
+						])
+				]);
+				builder.Prompts.choice(session, msg, "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
+			break;
+			default:
+				builder.Prompts.choice(session, "What would you like to do right now?", "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
+			break;
+		}
 	}, 
 	function (session, results) {
 		switch (results.response.entity) {
@@ -383,7 +448,37 @@ bot.dialog('/utility', [
 ]);
 bot.dialog('/fun', [
 	function (session) {
-		builder.Prompts.choice(session, "What would you like to do right now?", "9gag|Urban Dictionary|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit", { listStyle: 3 });
+		switch (session.message.source) {
+			case "line":
+				var msg = new builder.Message(session);
+				msg.attachmentLayout(builder.AttachmentLayout.carousel);
+				msg.attachments([
+					new builder.HeroCard(session)
+						.text("What would you like to do right now?")
+						.buttons([
+							builder.CardAction.imBack(session, "9gag", "9gag"),
+							builder.CardAction.imBack(session, "Urban Dictionary", "Urban Dictionary"),
+							builder.CardAction.imBack(session, "Chuck Norris", "Chuck Norris")
+						]),
+					new builder.HeroCard(session)
+						.text("What would you like to do right now?")
+						.buttons([
+							builder.CardAction.imBack(session, "Yoda Quote", "Yoda Quote"),
+							builder.CardAction.imBack(session, "Quote on Design", "Quote on Design"),
+							builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu")
+						]),
+					new builder.HeroCard(session)
+						.text("What would you like to do right now?")
+						.buttons([
+							builder.CardAction.imBack(session, "Quit", "Quit")
+						])
+				]);
+				builder.Prompts.choice(session, msg, "9gag|Urban Dictionary|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit", { listStyle: 3 });
+			break;
+			default:		
+				builder.Prompts.choice(session, "What would you like to do right now?", "9gag|Urban Dictionary|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit", { listStyle: 3 });
+			break;
+		}
 	},
 	function (session, results) {
 		switch (results.response.entity) {
