@@ -455,6 +455,7 @@ bot.dialog('/feedback', [
 // Image
 bot.beginDialogAction("cat", "/cat", { matches: /^( \/|\/|Metagon \/)cat/g});
 bot.dialog('/cat', function (session) {
+	console.log(session.message.source);
 	if (session.message.source !== "directline" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('https://random.cat/meow', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
