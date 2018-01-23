@@ -1079,7 +1079,7 @@ bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/|Metagon \/)
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
-			.title("You chose "+results.response.replace(/^Metagon /g, "")+" for NSFW visibility. Input a search query.")
+			.title("You chose "+results.response+" for NSFW visibility. Input a search query.")
 			.subtitle("After your input, wait patiently as it takes time to send the image!")
 			.buttons([
 				builder.CardAction.imBack(session, "Back to Image Menu", "Back to Image Menu")
@@ -1216,7 +1216,7 @@ bot.dialog('/pixiv1',[
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
-			.title("You chose "+results.response.replace(/^Metagon /g, "")+" for NSFW visibility. Input a search query.")
+			.title("You chose "+results.response+" for NSFW visibility. Input a search query.")
 			.buttons([
 				builder.CardAction.imBack(session, "Back to Image Menu", "Back to Image Menu")
 			])
