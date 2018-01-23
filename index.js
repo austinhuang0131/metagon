@@ -507,7 +507,7 @@ bot.dialog('/fun', [
 	}
 ]);
 
-bot.beginDialogAction("help", "/about", { matches: /help/i});
+bot.beginDialogAction("help", "/about", { matches: /^(\/|)help/i});
 bot.dialog('/about', function (session) {
 	if (session.message.source === "kik") {
 		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at @austinhuang0131.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
@@ -524,7 +524,7 @@ bot.dialog('/about', function (session) {
 	else {
 		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation/Contact Us: http://metagon.cf\n\nDo I help you a lot? Consider a small donation (Detail in documentation)! The simplest way to use this bot is by typing \"start\".");
 	}
-	if (session.message.source !== "groupme" && session.message.source !== "line" && session.message.source !== vk.channelId && session.message.text.endsWith("support")) {
+	if (session.message.source !== "groupme" && session.message.source !== vk.channelId && session.message.text !== ("/help")) {
 		session.replaceDialog("/menu");
 	}
 	else {
