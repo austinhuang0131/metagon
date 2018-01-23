@@ -270,7 +270,7 @@ bot.dialog('/menu', [
 						builder.CardAction.imBack(session, "Quit", "Quit")
 					])
 			]);
-			builder.Prompts.choice(session, msg, "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
+			builder.Prompts.choice(session, msg, "Images|Utility|Fun|About|Feedback|Quit");
 		}
 	}, function (session, results) {
 		switch (results.response.entity) {
@@ -333,7 +333,7 @@ bot.dialog('/image', [
 							builder.CardAction.imBack(session, "Quit", "Quit")
 						])
 				]);
-				builder.Prompts.choice(session, msg, "Imgur|Flickr|Pixiv (Anime)|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, msg, "Imgur|Flickr|Pixiv (Anime)|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Back to Start Menu|Quit");
 			break;
 			default:
 				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|Pixiv (Anime)|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
@@ -413,7 +413,7 @@ bot.dialog('/utility', [
 				builder.Prompts.choice(session, msg, "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
 			break;
 			default:
-				builder.Prompts.choice(session, "What would you like to do right now?", "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, "What would you like to do right now?", "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit");
 			break;
 		}
 	}, 
@@ -473,7 +473,7 @@ bot.dialog('/fun', [
 							builder.CardAction.imBack(session, "Quit", "Quit")
 						])
 				]);
-				builder.Prompts.choice(session, msg, "9gag|Urban Dictionary|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, msg, "9gag|Urban Dictionary|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit");
 			break;
 			default:		
 				builder.Prompts.choice(session, "What would you like to do right now?", "9gag|Urban Dictionary|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit", { listStyle: 3 });
