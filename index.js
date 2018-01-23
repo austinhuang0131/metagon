@@ -329,6 +329,7 @@ bot.dialog('/image', [
 					new builder.HeroCard(session)
 						.text("What would you like to do right now?")
 						.buttons([
+							builder.CardAction.imBack(session, "Hey Line, stop enforcing consistencies on button counts!", "(Click for Suprise)"),
 							builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu"),
 							builder.CardAction.imBack(session, "Quit", "Quit")
 						])
@@ -399,14 +400,14 @@ bot.dialog('/utility', [
 					new builder.HeroCard(session)
 						.text("What would you like to do right now?")
 						.buttons([
-							builder.CardAction.imBack(session, "Minecraft User Lookup", "Minecraft User Lookup"),
-							builder.CardAction.imBack(session, "Minecraft Server Status", "Minecraft Server Status"),
+							builder.CardAction.imBack(session, "Minecraft User Lookup", "Minecraft User"),
+							builder.CardAction.imBack(session, "Minecraft Server Ping", "Minecraft Server"),
 							builder.CardAction.imBack(session, "Pastebin", "Pastebin")
 						]),
 					new builder.HeroCard(session)
 						.text("What would you like to do right now?")
 						.buttons([
-							builder.CardAction.imBack(session, "(Click for Suprise)", "Hey Line, stop enforcing consistencies on button counts!"),
+							builder.CardAction.imBack(session, "Hey Line, stop enforcing consistencies on button counts!", "(Click for Suprise)"),
 							builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu"),
 							builder.CardAction.imBack(session, "Quit", "Quit")
 						])
