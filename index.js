@@ -121,12 +121,10 @@ var incomes = {skype: 0, telegram: 0, slack: 0, kik: 0, total: 0};
 		key: process.env.dictionary
 	});*/
 
-const LineConnector = require("botbuilder-linebot-connector"),
-lineConnector = new LineConnector.LineConnector({
-    hasPushApi: false,
-    channelId: process.env.line1,
+const lineConnector = require("botbuilder-line"){
     channelSecret: process.env.line2,
-    channelAccessToken: process.env.line3
+    channelAccessToken: process.env.line3,
+	debug: true
 });
 bot.connector("directline", lineConnector);
 
