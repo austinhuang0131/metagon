@@ -1239,7 +1239,6 @@ bot.dialog('/pixiv1',[
 			else {
 				var url = illust.imageUrls.large;
 				if (illust.metaSinglePage) {url = illust.metaSinglePage.originalImageUrl;}
-				console.log(url);
 				pixivImg(url).then(output => {
 					cloudinary.uploader.upload(output, urls => {
 						session.send({
@@ -1352,6 +1351,7 @@ bot.dialog('/pixiv2',[
 				session.send("No results.");
 			}
 			else {
+				console.log(illust.imageUrls);
 				var msg = "";
 				if (illust.is_manga === true) {msg += "\nThis is a multiple-page illustration, so only the first page is shown. View the full content at http://www.pixiv.net/member_illust.php?mode=medium&illust_id="+illust.id;}
 				var url = illust.imageUrls.large;
