@@ -1239,6 +1239,7 @@ bot.dialog('/pixiv1',[
 			else {
 				var url = illust.imageUrls.large;
 				if (illust.metaSinglePage) {url = illust.metaSinglePage.originalImageUrl;}
+				console.log(url);
 				pixivImg(url).then(output => {
 					cloudinary.uploader.upload(output, urls => {
 						session.send({
