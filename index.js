@@ -121,7 +121,7 @@ var incomes = {skype: 0, telegram: 0, slack: 0, kik: 0, total: 0};
 		key: process.env.dictionary
 	});*/
 
-const lineConnector = require("botbuilder-line"){
+const lineConnector = require("botbuilder-line")({
     channelSecret: process.env.line2,
     channelAccessToken: process.env.line3,
 	debug: true
