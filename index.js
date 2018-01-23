@@ -2,6 +2,7 @@ const express = require('express'),
       builder = require('botbuilder'),
       fs = require('fs'),
       request = require('request'),
+	  bodyParser = require('body-parser'),
       cloudinary = require('cloudinary');
 var connector = new builder.ChatConnector({
     appId: process.env.appid,
@@ -2107,6 +2108,7 @@ bot.dialog('/', function (session) {
 
 // Setup Restify Server
 var server = express();
+server.use(bodyParser.json({type: "*/*"}));
 server.post('/api/messages', connector.listen());
 /*server.post('/viber', viberChannel.listen());*/
 server.post('/linebot', lineConnector.listen);
