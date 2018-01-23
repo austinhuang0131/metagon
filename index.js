@@ -2109,7 +2109,7 @@ bot.dialog('/', function (session) {
 var server = express();
 server.post('/api/messages', connector.listen());
 /*server.post('/viber', viberChannel.listen());*/
-server.post('/linebot', lineConnector.listen());
+server.post('/linebot', lineConnector.listen);
 server.post('/vk', vk.listen());
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
