@@ -406,6 +406,7 @@ bot.dialog('/utility', [
 					new builder.HeroCard(session)
 						.text("What would you like to do right now?")
 						.buttons([
+							builder.CardAction.imBack(session, "(Click for Suprise)", "Hey Line, stop enforcing consistencies on button counts!"),
 							builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu"),
 							builder.CardAction.imBack(session, "Quit", "Quit")
 						])
@@ -466,11 +467,6 @@ bot.dialog('/fun', [
 							builder.CardAction.imBack(session, "Yoda Quote", "Yoda Quote"),
 							builder.CardAction.imBack(session, "Quote on Design", "Quote on Design"),
 							builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu")
-						]),
-					new builder.HeroCard(session)
-						.text("What would you like to do right now?")
-						.buttons([
-							builder.CardAction.imBack(session, "Quit", "Quit")
 						])
 				]);
 				builder.Prompts.choice(session, msg, "9gag|Urban Dictionary|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit");
