@@ -1,5 +1,5 @@
 ---
-title: Category: Fun
+title: Fun commands
 ---
 
 These commands are located in the Fun category of the startup menu.
@@ -29,4 +29,4 @@ Returns a random post from 9gag. Either from one section, or by a search query.
   * `/9gag trending`
   * `/9gag <Section> <Hot/Fresh>`
   * `/9gag search <Query>`
-* Allowed sections: funny, wtf, gif, gaming, anime-manga, movie-tv, cute, girl, awesome, cosplay, sport, food, ask9gag, timely, nsfw.
+* Available sections are defined [here](https://github.com/austinhuang0131/metagon/blob/master/index.js#L21).
