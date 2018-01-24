@@ -1727,7 +1727,7 @@ bot.dialog('/design', function (session) {
 bot.beginDialogAction("9gag", "/9gag2", { matches: /^( \/|\/|Metagon \/)9gag/g});
 bot.dialog('/9gag1',[
 	function (session) {
-		else if (session.message.source === "line") {
+		if (session.message.source === "line") {
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel);
 			msg.attachments([
