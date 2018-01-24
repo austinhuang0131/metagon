@@ -1,5 +1,5 @@
 ---
-title: Category: Utility
+title: Utility Commands
 ---
 
 These commands are located in the Utility category of the startup menu.
