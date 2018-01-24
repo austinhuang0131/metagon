@@ -1,5 +1,5 @@
 ---
-title: Category: Images
+title: Images commands
 ---
 
 These commands are located in the Images category of the startup menu.
