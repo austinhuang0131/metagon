@@ -14,7 +14,12 @@ Kiss/Pat/Hug yourself or your buddy. Or give them a smug.
 
 * Command Entry: `/kiss` `/pat` `/hug` `/smug`
 
-## Anime Images
+## Illustrations
+### DeviantArt
+Searches images from [DeviantArt](http://deviantart.com).
+
+* Command Entry: `/deviantart <Query>`
+
 ### Pixiv
 Searches images from [pixiv](http://pixiv.net).
 
@@ -26,37 +31,9 @@ Searches images from [pixiv](http://pixiv.net).
 * `-Query`: Exclude this tag.
 * ` ` separates tags when multiple tags are present.
 
-For users who chose not to display NSFW content, `-R-18 -R-18G` is automatically enabled at the end of your query.
+For users who chose not to display NSFW content, `-R-18 -R-18G` is automatically enabled at the end of your query. However, this does ONLY filter illustrations that are tagged either `R-18` or `R-18G` (which are required tags for such illustrations).
 
-Japanese tags are suggested, as the majority pixiv users are Japanese (But there are also a lot of Chinese which is sometimes considered as a majority too, as well as some Koreans and Americans. Chinese users use Japanese tags to label their work for more traffic, but Koreans and Americans don't. *Who knows.*).
-
-### IbSearch
-**Unavailable due to IbSearch closure.**
-
-> IbSearch's main server has suffered a failure of both RAID drives and repairing the damage from backups requires more time than I can afford to spend right now.
->
-> Thus, sadly, the site has to be put offline until I can get back to development.
->
-> Sorry everyone who has continued to visit it despite lack of updates for the last few years.
->
-> I promise this is not the end.
-
-<!--
-Searches images from [IbSearch.xxx](http://ibsearch.xxx) which covers most boorus (gelbooru, danbooru, rule34, furrybo, yandere, konachan, safebooru, xbooru, e621, Überbooru).
-
-For users who chose not to display NSFW content, `rating:s` is automatically enabled at the end of your query.
-
-* Command Entry: `/ibsearch [Query]`
-
-#### Query
-For all queries, `random: ` is added before your query to increase randomness of the result (So you are more likely getting different images when you execute it multiple times. Wait, *why do you execute it multiple times?*).
-
-* `Query`: Include this tag.
-* `-Query`: Exclude this tag.
-* Space separates tags.
-* There's no tags with space. However when you need them, use `_`, for example `animal_ears`.
-* For other rules click [here](https://ibsearch.xxx/api/v1/images#qtags). However, most of them are unnecessary.
--->
+Japanese tags are suggested, as the majority of pixiv users are Japanese-speaking.
 
 ## Imgur
 Search Imgur images.
