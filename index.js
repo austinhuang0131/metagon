@@ -18,7 +18,7 @@ var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 const Pixiv = require('pixiv-app-api'),
       pixiv = new Pixiv(process.env.pixiv_username, process.env.pixiv_password),
       pixivImg = require('pixiv-img');
-const gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "pol3itics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf"],
+const gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "politics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf", "starwars", "classicalartmemes", "travel", "surrealmemes"],
       gagsubs = ["hot", "fresh"],
       yoda_said = [
   '"Fear is the path to the dark side. Fear leads to anger, anger leads to hate, hate leads to suffering." -- Yoda \n',
@@ -510,6 +510,16 @@ bot.dialog('/about', function (session) {
 	}
 	else if (session.message.source === "telegram") {
 		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at @austinhuang.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+	}
+	else if (session.message.source === "line") {
+		session.send({text: "Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master by searching user ID \"austinhuang0131\".\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".",
+			attachments: [
+				{
+					contentType: "image/*",
+					contentUrl: "https://austinhuang.me/assets/line.jpg"
+				}
+			]
+		});
 	}
 	else if (session.message.source === "skype") {
 		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at \"live:austin.0131\".\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
@@ -1019,7 +1029,7 @@ bot.dialog('/deviantart2', function (session) {
 						return;
 					}
 					var thing = result.rss.channel[0].item[Math.floor(Math.random() * result.rss.channel[0].item.length)];
-					session.send({
+					session.endDialog({
 						text: thing.title[0],
 						attachments: [
 							{
@@ -1032,12 +1042,12 @@ bot.dialog('/deviantart2', function (session) {
 			}
 			else {
 				console.log(body);
-				session.send("Failed to connect to https://backend.deviantart.com/rss.xml");
+				session.endDialog("Failed to connect to https://backend.deviantart.com/rss.xml");
 			}
 		});
 	}
 	else {
-		session.send("Missing search query! Correct usage: \"/deviantart (Query)\"");
+		session.endDialog("Missing search query! Correct usage: \"/deviantart (Query)\"");
 	}
 });
 
@@ -1237,7 +1247,7 @@ bot.dialog('/pixiv1',[
 				session.replaceDialog("/image");
 			}
 			else {
-				var url = illust.imageUrls.large;
+				var url = illust.imageUrls.large || illust.imageUrls.medium;
 				if (illust.metaSinglePage) {url = illust.metaSinglePage.originalImageUrl;}
 				pixivImg(url).then(output => {
 					cloudinary.uploader.upload(output, urls => {
@@ -1351,14 +1361,13 @@ bot.dialog('/pixiv2',[
 				session.send("No results.");
 			}
 			else {
-				console.log(illust.imageUrls);
 				var msg = "";
 				if (illust.is_manga === true) {msg += "\nThis is a multiple-page illustration, so only the first page is shown. View the full content at http://www.pixiv.net/member_illust.php?mode=medium&illust_id="+illust.id;}
-				var url = illust.imageUrls.large;
+				var url = illust.imageUrls.large || illust.imageUrls.medium;
 				if (illust.metaSinglePage) {url = illust.metaSinglePage.originalImageUrl;}
 				pixivImg(url).then(output => {
 					cloudinary.uploader.upload(output, urls => {
-						session.send({
+						session.endDialog({
 							text: msg,
 							attachments: [
 								{
@@ -1445,10 +1454,10 @@ bot.dialog('/shorten2', function (session) {
 	}
 	request("https://api-ssl.bitly.com/v3/shorten?access_token="+process.env.bitly_token+"&longUrl="+site+"&format=txt", function(error, response, body) {
 		if (!error && response.statusCode === 200) {
-			session.send("Done! "+body);
+			session.endDialog("Done! "+body);
 		}
 		else {
-			session.send("An error occured. Invalid address, or retry?\n\n/shorten (URL)");
+			session.endDialog("An error occured. Invalid address, or retry?\n\n/shorten (URL)");
 		}
 	});
 });
@@ -1521,10 +1530,10 @@ bot.dialog('/expand2', function (session){
 	}
 	request("https://api-ssl.bitly.com/v3/expand?access_token="+process.env.bitly_token+"&shortUrl="+site+"&format=txt", function(error, response, body) {
 		if (!error && response.statusCode === 200) {
-			session.send("Done! "+body);
+			session.endDialog("Done! "+body);
 		}
 		else {
-			session.send("An error occured. Invalid address, or retry?\n\n/expand (Bitly URL)");
+			session.endDialog("An error occured. Invalid address, or retry?\n\n/expand (Bitly URL)");
 		}
 	});
 });
@@ -1597,24 +1606,24 @@ bot.dialog('/mcuser2', function (session) {
 			if (mcapi.result.status === "Ok") {
 				request('http://mcapi.de/api/user/'+mcapi.uuid+'/reputation', function(error, response, body) {
 					var mcrep = JSON.parse(body);
-					session.send(mcapi.username+" (UUID: "+mcapi.uuid+")\n* Name history: "+mcapi.history.map(h => h.name).splice(mcapi.history.length - 1, 1).join(", ")+"\n\n== Appearance ==\n* Body: https://crafatar.com/renders/body/"+mcapi.uuid+"\n* Skin: https://crafatar.com/skins/"+mcapi.uuid+"\n* Cape: https://crafatar.com/cape/"+mcapi.uuid);
+					session.endDialog(mcapi.username+" (UUID: "+mcapi.uuid+")\n* Name history: "+mcapi.history.map(h => h.name).splice(mcapi.history.length - 1, 1).join(", ")+"\n\n== Appearance ==\n* Body: https://crafatar.com/renders/body/"+mcapi.uuid+"\n* Skin: https://crafatar.com/skins/"+mcapi.uuid+"\n* Cape: https://crafatar.com/cape/"+mcapi.uuid);
 					request('http://mcapi.de/api/user/'+mcapi.uuid+'/reputation', function(error, response, body) {
 						var mcrep = JSON.parse(body);
 						if (!body.includes('"services":[]')) {
-							session.send("Reputation: "+mcrep.reputation+"/10\n\nRecorded bans:\n\nMCBans: "+mcrep.services.mcbans[0].amount+" / Glizer: "+mcrep.services.glizer[0].amount+" / MCBouncer: "+mcrep.services.mcbouncer[0].amount);
+							session.endDialog("Reputation: "+mcrep.reputation+"/10\n\nRecorded bans:\n\nMCBans: "+mcrep.services.mcbans[0].amount+" / Glizer: "+mcrep.services.glizer[0].amount+" / MCBouncer: "+mcrep.services.mcbouncer[0].amount);
 						}
 					});
 				});
 			}
 			else if (mcapi.result.status === "The service is currently cooling down and cannot perform any requests. Please try it later again.") {
-				session.send("The user should be cracked (Not registered with Mojang). Or the Mojang server broke. Who knows.");
+				session.endDialog("The user should be cracked (Not registered with Mojang). Or the Mojang server broke. Who knows.");
 			}
 			else {
-				session.send("An error occurred.");
+				session.endDialog("An error occurred.");
 			}
 		}
 		else {
-			session.send("An error occurred.");
+			session.endDialog("An error occurred.");
 		}
 	});
 });
@@ -1692,7 +1701,7 @@ bot.dialog('/mcserver2', function (session) {
 	request.post('https://mcapi.de/api/server/', {json: ip}, function(error, response, body) {
 		if (!error) {
 			if (body.result.status === "success") {
-				session.send({
+				session.endDialog({
 					text: session.message.text.substring(10)+" ("+body.hostname+")\n* Players: "+body.players.online+"/"+body.players.max+"\n* Blocked by Mojang: "+body.blocked.status+"\n* Software: "+body.software.name+", MC Version "+body.software.version+"\n* Ping: "+body.list.ping+"ms",
 					attachments: [
 						{
@@ -1703,11 +1712,11 @@ bot.dialog('/mcserver2', function (session) {
 				});
 			}
 			else {
-				session.send('Your input is invalid, or the server you requested is offline, or maybe you just need a retry.\nYour input is '+session.message.text.substring(10));
+				session.endDialog('Your input is invalid, or the server you requested is offline, or maybe you just need a retry.\nYour input is '+session.message.text.substring(10));
 			}
 		}
 		else {
-			session.send("An error occurred.");
+			session.endDialog("An error occurred.");
 		}
 	});
 });
@@ -1755,10 +1764,10 @@ bot.dialog('/paste2', function (session) {
 	}
 	request.post('https://pastebin.com/api/api_post.php', {form: {api_dev_key: process.env.pastebin, api_option: "paste", api_paste_code: session.message.text.substring(7).replace(" ", "")}}, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
-			session.send("Done! "+body);
+			session.endDialog("Done! "+body);
 		}
 		else {
-			session.send("An error occurred.");
+			session.endDialog("An error occurred.");
 		}
 	});
 });
@@ -1859,7 +1868,7 @@ bot.dialog('/ud2', function (session) {
 			session.endDialog("Top UD result for "+session.message.text.replace("/ud", "").replace(" ", "")+"\n\n== Definition ==\n\n"+body.list[0].definition+"\n\n == Example ==\n\n"+body.list[0].example+"\n\n* "+body.list[0].thumbs_up+"\uD83D\uDC4D / "+body.list[0].thumbs_down+"\uD83D\uDC4E");
 		}
 		else if (!error && response.statusCode === 200) {
-			session.send("No results!");
+			session.endDialog("No results!");
 		}
 		else {
 			session.endDialog("An error occurred.");
@@ -1873,7 +1882,7 @@ bot.dialog('/joke', function (session) {
 		request('http://api.icndb.com/jokes/random?escape=javascript?exclude=[explicit]', function(error, response, body) {
 			if (!error && response.statusCode === 200 && session.message.text === "/joke") {
 				body = JSON.parse(body);
-				session.send(body.value.joke);
+				session.endDialog(body.value.joke);
 			}
 			else if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
@@ -1889,7 +1898,7 @@ bot.dialog('/joke', function (session) {
 		request('http://api.icndb.com/jokes/random?escape=javascript', function(error, response, body) {
 			if (!error && response.statusCode === 200 && session.message.text === "/joke") {
 				body = JSON.parse(body);
-				session.send(body.value.joke);
+				session.endDialog(body.value.joke);
 			}
 			else if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
@@ -1897,7 +1906,7 @@ bot.dialog('/joke', function (session) {
 				session.replaceDialog("/fun");
 			}
 			else {
-				session.send("ERROR! I could not connect to http://api.icndb.com/jokes/random. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+				session.endDialog("ERROR! I could not connect to http://api.icndb.com/jokes/random. Please retry. If the problem persists, leave an issue at http://metagon.cf");
 			}
 		});
 	}
@@ -1940,7 +1949,84 @@ bot.dialog('/9gag1',[
 			session.replaceDialog("/utility");
 			return;
 		}
-		builder.Prompts.choice(session, "Select a section to visit, or \"Search\" to search for posts.\n\n* \"got\" = Game of Thrones\n* \"imadedis\" = I made dis\n* \"pcmr\" = PC Master Race", "Search|"+gagbrds.join("|")+"|Back to Fun Menu", { listStyle: 3 });
+		else if (session.message.source === "line") {
+			var msg = new builder.Message(session);
+			msg.attachmentLayout(builder.AttachmentLayout.carousel);
+			msg.attachments([
+				new builder.HeroCard(session)
+					.text("Select a section to visit, or \"Search\" to search for posts.")
+					.buttons([
+						builder.CardAction.imBack(session, "Search", "Search"),
+						builder.CardAction.imBack(session, "cute", "Animals"),
+						builder.CardAction.imBack(session, "anime-manga", "Anime & Manga")
+					]),
+				new builder.HeroCard(session)
+					.text("Due to Line's API limitations, not all sections are shown.")
+					.buttons([
+						builder.CardAction.imBack(session, "ask9gag", "Ask 9GAG"),
+						builder.CardAction.imBack(session, "awesome", "Awesome"),
+						builder.CardAction.imBack(session, "car", "Car")
+					]),
+				new builder.HeroCard(session)
+					.text("However, the correct code of hidden sections will still work.")
+					.buttons([
+						builder.CardAction.imBack(session, "comic", "Comic"),
+						builder.CardAction.imBack(session, "country", "Country"),
+						builder.CardAction.imBack(session, "food", "Food")
+					]),
+				new builder.HeroCard(session)
+					.text("Here are the hidden sections: Type \"crafts\" for Crafts,")
+					.buttons([
+						builder.CardAction.imBack(session, "funny", "Funny"),
+						builder.CardAction.imBack(session, "gaming", "Gaming"),
+						builder.CardAction.imBack(session, "gif", "GIF")
+					]),
+				new builder.HeroCard(session)
+					.text("\"horror\" for Horror, \"overwatch\" for Overwatch,")
+					.buttons([
+						builder.CardAction.imBack(session, "girl", "Girl"),
+						builder.CardAction.imBack(session, "girly", "Girly Things"),
+						builder.CardAction.imBack(session, "got", "Game of Thrones")
+					]),
+				new builder.HeroCard(session)
+					.text("\"nsfw\" for NFK-Not for Kids, \"pcmr\" for PC Master Race,")
+					.buttons([
+						builder.CardAction.imBack(session, "history", "Historical Images"),
+						builder.CardAction.imBack(session, "imadedis", "I Made Dis"),
+						builder.CardAction.imBack(session, "movie-tv", "Movie & TV")
+					]),
+				new builder.HeroCard(session)
+					.text("\"darkhumor\" for Dark Humor, \"wallpaper\" for Wallpaper,")
+					.buttons([
+						builder.CardAction.imBack(session, "music", "Music"),
+						builder.CardAction.imBack(session, "politics", "Politics"),
+						builder.CardAction.imBack(session, "relationship", "Relationship")
+					]),
+				new builder.HeroCard(session)
+					.text("\"starwars\" for Star Wars, \"travel\" for Travel,")
+					.buttons([
+						builder.CardAction.imBack(session, "satisfying", "Satisfying"),
+						builder.CardAction.imBack(session, "savage", "Savage"),
+						builder.CardAction.imBack(session, "school", "School")
+					]),
+				new builder.HeroCard(session)
+					.text("\"surrealmemes\" for Surreal Memes,")
+					.buttons([
+						builder.CardAction.imBack(session, "science", "Sci-Tech"),
+						builder.CardAction.imBack(session, "sport", "Sport"),
+						builder.CardAction.imBack(session, "timely", "Timely")
+					]),
+				new builder.HeroCard(session)
+					.text("And \"classicalartmemes\" for Classical Art Memes.")
+					.buttons([
+						builder.CardAction.imBack(session, "video", "Video"),
+						builder.CardAction.imBack(session, "wtf", "WTF"),
+						builder.CardAction.imBack(session, "Back to Fun Menu", "Back to Fun Menu")
+					])
+			]);
+			builder.Prompts.choice(session, msg, "Search|"+gagbrds.join("|")+"|Back to Fun Menu", { listStyle: 0 });
+		}
+		else builder.Prompts.choice(session, "Select a section to visit, or \"Search\" to search for posts.\n\n* \"got\" = Game of Thrones\n* \"imadedis\" = I made dis\n* \"pcmr\" = PC Master Race", "Search|"+gagbrds.join("|")+"|Back to Fun Menu", { listStyle: 3 });
 	},
 	function (session, results) {
 		if (results.response.entity.endsWith("Back to Fun Menu")) {
