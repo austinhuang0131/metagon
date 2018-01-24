@@ -125,7 +125,7 @@ var incomes = {skype: 0, telegram: 0, slack: 0, kik: 0, total: 0};
 const lineConnector = require("botbuilder-line")({
     channelSecret: process.env.line2,
     channelAccessToken: process.env.line3,
-	debug: true
+	debug: false
 });
 bot.connector("directline", lineConnector);
 
@@ -199,10 +199,6 @@ setInterval(function(){
 }, 300000);
 
 bot.on('incoming', message => {
-	dd.postEvent({
-	   title: message.source + ' message received',
-	   text: 'User '+message.address.user.name+': '+message.text
-	});
 	if (incomes[message.source] !== undefined) {incomes[message.source] += 1;}
 	incomes.total += 1;
 });
@@ -512,14 +508,7 @@ bot.dialog('/about', function (session) {
 		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at @austinhuang.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "line") {
-		session.send({text: "Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master by searching user ID \"austinhuang0131\".\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".",
-			attachments: [
-				{
-					contentType: "image/*",
-					contentUrl: "https://austinhuang.me/assets/line.jpg"
-				}
-			]
-		});
+		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master by adding me (line://ti/p/eCQ4745xqO).\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "skype") {
 		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at \"live:austin.0131\".\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
@@ -779,11 +768,6 @@ bot.dialog('/smug', function (session) {
 bot.beginDialogAction("imgur", "/imgur2", { matches: /^( \/|\/|Metagon \/)imgur/g});
 bot.dialog('/imgur1',[
 	function (session) {
-		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\" after typing \"Quit\".\n`/imgur (Query)`");
-			session.replaceDialog("/image");
-			return;
-		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
@@ -843,16 +827,6 @@ bot.dialog('/imgur2', function (session) {
 bot.beginDialogAction("flickr", "/flickr2", { matches: /^( \/|\/|Metagon \/)flickr/g});
 bot.dialog('/flickr1',[
 	function (session) {
-		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/flickr (Query)`");
-			session.replaceDialog("/image");
-			return;
-		}
-		if (session.message.source === "kik") {
-			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
-			session.replaceDialog("/image");
-			return;
-		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
@@ -958,16 +932,6 @@ bot.dialog('/flickr2', function (session) {
 bot.beginDialogAction("deviantart", "/deviantart2", { matches: /^( \/|\/|Metagon \/)deviantart/g});
 bot.dialog('/deviantart1',[
 	function (session) {
-		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/flickr (Query)`");
-			session.replaceDialog("/image");
-			return;
-		}
-		if (session.message.source === "kik") {
-			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
-			session.replaceDialog("/image");
-			return;
-		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
@@ -1051,156 +1015,9 @@ bot.dialog('/deviantart2', function (session) {
 	}
 });
 
-bot.beginDialogAction("ibsearch", "/ibsearch2", { matches: /^( \/|\/|Metagon \/)ibsearch/g});
-/*bot.dialog('/ibsearch1',[
-	function (session) {
-		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/ibsearch (Query)`");
-			session.replaceDialog("/image");
-			return;
-		}
-		if (session.message.source === "kik") {
-			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
-			session.replaceDialog("/image");
-			return;
-		}
-		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.list);
-		msg.attachments([
-			new builder.HeroCard(session)
-			.title("Show NSFW content?")
-			.subtitle("Make sure you're legal to do this, because we're not liable for anything you've done!")
-			.buttons([
-				builder.CardAction.imBack(session, "Yes", "Yes"),
-				builder.CardAction.imBack(session, "No", "No")
-			])
-		]);
-		builder.Prompts.confirm(session, msg);
-	},
-	function (session, results) {
-		if (results.response === false) {
-			nsfw.push({user: session.message.address.user.id, nsfw: "+rating:s"});
-			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
-		}
-		else if (results.response === true) {
-			nsfw.push({user: session.message.address.user.id, nsfw: ""});
-			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
-		}
-		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.list);
-		msg.attachments([
-			new builder.HeroCard(session)
-			.title("Input a search query.")
-			.subtitle("After your input, wait patiently as it takes time to send the image!")
-			.buttons([
-				builder.CardAction.imBack(session, "Back to Image Menu", "Back to Image Menu")
-			])
-		]);
-		builder.Prompts.text(session, msg);
-	},
-	function (session, results) {
-		if (results.response.replace(/^Metagon /g, "").endsWith("Back to Image Menu")) {
-			
-			session.replaceDialog("/image");
-			return;
-		}
-		if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
-		request("https://ibsearch.xxx/api/v1/images.json?key="+process.env.ibsearch+"&limit=1&q=random:+"+results.response.replace(/^Metagon /g, "")+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, function(error, response, body) {
-			if (!error && response.statusCode === 200) {
-				if (body !== "[]") {
-					body = JSON.parse(body);
-					session.send({
-						attachments: [
-							{
-								contentType: "image/*",
-								contentUrl: "https://"+body[0].server+".ibsearch.xxx/"+body[0].path
-							}
-						]
-					});
-					session.replaceDialog("/image");
-				}
-				else {
-					session.send("No result. Change your query?");
-					session.replaceDialog("/image");
-				}
-			}
-			else {
-				session.send("Failed to connect to http://ibsearch.xxx");
-				session.replaceDialog("/image");
-			}
-		});
-		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
-    }
-]);*/
-bot.dialog('/ibsearch2',[
-	function (session) {
-		session.send("Due to IbSearch's temporary closure, this command is not available.");
-		/*if (session.message.source === "kik") {
-			session.send('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
-			return;
-		}
-		if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
-		nsfw.push({user: session.message.address.user.id, query: session.message.text.substring(11)});
-		fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
-		if (session.message.source !== "groupme" && session.message.source !== "line") {
-			var msg = new builder.Message(session);
-			msg.attachmentLayout(builder.AttachmentLayout.list);
-			msg.attachments([
-				new builder.HeroCard(session)
-				.title("Show NSFW content?")
-				.subtitle("Make sure you're legal to do this, because we're not liable for anything you've done!")
-				.buttons([
-					builder.CardAction.imBack(session, "Yes", "Yes"),
-					builder.CardAction.imBack(session, "No", "No")
-				])
-			]);
-			builder.Prompts.confirm(session, msg);
-		}
-		else {
-			builder.Prompts.confirm(session, "Do you want me to show NSFW content? Make sure you're legal to do this, because we're not liable for anything you've done! Type \"yes\" or \"no\".");
-		}
-	},
-	function (session, results) {
-		var rating = "";
-		if (results.response === false) {rating = "rating:s";}
-		request("https://ibsearch.xxx/api/v1/images.json?key="+process.env.ibsearch+"&limit=1&q=random:+"+nsfw.find(i => {return i.user === session.message.address.user.id;}).query+"+"+rating, function(error, response, body) {
-			if (!error && response.statusCode === 200) {
-				if (body !== "[]") {
-					body = JSON.parse(body);
-					session.send({
-						attachments: [
-							{
-								contentType: "image/*",
-								contentUrl: "https://"+body[0].server+".ibsearch.xxx/"+body[0].path
-							}
-						]
-					});
-				}
-				else {
-					session.send("No result. Change your query? Was "+nsfw.find(i => {return i.user === session.message.address.user.id;}).query);
-				}
-			}
-			else {
-				session.send("Failed to connect to http://ibsearch.xxx");
-			}
-		});
-		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);*/
-    }
-]);
-
 bot.beginDialogAction("pixiv", "/pixiv2", { matches: /^( \/|\/|Metagon \/)pixiv/g});
 bot.dialog('/pixiv1',[
 	function (session) {
-		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/pixiv (Query)`");
-			session.replaceDialog("/image");
-			return;
-		}
-		if (session.message.source === "kik") {
-			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
-			session.replaceDialog("/image");
-			return;
-		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
@@ -1249,6 +1066,7 @@ bot.dialog('/pixiv1',[
 			else {
 				var url = illust.imageUrls.large || illust.imageUrls.medium;
 				if (illust.metaSinglePage) {url = illust.metaSinglePage.originalImageUrl;}
+				if (!url) url = illust.metaPages[0].imageUrls;
 				pixivImg(url).then(output => {
 					cloudinary.uploader.upload(output, urls => {
 						session.send({
@@ -1260,7 +1078,7 @@ bot.dialog('/pixiv1',[
 							]
 						});
 						nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
-						if (illust.is_manga === true) {
+						if (illust.pageCount > 1) {
 							builder.Prompts.choice(session, "\nThis illustration contains "+illust.page_count+" pages. You can choose to...\n\nWARNING: \"View all pages\" will spam your conversation with "+illust.page_count+" images. Use with caution!", "View all pages|Restart a Search|Back to Image Menu", { listStyle: 3 });
 							nsfw.push({user: session.message.address.user.id, illust: illust.id});
 						}
@@ -1284,7 +1102,7 @@ bot.dialog('/pixiv1',[
 			session.replaceDialog("/image");
 		}
 		else if (results.response.entity === "View all pages") {
-			session.sendTyping();
+			if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
 			pixiv.illustDetail(nsfw.find(i => {return i.user === session.message.address.user.id;}).illust).then(json => {
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
@@ -1389,11 +1207,6 @@ bot.dialog('/pixiv2',[
 bot.beginDialogAction("shorten", "/shorten2", { matches: /^( \/|\/|Metagon \/)shorten/g});
 bot.dialog('/shorten1',[
 	function (session) {
-		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/shorten (Url)`");
-			session.replaceDialog("/utility");
-			return;
-		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
@@ -1465,11 +1278,6 @@ bot.dialog('/shorten2', function (session) {
 bot.beginDialogAction("expand", "/expand2", { matches: /^( \/|\/|Metagon \/)expand/g});
 bot.dialog('/expand1',[
 	function (session) {
-		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/expand (Url)`");
-			session.replaceDialog("/utility");
-			return;
-		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
@@ -1541,11 +1349,6 @@ bot.dialog('/expand2', function (session){
 bot.beginDialogAction("mcuser", "/mcuser2", { matches: /^( \/|\/|Metagon \/)mcuser/g});
 bot.dialog('/mcuser1',[
 	function (session) {
-		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/mcuser (Username/UUID)`");
-			session.replaceDialog("/utility");
-			return;
-		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
@@ -1631,11 +1434,6 @@ bot.dialog('/mcuser2', function (session) {
 bot.beginDialogAction("mcserver", "/mcserver2", { matches: /^( \/|\/|Metagon \/)mcserver/g});
 bot.dialog('/mcserver1',[
 	function (session) {
-		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/mcserver (Address)`");
-			session.replaceDialog("/utility");
-			return;
-		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
@@ -1724,11 +1522,6 @@ bot.dialog('/mcserver2', function (session) {
 bot.beginDialogAction("paste", "/paste2", { matches: /^( \/|\/|Metagon \/)paste/g});
 bot.dialog('/paste1',[
 	function (session) {
-		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/paste (content)`");
-			session.replaceDialog("/utility");
-			return;
-		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
@@ -1775,11 +1568,6 @@ bot.dialog('/paste2', function (session) {
 bot.beginDialogAction("weather", "/weather2", { matches: /^( \/|\/|Metagon \/)weather/g});
 bot.dialog('/weather1',[
 	function (session) {
-		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/paste (content)`");
-			session.replaceDialog("/utility");
-			return;
-		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
@@ -1825,11 +1613,6 @@ bot.dialog('/weather2', function (session) {
 bot.beginDialogAction("ud", "/ud2", { matches: /^( \/|\/|Metagon \/)ud/g});
 bot.dialog('/ud1',[
 	function (session) {
-		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/paste (content)`");
-			session.replaceDialog("/utility");
-			return;
-		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
@@ -1944,11 +1727,6 @@ bot.dialog('/design', function (session) {
 bot.beginDialogAction("9gag", "/9gag2", { matches: /^( \/|\/|Metagon \/)9gag/g});
 bot.dialog('/9gag1',[
 	function (session) {
-		if (session.message.source === "telegram" && session.message.address.conversation.isGroup) {
-			session.send("This Keyboard function is not available on Telegram groups. Please use commands after typing \"Quit\".\n`/9gag (Section) (Hot/Fresh)` or `/9gag search (Query)`");
-			session.replaceDialog("/utility");
-			return;
-		}
 		else if (session.message.source === "line") {
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel);
@@ -2182,10 +1960,10 @@ bot.dialog('/unstuck', function (session) {
 	session.clearDialogStack();
 });
 bot.dialog('/', function (session) {
-	if (session.message.source !== "slack") {
+	if (session.message.source !== "slack" && session.message.source !== "telegram") {
 		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
 	}
-	else if (session.message.source === "slack" && !message.address.conversation.isGroup) {
+	else if ((session.message.source === "slack" || session.message.source === "telegram") && !message.address.conversation.isGroup) {
 		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');		
 	}
 	else {
