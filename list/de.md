@@ -1,5 +1,5 @@
 ---
-title: Simple Metagon Guide - German
+title: Metagon-Anleitung - Deutsch / Simple Metagon Guide - German
 ---
 
 ## Wie benutzt man den Bot?
