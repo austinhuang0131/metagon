@@ -14,7 +14,7 @@ All commands have the `/` prefix (Or `Metagon ` prefix in Skype groups)
 | Command | Description | Note |
 | --- | --- | --- |
 | start | Keyboard Mode Entry | Not available on GroupMe, Skype for Business, and VK. |
-| 9gag <Section> <Hot/Fresh> | Get a random post from a 9gag section | |
+| 9gag \<Section\> <Hot/Fresh> | Get a random post from a 9gag section | |
 | 9gag search <Query> | Search for posts on 9gag | |
 | bunny | Random Bunny Image/Video | |
 | cat | Random Cat Image | |
