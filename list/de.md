@@ -4,7 +4,7 @@ title: Simple Metagon Guide - German
 
 ## Wie benutzt man den Bot?
 
-1. Du kannst den Bot hinzufügen, indem du die entsprechende Platform auf [this page] anklickst.(../).
+1. Du kannst den Bot hinzufügen, indem du die entsprechende Platform auf [diese Seite](../) anklickst.
 2. Bei den meisten Platformen kannst du dem Bot einfach `start` schreiben, um alle Funktionen mit der Tastatur nutzen zu können. (Weitere Infos zum Start-Command unten)
 3. Auf Platformen, wo der `start`-Befehl nicht verfügbar ist, musst du die untenstehenden Befehle benutzen.
 
