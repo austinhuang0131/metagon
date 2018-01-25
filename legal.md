@@ -1,17 +1,17 @@
-Legal
-==========================
+---
+title: Legal
+---
 
 Please don't bring a whole set of legal team to challenge me. I wrote my thing in a human-readable way, not big-corporations-readable way, so excuse me.
 
 Privacy
 ==========================
+Last updated: January 25, 2018
 
-* As a user of Metagon, you provide data to us, 0131 Bot Services, in the form of messages and user identifiers (Names and platforms, that's all), we call them **Customer Data**. Metagon will only use said Customer Data to process your request and to function properly. In addition, we store the said Customer Data for debugging and improvement purposes, as well as responding your requests. 0131 Bot Services will not review, share, distribute, or reference any such Customer Data, except for reasons listed above.
+* As a user of Metagon, you provide data to us, 0131 Bot Services, in the form of messages and user identifiers (Names and platforms, that's all), we call them **Customer Data**. Metagon will only use said Customer Data to process your request and to function properly. In addition, starting from January 25, 2018, we no longer store such data, unless you use the Feedback function to reach us.
   * Metagon is running on [Heroku](http://heroku.com). Heroku will receive the Customer Data to help the proper functioning of Metagon. Please review [Salesforce.com's Privacy Policy](https://www.salesforce.com/company/privacy/).
   * Metagon is using [Microsoft Bot Framework](http://botframework.com) to route your message. Microsoft will receive the Customer Data to help the proper functioning of Metagon. Please review [Microsoft's Privacy Policy](https://aka.ms/bf-privacy).
-  * Metagon is using [DataDog](http://datadoghq.com) to log your message. DataDog, Inc. will receive the Customer Data to help improving Metagon. Please review [DataDog's Privacy Policy](https://www.datadoghq.com/legal/privacy/).
 * 0131 Bot Services will protect personal information by using reasonable security safeguards against loss or theft, as well as unauthorized access, disclosure, copying, use or modification.
-* At any moment, you can ask us to remove your provided Customer Data by [contacting us](http://metagon.cf/#contact-us).
 
 If you do not accept any one of above, please stop using Metagon.
 
