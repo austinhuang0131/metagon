@@ -1,5 +1,5 @@
 ---
-title: Simple Metagon Guide - Simplified Chinese
+title: Metagon使用指南 － 简体中文 / Simple Metagon Guide - Simplified Chinese
 ---
 
 ## 如何使用Metagon？
