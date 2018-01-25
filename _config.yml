@@ -1,8 +1,5 @@
-remote_theme: qwtel/hydejack
+remote_theme: sharu725/hagura@gh-pages
 title: Metagon
-
-accent_image: icon_256.jpg
-url: https://metagon.cf
 
 exclude:
   - Makefile
