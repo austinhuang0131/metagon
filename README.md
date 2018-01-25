@@ -1,4 +1,4 @@
-[Simple Metagon Guide 🇩🇪🇬🇧🇨🇳](/list)
+[Simple Metagon Guide 🇨🇳🇨🇿🇬🇧🇩🇪](/list)
 
 Metagon does a lot. From bringing you the nicest pictures, to providing you the best tools, and giving you the best fun! And I'm also [open sourced](http://github.com/austinhuang0131/metagon)!
 
