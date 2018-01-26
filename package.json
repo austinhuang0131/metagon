@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo THERE IS NO TEST COMMAND, JUST START THE APP",
-    "start": "node index"
+    "start": "node index",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [],
   "author": "austinhuang",
@@ -25,7 +27,8 @@
     "xml2js": "0.4.19",
     "winston": "2.3.0",
     "mw-dictionary": "0.0.5",
-    "winston-console-formatter": "0.3.1"
+    "winston-console-formatter": "0.3.1",
+    "snyk": "^1.69.3"
   },
   "devDependencies": {},
   "repository": {
@@ -35,5 +38,6 @@
   "bugs": {
     "url": "https://github.com/austinhuang0131/metagon_plus/issues"
   },
-  "homepage": "https://github.com/austinhuang0131/metagon_plus#readme"
+  "homepage": "https://github.com/austinhuang0131/metagon_plus#readme",
+  "snyk": true
 }
