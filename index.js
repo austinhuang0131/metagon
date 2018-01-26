@@ -1565,6 +1565,44 @@ bot.dialog('/paste2', function (session) {
 	});
 });
 
+bot.beginDialogAction("dictionary", "/dictionary2", { matches: /^( \/|\/|Metagon \/)dictionary/g});
+bot.dialog('/dictionary1', [
+	function (session) {
+		var msg = new builder.Message(session);
+		msg.attachmentLayout(builder.AttachmentLayout.list);
+		msg.attachments([
+			new builder.HeroCard(session)
+			.title("Input the word you'd like to look up.")
+			.buttons([
+				builder.CardAction.imBack(session, "Back to Utility Menu", "Back to Utility Menu")
+			])
+		]);
+		builder.Prompts.text(session, msg);
+	}, function (session, results) {
+		session.replaceDialog("/dictionary2");
+	}
+]);
+bot.dialog('/dictionary2', function (session) {
+	if (session.message.text.replace("/dictionary", "").replace(" ", "") === "") {
+		session.send("Nothing to look up! /dictionary (Stuff)");
+		return;
+	}
+	else if (session.message.text.includes("Back to Utility Menu")) {
+		session.replaceDialog("/utility");
+		return;
+	}
+	dict.define(session.message.text.replace(/^((Metagon | |)\/dictionary|Metagon )/g, ""), function(error, body) {
+		if (!error) {
+			session.endDialog(session.message.text.replace(/^((Metagon | |)\/dictionary|Metagon )/g+": \n\n"+body.map(b => "* " + b.partOfSpeech.join(", ") + b.definition)).join("\n");
+			if (!session.message.text.match(/^(Metagon | |)\/dictionary/g)) session.replaceDialog("/utility");
+		}
+		else {
+			session.endDialog("An error occurred. Is this a word?");
+			if (!session.message.text.match(/^(Metagon | |)\/dictionary/g)) session.replaceDialog("/utility");
+		}
+	});
+});
+
 bot.beginDialogAction("weather", "/weather2", { matches: /^( \/|\/|Metagon \/)weather/g});
 bot.dialog('/weather1',[
 	function (session) {
