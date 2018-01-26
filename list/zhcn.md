@@ -9,7 +9,7 @@ title: Metagon使用指南 － 简体中文 / Simple Metagon Guide - Simplified 
 3. 在`start`功能不可用的平台上，您需使用下方的命令。
 
 ## 命令列表
-所有的命令需`/`前缀（在Skype群聊中则为`@Metagon `前缀）。
+所有的命令需`/`前缀（在Skype群聊中则为`@Metagon /`前缀）。
 
 | 命令 | 介绍 | 注释 |
 | --- | --- | --- |
