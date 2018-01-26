@@ -117,10 +117,10 @@ const gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "d
       DataDog = require('datadog'),
       dd = new DataDog(process.env.datadog1, process.env.datadog2);
 var incomes = {skype: 0, telegram: 0, slack: 0, kik: 0, total: 0};
-/*var Dictionary = require('mw-dictionary'),
+var Dictionary = require('mw-dictionary'),
 	dict = new Dictionary({
 		key: process.env.dictionary
-	});*/
+	});
 
 const lineConnector = require("botbuilder-line")({
     channelSecret: process.env.line2,
