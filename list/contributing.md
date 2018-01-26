@@ -2,7 +2,7 @@
 title: Contribute to translations
 ---
 
-If you want to contribute, you should [shoot us a pull request](https://github.com/austinhuang0131/metagon/tree/gh-pages/list).
+If you want to contribute, you should [shoot us a pull request](https://github.com/austinhuang0131/metagon/tree/gh-pages/list) or [email me](mailto:im@austinhuang.me).
 
 ## Template
 Name the file with the [two-letter ISO 639-1 code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) of your language, plus the `.md` suffix. The only exception is Traditional Chinese, which should be `zhtw.md`.
@@ -26,7 +26,7 @@ title: <Your language> / Simple Metagon Guide - <language name in English>
 3. On platforms that `start` command are not available, you'll have to use the commands below.
 
 ## List of All Commands
-All commands have the `/` prefix (Or `@Metagon ` prefix in Skype groups)
+All commands have the `/` prefix (Or `@Metagon /` prefix in Skype groups)
 
 | Command | Description | Note |
 | --- | --- | --- |
