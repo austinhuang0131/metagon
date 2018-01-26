@@ -1591,9 +1591,9 @@ bot.dialog('/dictionary2', function (session) {
 		session.replaceDialog("/utility");
 		return;
 	}
-	dict.define(session.message.text.replace(/^((Metagon | |)\/dictionary|Metagon )/g, ""), function(error, body) {
+	dict.define(session.message.text.replace(/^((Metagon | |)\/dictionary |Metagon )/g, ""), function(error, body) {
 		if (!error) {
-			session.endDialog(session.message.text.replace(/^((Metagon | |)\/dictionary|Metagon )/g, "")+": \n\n"+body.map(b => "* " + b.partOfSpeech.join(", ") + b.definition)).join("\n");
+			session.endDialog(session.message.text.replace(/^((Metagon | |)\/dictionary |Metagon )/g, "")+": \n\n"+body.map(b => "* " + b.partOfSpeech.join(", ") + b.definition)).join("\n");
 			if (!session.message.text.match(/^(Metagon | |)\/dictionary/g)) session.replaceDialog("/utility");
 		}
 		else {
