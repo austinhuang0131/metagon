@@ -9,7 +9,7 @@ title: Metagon-Anleitung - Deutsch / Simple Metagon Guide - German
 3. Auf Platformen, wo der `start`-Befehl nicht verfügbar ist, musst du die untenstehenden Befehle benutzen.
 
 ## Liste aller Befehle
-Alle Befehle haben den `/`-Prefix, oder `@Metagon ` in Skype-Gruppe.
+Alle Befehle haben den `/`-Prefix, oder `@Metagon /` in Skype-Gruppe.
 
 | Befehl | Beschreibung | Anmerkung |
 | --- | --- | --- |
