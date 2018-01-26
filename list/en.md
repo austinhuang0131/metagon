@@ -9,7 +9,7 @@ title: Simple Metagon Guide - English
 3. On platforms that `start` command are not available, you'll have to use the commands below.
 
 ## List of All Commands
-All commands have the `/` prefix (Or `@Metagon ` prefix in Skype groups)
+All commands have the `/` prefix (Or `@Metagon /` prefix in Skype groups)
 
 | Command | Description | Note |
 | --- | --- | --- |
