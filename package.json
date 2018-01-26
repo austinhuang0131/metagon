@@ -15,17 +15,12 @@
     "request": "^2.83.0",
     "express": "^4.16.2",
     "cloudinary": "^1.9.1",
-    "botbuilder-viber": "^0.0.2",
     "datadog": "HashGo/node-datadog",
     "botbuilder-line": "austinhuang0131/botbuilder-line",
     "botbuilder-vk": "austinhuang0131/botbuilder-vk",
     "pixiv-app-api": "^0.11.0",
     "pixiv-img": "^0.3.1",
-    "viber-bot": "1.0.12",
     "xml2js": "0.4.19",
-    "winston": "2.3.0",
-    "mw-dictionary": "0.0.5",
-    "winston-console-formatter": "0.3.1"
   },
   "devDependencies": {},
   "repository": {

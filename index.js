@@ -117,10 +117,6 @@ const gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "d
       DataDog = require('datadog'),
       dd = new DataDog(process.env.datadog1, process.env.datadog2);
 var incomes = {skype: 0, telegram: 0, slack: 0, kik: 0, total: 0};
-var Dictionary = require('mw-dictionary'),
-	dict = new Dictionary({
-		key: process.env.dictionary
-	});
 
 const lineConnector = require("botbuilder-line")({
     channelSecret: process.env.line2,
@@ -135,15 +131,6 @@ const vk = require('botbuilder-vk')({
 	group_id: process.env.vk3
 });
 bot.connector(vk.channelId, vk);
-
-/*var viber = require('botbuilder-viber');
-var viberChannel = new viber.ViberEnabledConnector({
-	Token: process.env.VIBER_TOKEN,
-	Name: 'Metagon',  
-	AvatarUrl: 'https://cdn.discordapp.com/avatars/376786742579298306/813b2b57849c91610fb6b4e74fa758b1.png',
-	Webhook: "https://discoin.herokuapp.com/viber"
-});
-bot.connector("viber", viberChannel);*/
 
 function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;
@@ -407,10 +394,10 @@ bot.dialog('/utility', [
 							builder.CardAction.imBack(session, "Quit", "Quit")
 						])
 				]);
-				builder.Prompts.choice(session, msg, "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, msg, "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 0 });
 			break;
 			default:
-				builder.Prompts.choice(session, "What would you like to do right now?", "Weather|Dictionary|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit");
+				builder.Prompts.choice(session, "What would you like to do right now?", "Weather|Dictionary|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
 			break;
 		}
 	}, 
@@ -1594,14 +1581,16 @@ bot.dialog('/dictionary2', function (session) {
 		session.replaceDialog("/utility");
 		return;
 	}
-	dict.define(session.message.text.replace(/^((Metagon | |)\/dictionary |Metagon )/g, ""), function(error, body) {
+	request("http://api.pearson.com/v2/dictionaries/ldoce5/entries?headword="+session.message.text.replace(/^((Metagon | |)\/dictionary |Metagon )/g, ""), {json: true}, function(error, body) {
 		if (!error) {
-			session.endDialog(session.message.text.replace(/^((Metagon | |)\/dictionary |Metagon )/g, "")+": \n\n"+body.map(b => "* " + b.partOfSpeech.join(", ") + b.definition)).join("\n");
+			session.send(body.results.filter(e => {return e.headword === session.message.text.replace(/^((Metagon | |)\/dictionary |Metagon )/g);}).map(r => "* " + r.headword + ": " + r.senses[0].definition).join("\n\n"));
 			if (!session.message.text.match(/^(Metagon | |)\/dictionary/g)) session.replaceDialog("/utility");
+			else session.endDialog();
 		}
 		else {
-			session.endDialog("An error occurred. Is this a word?");
+			session.send("An error occurred. Is this a word?");
 			if (!session.message.text.match(/^(Metagon | |)\/dictionary/g)) session.replaceDialog("/utility");
+			else session.endDialog();
 		}
 	});
 });
@@ -2016,7 +2005,6 @@ bot.dialog('/', function (session) {
 var server = express();
 server.use(bodyParser.json({type: "*/*"}));
 server.post('/api/messages', connector.listen());
-/*server.post('/viber', viberChannel.listen());*/
 server.post('/linebot', lineConnector.listen);
 server.post('/vk', vk.listen());
 server.listen(process.env.PORT || 5000, function () {
