@@ -389,20 +389,20 @@ bot.dialog('/utility', [
 						.text("What would you like to do right now?")
 						.buttons([
 							builder.CardAction.imBack(session, "Weather", "Weather"),
-							builder.CardAction.imBack(session, "Shorten URLs", "Shorten URLs"),
-							builder.CardAction.imBack(session, "Expand Bitly URLs", "Expand Bitly URLs")
+							builder.CardAction.imBack(session, "Dictionary", "Dictionary"),
+							builder.CardAction.imBack(session, "Shorten URLs", "Shorten URLs")
 						]),
 					new builder.HeroCard(session)
 						.text("What would you like to do right now?")
 						.buttons([
+							builder.CardAction.imBack(session, "Expand Bitly URLs", "Expand Bitly URLs"),
 							builder.CardAction.imBack(session, "Minecraft User Lookup", "Minecraft User"),
-							builder.CardAction.imBack(session, "Minecraft Server Ping", "Minecraft Server"),
-							builder.CardAction.imBack(session, "Pastebin", "Pastebin")
+							builder.CardAction.imBack(session, "Minecraft Server Ping", "Minecraft Server")
 						]),
 					new builder.HeroCard(session)
 						.text("What would you like to do right now?")
 						.buttons([
-							builder.CardAction.imBack(session, "Hey Line, stop enforcing consistencies on button counts!", "(Click for Suprise)"),
+							builder.CardAction.imBack(session, "Pastebin", "Pastebin"),
 							builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu"),
 							builder.CardAction.imBack(session, "Quit", "Quit")
 						])
@@ -410,7 +410,7 @@ bot.dialog('/utility', [
 				builder.Prompts.choice(session, msg, "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit", { listStyle: 3 });
 			break;
 			default:
-				builder.Prompts.choice(session, "What would you like to do right now?", "Weather|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit");
+				builder.Prompts.choice(session, "What would you like to do right now?", "Weather|Dictionary|Shorten URLs|Expand Bitly URLs|Minecraft User Lookup|Minecraft Server Status|Pastebin|Back to Start Menu|Quit");
 			break;
 		}
 	}, 
@@ -418,6 +418,9 @@ bot.dialog('/utility', [
 		switch (results.response.entity) {
 			case "Weather":
 				session.replaceDialog("/weather1");
+			break;
+			case "Dictionary":
+				session.replaceDialog("/dictionary1");
 			break;
 			case "Shorten URLs":
 				session.replaceDialog("/shorten1");
