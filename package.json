@@ -20,7 +20,7 @@
     "botbuilder-vk": "austinhuang0131/botbuilder-vk",
     "pixiv-app-api": "^0.11.0",
     "pixiv-img": "^0.3.1",
-    "xml2js": "0.4.19",
+    "xml2js": "0.4.19"
   },
   "devDependencies": {},
   "repository": {
