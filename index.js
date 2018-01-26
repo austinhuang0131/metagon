@@ -2001,7 +2001,7 @@ bot.dialog('/', function (session) {
 	if (session.message.source !== "slack" && session.message.source !== "telegram") {
 		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
 	}
-	else if ((session.message.source === "slack" || session.message.source === "telegram") && !message.address.conversation.isGroup) {
+	else if ((session.message.source === "slack" || session.message.source === "telegram") && !session.message.address.conversation.isGroup) {
 		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');		
 	}
 	else {
