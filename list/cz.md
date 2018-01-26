@@ -9,7 +9,7 @@ title: Jednoduchá příručka pro Metagon bota - Čeština / Simple guide for M
 3. Na platformách, kde  `start` příkaz není dostupný, budete muset použít příkazy níže.
 
 ## Seznam všech příkazů
-Všechny příkazy mají `/` prefix (Nebo `@Metagon ` prefix ve Skype skupinách)
+Všechny příkazy mají `/` prefix (Nebo `@Metagon /` prefix ve Skype skupinách)
 
 | Příkaz | Popis | Připomínka |
 | --- | --- | --- |
