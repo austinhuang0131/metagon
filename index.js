@@ -565,9 +565,8 @@ bot.dialog('/cat', function (session) {
 					}
 				]
 			});
-			if (!session.message.text.includes("/cat")) {
-				session.replaceDialog("/image");
-			}
+			if (!session.message.text.includes("/cat")) session.replaceDialog("/image");
+			else session.endDialog;
 		}
 		else {
 			session.endDialog("ERROR! I could not connect to http://random.cat/meow. Please retry. If the problem persists, leave an issue at http://metagon.cf");
