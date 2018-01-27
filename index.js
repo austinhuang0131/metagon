@@ -551,7 +551,7 @@ bot.dialog('/feedback', [
 ]);
 
 // Image
-bot.beginDialogAction("cat", "/cat", { matches: /^( \/|\/|Metagon \/)cat/g});
+bot.beginDialogAction("cat", "/cat", { matches: /^( ||Metagon )\/cat/g});
 bot.dialog('/cat', function (session) {
 	console.log(session.message.source);
 	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
@@ -569,9 +569,6 @@ bot.dialog('/cat', function (session) {
 			if (!session.message.text.includes("/cat")) {
 				session.replaceDialog("/image");
 			}
-			else {
-				session.endDialog();
-			}
 		}
 		else {
 			session.endDialog("ERROR! I could not connect to http://random.cat/meow. Please retry. If the problem persists, leave an issue at http://metagon.cf");
@@ -579,7 +576,7 @@ bot.dialog('/cat', function (session) {
 	});
 });
 
-bot.beginDialogAction("snake", "/snake", { matches: /^( \/|\/|Metagon \/)snake/g});
+bot.beginDialogAction("snake", "/snake", { matches: /^( ||Metagon )\/snake/g});
 bot.dialog('/snake', function (session) {
 	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('http://fur.im/snek', function(error, response, body) {
@@ -606,7 +603,7 @@ bot.dialog('/snake', function (session) {
 	});
 });
 
-bot.beginDialogAction("dog", "/dog", { matches: /^( \/|\/|Metagon \/)dog/g});
+bot.beginDialogAction("dog", "/dog", { matches: /^( ||Metagon )\/dog/g});
 bot.dialog('/dog', function (session) {
 	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('https://random.dog/woof.json', function(error, response, body) {
@@ -643,7 +640,7 @@ bot.dialog('/dog', function (session) {
 	});
 });
 
-bot.beginDialogAction("bunny", "/bunny", { matches: /^( \/|\/|Metagon \/)bunny/g});
+bot.beginDialogAction("bunny", "/bunny", { matches: /^( ||Metagon )\/bunny/g});
 bot.dialog('/bunny', function (session) {
 	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', function(error, response, body) {
@@ -687,8 +684,8 @@ bot.dialog('/bunny', function (session) {
 	});
 });
 
-bot.beginDialogAction("kph", "/kph", { matches: /^( \/|\/|Metagon \/)(kiss|pat|hug)/g});
-bot.beginDialogAction("smug", "/smug", { matches: /^( \/|\/|Metagon \/)smug/g});
+bot.beginDialogAction("kph", "/kph", { matches: /^( ||Metagon )\/(kiss|pat|hug)/g});
+bot.beginDialogAction("smug", "/smug", { matches: /^( ||Metagon )\/smug/g});
 bot.dialog('/anime', [
 	function (session) {
 		builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Smug|Back to Image Menu|Quit", { listStyle: 3 });
@@ -755,7 +752,7 @@ bot.dialog('/smug', function (session) {
 	});
 });
 
-bot.beginDialogAction("imgur", "/imgur2", { matches: /^( \/|\/|Metagon \/)imgur/g});
+bot.beginDialogAction("imgur", "/imgur2", { matches: /^( ||Metagon )\/imgur/g});
 bot.dialog('/imgur1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -814,7 +811,7 @@ bot.dialog('/imgur2', function (session) {
 	}
 });
 
-bot.beginDialogAction("flickr", "/flickr2", { matches: /^( \/|\/|Metagon \/)flickr/g});
+bot.beginDialogAction("flickr", "/flickr2", { matches: /^( ||Metagon )\/flickr/g});
 bot.dialog('/flickr1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -919,7 +916,7 @@ bot.dialog('/flickr2', function (session) {
 	}
 });
 
-bot.beginDialogAction("deviantart", "/deviantart2", { matches: /^( \/|\/|Metagon \/)deviantart/g});
+bot.beginDialogAction("deviantart", "/deviantart2", { matches: /^( ||Metagon )\/deviantart/g});
 bot.dialog('/deviantart1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1005,7 +1002,7 @@ bot.dialog('/deviantart2', function (session) {
 	}
 });
 
-bot.beginDialogAction("pixiv", "/pixiv2", { matches: /^( \/|\/|Metagon \/)pixiv/g});
+bot.beginDialogAction("pixiv", "/pixiv2", { matches: /^( ||Metagon )\/pixiv/g});
 bot.dialog('/pixiv1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1194,7 +1191,7 @@ bot.dialog('/pixiv2',[
 ]);
 
 // Utility
-bot.beginDialogAction("shorten", "/shorten2", { matches: /^( \/|\/|Metagon \/)shorten/g});
+bot.beginDialogAction("shorten", "/shorten2", { matches: /^( ||Metagon )\/shorten/g});
 bot.dialog('/shorten1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1265,7 +1262,7 @@ bot.dialog('/shorten2', function (session) {
 	});
 });
 
-bot.beginDialogAction("expand", "/expand2", { matches: /^( \/|\/|Metagon \/)expand/g});
+bot.beginDialogAction("expand", "/expand2", { matches: /^( ||Metagon )\/expand/g});
 bot.dialog('/expand1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1336,7 +1333,7 @@ bot.dialog('/expand2', function (session){
 	});
 });
 
-bot.beginDialogAction("mcuser", "/mcuser2", { matches: /^( \/|\/|Metagon \/)mcuser/g});
+bot.beginDialogAction("mcuser", "/mcuser2", { matches: /^( ||Metagon )\/mcuser/g});
 bot.dialog('/mcuser1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1421,7 +1418,7 @@ bot.dialog('/mcuser2', function (session) {
 	});
 });
 
-bot.beginDialogAction("mcserver", "/mcserver2", { matches: /^( \/|\/|Metagon \/)mcserver/g});
+bot.beginDialogAction("mcserver", "/mcserver2", { matches: /^( ||Metagon )\/mcserver/g});
 bot.dialog('/mcserver1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1509,7 +1506,7 @@ bot.dialog('/mcserver2', function (session) {
 	});
 });
 
-bot.beginDialogAction("paste", "/paste2", { matches: /^( \/|\/|Metagon \/)paste/g});
+bot.beginDialogAction("paste", "/paste2", { matches: /^( ||Metagon )\/paste/g});
 bot.dialog('/paste1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1555,7 +1552,7 @@ bot.dialog('/paste2', function (session) {
 	});
 });
 
-bot.beginDialogAction("dictionary", "/dictionary2", { matches: /^( \/|\/|Metagon \/)dictionary/g});
+bot.beginDialogAction("dictionary", "/dictionary2", { matches: /^( ||Metagon )\/dictionary/g});
 bot.dialog('/dictionary1', [
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1581,7 +1578,7 @@ bot.dialog('/dictionary2', function (session) {
 		session.replaceDialog("/utility");
 		return;
 	}
-	request("http://api.pearson.com/v2/dictionaries/ldoce5/entries?headword="+session.message.text.replace(/^((Metagon | |)\/dictionary |Metagon )/g, "") + "&limit=", {json: true}, function(error, response, body) {
+	request("http://api.pearson.com/v2/dictionaries/ldoce5/entries?headword="+session.message.text.replace(/^((Metagon | |)\/dictionary |Metagon )/g, ""), {json: true}, function(error, response, body) {
 		if (!error && body.results.length === 0) {
 			session.send("No results! Is this a word?")
 		}
@@ -1596,7 +1593,7 @@ bot.dialog('/dictionary2', function (session) {
 	});
 });
 
-bot.beginDialogAction("weather", "/weather2", { matches: /^( \/|\/|Metagon \/)weather/g});
+bot.beginDialogAction("weather", "/weather2", { matches: /^( ||Metagon )\/weather/g});
 bot.dialog('/weather1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1641,7 +1638,7 @@ bot.dialog('/weather2', function (session) {
 });
 
 // Fun
-bot.beginDialogAction("ud", "/ud2", { matches: /^( \/|\/|Metagon \/)ud/g});
+bot.beginDialogAction("ud", "/ud2", { matches: /^( ||Metagon )\/ud/g});
 bot.dialog('/ud1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1690,7 +1687,7 @@ bot.dialog('/ud2', function (session) {
 	});
 });
 
-bot.beginDialogAction("joke", "/joke", { matches: /^( \/|\/|Metagon \/)joke/g});
+bot.beginDialogAction("joke", "/joke", { matches: /^( ||Metagon )\/joke/g});
 bot.dialog('/joke', function (session) {
 	if (session.message.source === "kik") {
 		request('http://api.icndb.com/jokes/random?escape=javascript?exclude=[explicit]', function(error, response, body) {
@@ -1726,7 +1723,7 @@ bot.dialog('/joke', function (session) {
 	}
 });
 
-bot.beginDialogAction("yoda", "/yoda", { matches: /^( \/|\/|Metagon \/)yoda/g});
+bot.beginDialogAction("yoda", "/yoda", { matches: /^( ||Metagon )\/yoda/g});
 bot.dialog('/yoda', function (session) {
 		if (session.message.text === "/yoda") {
 			session.send(yoda_said[Math.floor(Math.random() * yoda_said.length)]);
@@ -1737,7 +1734,7 @@ bot.dialog('/yoda', function (session) {
 		}
 });
 
-bot.beginDialogAction("design", "/design", { matches: /^( \/|\/|Metagon \/)design/g});
+bot.beginDialogAction("design", "/design", { matches: /^( ||Metagon )\/design/g});
 bot.dialog('/design', function (session) {
 	request('http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1', function(error, response, body) {
 		if (!error && response.statusCode === 200 && session.message.text === "/design") {
@@ -1755,7 +1752,7 @@ bot.dialog('/design', function (session) {
 	});
 });
 
-bot.beginDialogAction("9gag", "/9gag2", { matches: /^( \/|\/|Metagon \/)9gag/g});
+bot.beginDialogAction("9gag", "/9gag2", { matches: /^( ||Metagon )\/9gag/g});
 bot.dialog('/9gag1',[
 	function (session) {
 		if (session.message.source === "line") {
