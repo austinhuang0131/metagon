@@ -552,12 +552,11 @@ bot.dialog('/feedback', [
 
 // Image
 bot.dialog('/cat', function (session) {
-	console.log(session.message.source);
 	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('https://random.cat/meow', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
-			session.send({
+			session.endDialog({
 				attachments: [
 					{
 						contentType: "image/*",
@@ -565,8 +564,7 @@ bot.dialog('/cat', function (session) {
 					}
 				]
 			});
-			if (!session.message.text.includes("/cat")) session.replaceDialog("/image");
-			else session.endDialog;
+			if (!session.message.text.includes("/cat")) session.beginDialog("/image");
 		}
 		else {
 			session.endDialog("ERROR! I could not connect to http://random.cat/meow. Please retry. If the problem persists, leave an issue at http://metagon.cf");
