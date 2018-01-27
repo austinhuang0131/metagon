@@ -1582,16 +1582,17 @@ bot.dialog('/dictionary2', function (session) {
 		return;
 	}
 	request("http://api.pearson.com/v2/dictionaries/ldoce5/entries?headword="+session.message.text.replace(/^((Metagon | |)\/dictionary |Metagon )/g, "") + "&limit=", {json: true}, function(error, response, body) {
-		if (!error) {
+		if (!error && body.results.length === 0) {
+			session.send("No results! Is this a word?")
+		}
+		else if (!error) {
 			session.send(body.results.filter(e => {return e.headword === session.message.text.replace(/^((Metagon | |)\/dictionary |Metagon )/g, "") && e.senses[0].definition !== undefined;}).map(r => "* " + r.headword + ": " + r.senses[0].definition).join("\n\n"));
-			if (!session.message.text.match(/^(Metagon | |)\/dictionary/g)) session.replaceDialog("/utility");
-			else session.endDialog();
 		}
 		else {
-			session.send("An error occurred. Is this a word?");
-			if (!session.message.text.match(/^(Metagon | |)\/dictionary/g)) session.replaceDialog("/utility");
-			else session.endDialog();
+			session.send("An error occurred.");
 		}
+		if (!session.message.text.match(/^(Metagon | |)\/dictionary/g)) session.replaceDialog("/utility");
+		else session.endDialog();
 	});
 });
 
