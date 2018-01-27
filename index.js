@@ -551,7 +551,6 @@ bot.dialog('/feedback', [
 ]);
 
 // Image
-bot.beginDialogAction("cat", "/cat", { matches: /^( ||Metagon )\/cat/g});
 bot.dialog('/cat', function (session) {
 	console.log(session.message.source);
 	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
@@ -574,7 +573,7 @@ bot.dialog('/cat', function (session) {
 			session.endDialog("ERROR! I could not connect to http://random.cat/meow. Please retry. If the problem persists, leave an issue at http://metagon.cf");
 		}
 	});
-});
+}).triggerAction({ matches: /^( ||Metagon )\/cat/g});
 
 bot.beginDialogAction("snake", "/snake", { matches: /^( ||Metagon )\/snake/g});
 bot.dialog('/snake', function (session) {
@@ -601,7 +600,7 @@ bot.dialog('/snake', function (session) {
 			session.endDialog("ERROR! I could not connect to http://fur.im/snek/snek.php. Please retry. If the problem persists, leave an issue at http://metagon.cf");
 		}
 	});
-});
+})
 
 bot.beginDialogAction("dog", "/dog", { matches: /^( ||Metagon )\/dog/g});
 bot.dialog('/dog', function (session) {
