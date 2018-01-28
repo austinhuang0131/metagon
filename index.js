@@ -224,7 +224,6 @@ bot.on('contactRelationUpdate', function (message) {
 });
 
 // Menus
-bot.beginDialogAction("menu", "/menu", { matches: /(\/|Metagon |)start/gi});
 bot.dialog('/menu', [
 	function (session) {
 		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness" || session.message.source === vk.channelId) {
@@ -276,7 +275,7 @@ bot.dialog('/menu', [
 			break;
 		}
 	}
-]);
+]).triggerAction({ matches: /(\/|Metagon |)start/gi});
 bot.dialog('/image', [
 	function (session) {
 		switch (session.message.source) {
@@ -489,7 +488,6 @@ bot.dialog('/fun', [
 	}
 ]);
 
-bot.beginDialogAction("help", "/about", { matches: /^(\/|)help/i});
 bot.dialog('/about', function (session) {
 	if (session.message.source === "kik") {
 		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at @austinhuang0131.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
@@ -515,8 +513,7 @@ bot.dialog('/about', function (session) {
 	else {
 		session.endDialog();
 	}
-});
-
+}).triggerAction({ matches: /^(\/|)help/i});
 bot.dialog('/feedback', [
 	function (session) {
 		var msg = new builder.Message(session);
@@ -571,8 +568,6 @@ bot.dialog('/cat', function (session) {
 		}
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/cat/g});
-
-bot.beginDialogAction("snake", "/snake", { matches: /^( ||Metagon )\/snake/g});
 bot.dialog('/snake', function (session) {
 	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('http://fur.im/snek', function(error, response, body) {
@@ -597,9 +592,7 @@ bot.dialog('/snake', function (session) {
 			session.endDialog("ERROR! I could not connect to http://fur.im/snek/snek.php. Please retry. If the problem persists, leave an issue at http://metagon.cf");
 		}
 	});
-})
-
-bot.beginDialogAction("dog", "/dog", { matches: /^( ||Metagon )\/dog/g});
+}).triggerAction({ matches: /^( ||Metagon )\/snake/g});
 bot.dialog('/dog', function (session) {
 	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('https://random.dog/woof.json', function(error, response, body) {
@@ -634,9 +627,7 @@ bot.dialog('/dog', function (session) {
 			session.endDialog("ERROR! I could not connect to https://random.dog/woof.json. Please retry. If the problem persists, leave an issue at http://metagon.cf");
 		}
 	});
-});
-
-bot.beginDialogAction("bunny", "/bunny", { matches: /^( ||Metagon )\/bunny/g});
+}).triggerAction({ matches: /^( ||Metagon )\/dog/g});
 bot.dialog('/bunny', function (session) {
 	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', function(error, response, body) {
@@ -678,7 +669,7 @@ bot.dialog('/bunny', function (session) {
 			session.send("ERROR! I could not connect to https://api.bunnies.io/v2/loop/random/?media=gif,mp4 . Please retry. If the problem persists, leave an issue at http://metagon.cf");
 		}
 	});
-});
+}).triggerAction({ matches: /^( ||Metagon )\/bunny/g});
 
 bot.beginDialogAction("kph", "/kph", { matches: /^( ||Metagon )\/(kiss|pat|hug)/g});
 bot.beginDialogAction("smug", "/smug", { matches: /^( ||Metagon )\/smug/g});
