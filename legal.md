@@ -94,11 +94,11 @@ If you have any questions about these Terms, please contact us.
 Privacy for Requested Work
 ==========================
 
-This privacy policy applies to Discord bots that are used in individual servers, and are made by me, as well as the Discord OAuth app called "0131-oauth-portal". **Instagram officials: READ HERE**
+This privacy policy applies to Discord and Telegram bots that are used in individual servers and groups, and are made by me on a contract basis.
 
-* As a user of 0131-oauth-portal, you provide data to us, 0131 Bot Services, in the form of messages (Whenever applicable) and user identifiers (Names and platforms, that's all), we call them **Customer Data**. 0131-oauth-portal will only use said Customer Data to process your request and to function properly. **We do not store your data.**
-  * 0131-oauth-portal is running on [Glitch](http://glitch.com). Glitch will receive the Customer Data to help the proper functioning of Metagon. Please review [Glitch Privacy Policy](https://glitch.com/legal#privacy).
+* As a user of any of the contracted bots, you provide data to us, 0131 Bot Services, mostly in the form of messages (Whenever applicable) and user identifiers (Names and platforms, that's all), we call them **Customer Data**. 0131-oauth-portal will only use said Customer Data to process your request and to function properly.
+  * Most contract bots are running on [Glitch](http://glitch.com). Glitch will receive the Customer Data to help the proper functioning of Metagon. Please review [Glitch Privacy Policy](https://glitch.com/legal#privacy).
+  * **For [Online Ballar](https://t.me/onlinezakovatballar_BOT) and [#SupraPizza Pole](https://t.me/SupraPizzaPOLE_bot) only:** Technically, the leaderboard is not considered data. However, there are methods to wipe the whole leaderboard, which are made available to the owners of each bot.
+  * **For [Myearnbot](https://t.me/myearnbot) only:** We collect your contact information. Any data you provided will be made available to me and user [@JMJMM](https://t.me/JMJMM) as per stated in the operating contract. You can request the deletion of your data by [emailing me](mailto:im@austinhuang.me).
 * 0131 Bot Services will protect personal information by using reasonable security safeguards against loss or theft, as well as unauthorized access, disclosure, copying, use or modification.
-* We do not store your data, thus we can't remove something that doesn't exist.
-
 If you do not accept any one of above, please stop using our service.
