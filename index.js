@@ -631,7 +631,7 @@ bot.beginDialogAction("kph", "/kph", { matches: /^( ||Metagon )\/(kiss|pat|hug)/
 bot.beginDialogAction("smug", "/smug", { matches: /^( ||Metagon )\/smug/g});
 bot.dialog('/anime', [
 	function (session) {
-		if (session.message.source !== line) builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Smug|Back to Image Menu|Quit", { listStyle: 3 });
+		if (session.message.source !== "line") builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Smug|Back to Image Menu|Quit", { listStyle: 3 });
 		else {
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel);
