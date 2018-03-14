@@ -16,7 +16,8 @@ const express = require('express'),
 			database: "heroku_fs0bkx2s",
 			collection: "metagon",
 			username: "mikhail_gorbachev",
-			password: process.env.appkey
+			password: process.env.appkey,
+			queryString: "heroku_fs0bkx2s"
 		})
 	  );
 cloudinary.config({ 
