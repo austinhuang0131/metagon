@@ -17,7 +17,7 @@ const express = require('express'),
 			collection: "metagon",
 			username: "mikhail_gorbachev",
 			password: process.env.appkey
-		});
+		})
 	  );
 cloudinary.config({ 
   cloud_name: 'metagon', 
