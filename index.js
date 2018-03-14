@@ -3,22 +3,32 @@ const express = require('express'),
       fs = require('fs'),
       request = require('request'),
 	  bodyParser = require('body-parser'),
-      cloudinary = require('cloudinary');
-var connector = new builder.ChatConnector({
-    appId: process.env.appid,
-    appPassword: process.env.appkey
-});
+      cloudinary = require('cloudinary'),
+	  connector = new builder.ChatConnector({
+		  appId: process.env.appid,
+		  appPassword: process.env.appkey
+	  }),
+	  botbuilderMongodb = require("botbuilder-mongodb"),
+	  bot = new builder.UniversalBot(connector).set("storage",
+	  	botbuilderMongodb.GetMongoDBLayer({
+			ip: "ds213199.mlab.com",
+			port: "13199",
+			database: "heroku_fs0bkx2s",
+			collection: "metagon",
+			username: "mikhail_gorbachev",
+			password: process.env.appkey
+		});
+	  );
 cloudinary.config({ 
   cloud_name: 'metagon', 
   api_key: process.env.cloudinary1, 
   api_secret: process.env.cloudinary2 
 });
-var bot = new builder.UniversalBot(connector);
 var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 const Pixiv = require('pixiv-app-api'),
       pixiv = new Pixiv(process.env.pixiv_username, process.env.pixiv_password),
-      pixivImg = require('pixiv-img');
-const gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "politics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf", "starwars", "classicalartmemes", "travel", "surrealmemes"],
+      pixivImg = require('pixiv-img'),
+	  gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "politics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf", "starwars", "classicalartmemes", "travel", "surrealmemes"],
       gagsubs = ["hot", "fresh"],
       yoda_said = [
   '"Fear is the path to the dark side. Fear leads to anger, anger leads to hate, hate leads to suffering." -- Yoda \n',
@@ -113,10 +123,7 @@ const gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "d
   '"To the Force, look for guidance. Accept what fate has placed before us." -- Yoda\n',
   '"Yoda, you seek?" -- Yoda\n', '"My ally is the Force" -- Yoda\n'
 ],
-      parseString = require('xml2js').parseString,
-      DataDog = require('datadog'),
-      dd = new DataDog(process.env.datadog1, process.env.datadog2);
-var incomes = {skype: 0, telegram: 0, slack: 0, kik: 0, total: 0};
+      parseString = require('xml2js').parseString;
 
 const lineConnector = require("botbuilder-line")({
     channelSecret: process.env.line2,
@@ -137,58 +144,6 @@ function f2c(f) {
 	return c.toFixed();
 }
 
-setInterval(function(){
-	dd.postSeries({
-		"series": [{
-			"metric": "memory.rss",
-			"points": [
-				[Date.now()/1000, process.memoryUsage().rss]
-			],
-			"type": "gauge",
-			"tags": ["memory"]
-		}]
-	});
-	dd.postSeries({
-		"series": [{
-			"metric": "memory.heapTotal",
-			"points": [
-				[Date.now()/1000, process.memoryUsage().heapTotal]
-			],
-			"type": "gauge",
-			"tags": ["memory"]
-		}]
-	});
-	dd.postSeries({
-		"series": [{
-			"metric": "memory.heapUsed",
-			"points": [
-				[Date.now()/1000, process.memoryUsage().heapUsed]
-			],
-			"type": "gauge",
-			"tags": ["memory"]
-		}]
-	});
-}, 5000);
-setInterval(function(){
-	for(var attributename in incomes){
-		dd.postSeries({
-			"series": [{
-				"metric": "messages.incoming",
-				"points": [
-					[Date.now()/1000, incomes[attributename]]
-				],
-				"type": "gauge",
-				"tags": [attributename]
-			}]
-		});
-		incomes[attributename] = 0;
-	}
-}, 300000);
-
-bot.on('incoming', message => {
-	if (incomes[message.source] !== undefined) {incomes[message.source] += 1;}
-	incomes.total += 1;
-});
 bot.on('conversationUpdate', function (message) {
     if (message.address.conversation.isGroup) {
         if (message.membersAdded) {
@@ -548,12 +503,6 @@ bot.dialog('/feedback', [
 ]);
 
 // Image
-bot.customAction({
-    matches: /^( ||Metagon )\/cat/g,
-    onSelectAction: (session, args, next) => {
-        session.beginDialog("/cat");
-    }
-})
 bot.dialog('/cat', function (session) {
 	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('https://random.cat/meow', function(error, response, body) {
