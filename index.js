@@ -644,7 +644,7 @@ bot.dialog('/anime', [
 						builder.CardAction.imBack(session, "Hug", "Hug")
 					]),
 				new builder.HeroCard(session)
-					.text("Discovered a bug? Press the \"Feedback\" button to contact the owner.")
+					.text("Due to Line API restrictions, all GIFs will NOT be displayed properly.")
 					.buttons([
 						builder.CardAction.imBack(session, "Smug", "Smug"),
 						builder.CardAction.imBack(session, "Back to Image Menu", "Back to Image Menu"),
@@ -793,7 +793,7 @@ bot.dialog('/flickr1',[
 	function (session, results, next) {
 		if (results.response.replace(/^Metagon /g, "") !== "Back to Image Menu") {
 			if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
-			request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+results.response.replace(/^Metagon /g, "")+"&format=json&per_page=500&nojsoncallback=1", function(error, response, body) {
+			request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+results.response.replace(/^Metagon /g, "")+"&format=json&per_page=500&nojsoncallback=1&media=photos", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
 					var photo = body.photos.photo[Math.floor(Math.random() * body.photos.photo.length)];
@@ -906,7 +906,8 @@ bot.dialog('/deviantart1',[
 							session.replaceDialog("/image");
 							return;
 						}
-						var thing = result.rss.channel[0].item[Math.floor(Math.random() * result.rss.channel[0].item.length)];
+						var things = result.rss.channel[0].item.filter(r => {return r["media:content"][0]["$"].medium === "image";});
+						var thing = things[Math.floor(Math.random() * things.length)];
 						session.send({
 							text: thing.title[0],
 							attachments: [
