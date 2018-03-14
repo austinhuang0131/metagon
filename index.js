@@ -506,7 +506,7 @@ bot.dialog('/feedback', [
 // Image
 bot.dialog('/cat', function (session) {
 	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
-	request('https://random.cat/meow', function(error, response, body) {
+	request('https://aws.random.cat/meow', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
 			session.endDialog({
@@ -520,7 +520,7 @@ bot.dialog('/cat', function (session) {
 			if (!session.message.text.includes("/cat")) session.beginDialog("/image");
 		}
 		else {
-			session.endDialog("ERROR! I could not connect to http://random.cat/meow. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+			session.endDialog("ERROR! I could not connect to http://aws.random.cat/meow. Please retry. If the problem persists, please contact im@austinhuang.me");
 		}
 	});
 })/*.triggerAction({ matches: /^( ||Metagon )\/cat/g})*/;
@@ -545,7 +545,7 @@ bot.dialog('/snake', function (session) {
 			}
   		}
 		else {
-			session.endDialog("ERROR! I could not connect to http://fur.im/snek/snek.php. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+			session.endDialog("ERROR! I could not connect to http://fur.im/snek/snek.php. Please retry. If the problem persists, please contact im@austinhuang.me");
 		}
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/snake/g});
@@ -580,7 +580,7 @@ bot.dialog('/dog', function (session) {
 			}
   		}
 		else {
-			session.endDialog("ERROR! I could not connect to https://random.dog/woof.json. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+			session.endDialog("ERROR! I could not connect to https://random.dog/woof.json. Please retry. If the problem persists, please contact im@austinhuang.me");
 		}
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/dog/g});
@@ -622,7 +622,7 @@ bot.dialog('/bunny', function (session) {
 			}
   		}
 		else {
-			session.send("ERROR! I could not connect to https://api.bunnies.io/v2/loop/random/?media=gif,mp4 . Please retry. If the problem persists, leave an issue at http://metagon.cf");
+			session.send("ERROR! I could not connect to https://api.bunnies.io/v2/loop/random/?media=gif,mp4 . Please retry. If the problem persists, please contact im@austinhuang.me");
 		}
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/bunny/g});
@@ -631,7 +631,29 @@ bot.beginDialogAction("kph", "/kph", { matches: /^( ||Metagon )\/(kiss|pat|hug)/
 bot.beginDialogAction("smug", "/smug", { matches: /^( ||Metagon )\/smug/g});
 bot.dialog('/anime', [
 	function (session) {
-		builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Smug|Back to Image Menu|Quit", { listStyle: 3 });
+		if (session.message.source !== line) builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Smug|Back to Image Menu|Quit", { listStyle: 3 });
+		else {
+			var msg = new builder.Message(session);
+			msg.attachmentLayout(builder.AttachmentLayout.carousel);
+			msg.attachments([
+				new builder.HeroCard(session)
+					.text("What would you like to do right now?")
+					.buttons([
+						builder.CardAction.imBack(session, "Kiss", "Kiss"),
+						builder.CardAction.imBack(session, "Pat", "Pat"),
+						builder.CardAction.imBack(session, "Hug", "Hug")
+					]),
+				new builder.HeroCard(session)
+					.text("Discovered a bug? Press the \"Feedback\" button to contact the owner.")
+					.buttons([
+						builder.CardAction.imBack(session, "Smug", "Smug"),
+						builder.CardAction.imBack(session, "Back to Image Menu", "Back to Image Menu"),
+						builder.CardAction.imBack(session, "Quit", "Quit")
+					])
+			]);
+			builder.Prompts.choice(session, msg, "Kiss|Pat|Hug|Smug|Back to Image Menu|Quit");
+		}
+
 	},
 	function (session, results) {
 		switch (results.response.entity) {
@@ -670,7 +692,7 @@ bot.dialog('/kph', function (session) {
 			}
 		}
 		else {
-			session.endDialog("ERROR! I could not connect to https://nekos.life/api. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+			session.endDialog("ERROR! I could not connect to https://nekos.life/api. Please retry. If the problem persists, please contact im@austinhuang.me");
 		}
 	});
 });
@@ -690,7 +712,7 @@ bot.dialog('/smug', function (session) {
 			}
 		}
 		else {
-			session.endDialog("ERROR! I could not connect to https://smug.z0ne.moe/. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+			session.endDialog("ERROR! I could not connect to https://smug.z0ne.moe/. Please retry. If the problem persists, please contact im@austinhuang.me");
 		}
 	});
 });
@@ -1644,7 +1666,7 @@ bot.dialog('/joke', function (session) {
 				session.replaceDialog("/fun");
 			}
 			else {
-				session.send("ERROR! I could not connect to http://api.icndb.com/jokes/random. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+				session.send("ERROR! I could not connect to http://api.icndb.com/jokes/random. Please retry. If the problem persists, please contact im@austinhuang.me");
 			}
 		});
 	}
@@ -1660,7 +1682,7 @@ bot.dialog('/joke', function (session) {
 				session.replaceDialog("/fun");
 			}
 			else {
-				session.endDialog("ERROR! I could not connect to http://api.icndb.com/jokes/random. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+				session.endDialog("ERROR! I could not connect to http://api.icndb.com/jokes/random. Please retry. If the problem persists, please contact im@austinhuang.me");
 			}
 		});
 	}
@@ -1690,7 +1712,7 @@ bot.dialog('/design', function (session) {
 			session.replaceDialog("/fun");
 		}
 		else {
-			session.endDialog("ERROR! I could not connect to http://quotesondesign.com/wp-json/posts. Please retry. If the problem persists, leave an issue at http://metagon.cf");
+			session.endDialog("ERROR! I could not connect to http://quotesondesign.com/wp-json/posts. Please retry. If the problem persists, please contact im@austinhuang.me");
 		}
 	});
 });
