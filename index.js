@@ -186,7 +186,7 @@ bot.dialog('/menu', [
 			session.send("Keyboard Mode is not available on GroupMe / Skype for Business / VK. Please use only commands.\nFor more information, type \"help\".");
 		}
 		else if (session.message.source !== "line") {
-			builder.Prompts.choice(session, "What would you like to do right now?\n\nDiscovered a bug? Press the \"Feedback\" button to contact the owner. You can also check out our update log at <https://github.com/austinhuang0131/metagon/releases>.", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
+			builder.Prompts.choice(session, "What would you like to do right now?\n\nDue to the recent Facebook scandal, we'd like to reaffirm that we do not collect your messages nor session data unless absolutely necessary as required by our operational providers. See <https://metagon.cf/legal>", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
 		}
 		else {
 			var msg = new builder.Message(session);
