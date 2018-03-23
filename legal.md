@@ -2,8 +2,6 @@
 title: Legal
 ---
 
-Please don't bring a whole set of legal team to challenge me. I wrote my thing in a human-readable way, not big-corporations-readable way, so excuse me.
-
 Privacy
 ==========================
 Last updated: March 23, 2018
