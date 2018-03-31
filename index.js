@@ -627,11 +627,11 @@ bot.dialog('/bunny', function (session) {
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/bunny/g});
 
-bot.beginDialogAction("kph", "/kph", { matches: /^( ||Metagon )\/(kiss|pat|hug)/g});
+bot.beginDialogAction("kph", "/kph", { matches: /^( ||Metagon )\/(kiss|pat|hug|poke|slap|cuddle)/g});
 bot.beginDialogAction("smug", "/smug", { matches: /^( ||Metagon )\/smug/g});
 bot.dialog('/anime', [
 	function (session) {
-		if (session.message.source !== "line") builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Smug|Back to Image Menu|Quit", { listStyle: 3 });
+		if (session.message.source !== "line") builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Smug|Poke|Slap|Cuddle|Back to Image Menu|Quit", { listStyle: 3 });
 		else {
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel);
@@ -644,6 +644,13 @@ bot.dialog('/anime', [
 						builder.CardAction.imBack(session, "Hug", "Hug")
 					]),
 				new builder.HeroCard(session)
+					.text("What would you like to do right now?")
+					.buttons([
+						builder.CardAction.imBack(session, "Poke", "Pole"),
+						builder.CardAction.imBack(session, "Slap", "Slap"),
+						builder.CardAction.imBack(session, "Cuddle", "Cuddle")
+					]),
+				new builder.HeroCard(session)
 					.text("Due to Line API restrictions, all GIFs will NOT be displayed properly.")
 					.buttons([
 						builder.CardAction.imBack(session, "Smug", "Smug"),
@@ -651,7 +658,7 @@ bot.dialog('/anime', [
 						builder.CardAction.imBack(session, "Quit", "Quit")
 					])
 			]);
-			builder.Prompts.choice(session, msg, "Kiss|Pat|Hug|Smug|Back to Image Menu|Quit");
+			builder.Prompts.choice(session, msg, "Kiss|Pat|Hug|Smug|Poke|Slap|Cuddle|Back to Image Menu|Quit");
 		}
 
 	},
@@ -676,13 +683,16 @@ bot.dialog('/kph', function (session) {
 	var endpoint = "hug";
 	if (session.message.text.search(/kiss/gi) > -1) {endpoint = "kiss";}
 	else if (session.message.text.search(/pat/gi) > -1) {endpoint = "pat"}
-	request('https://nekos.life/api/'+endpoint, {headers: {'Key': 'dnZ4fFJbjtch56pNbfrZeSRfgWqdPDgf'}}, function(error, response, body) {
+	else if (session.message.text.search(/poke/gi) > -1) {endpoint = "poke"}
+	else if (session.message.text.search(/slap/gi) > -1) {endpoint = "slap"}
+	else if (session.message.text.search(/cuddle/gi) > -1) {endpoint = "cuddle"}
+	request('https://nekos.life/api/v2/img/'+endpoint, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
 			session.send({
 				attachments: [
 					{
-						contentType: "image/*",
+						contentType: "image/gif",
 						contentUrl: body.url
 					}
 				]
