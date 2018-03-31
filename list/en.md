@@ -38,7 +38,6 @@ All commands have the `/` prefix (Or `@Metagon /` prefix in Skype groups)
 | poke | Poke your friend! | |
 | shorten <Link> | Shorten links via Bitly | |
 | slap | AAAAAAAAAAA IT HURTS | |
-| smug | Show an Anime smug | |
 | snake | Random Snake Image | |
 | tickle | Tickle your friend! | |
 | ud <Word> | Define a word in Urban Dictionary | |
