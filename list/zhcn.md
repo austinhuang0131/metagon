@@ -18,10 +18,13 @@ title: Metagon使用指南 － 简体中文 / Simple Metagon Guide - Simplified 
 | 9gag search <关键词> | 以关键词查找9gag帖子 | |
 | bunny | 随机给一只兔子萌图 | |
 | cat | 随机给一只喵星人萌图 | |
+| cuddle | 搂搂抱抱 | |
 | design | 随机给一句设计师名言 | |
 | deviantart <关键词> | 查找DeviantArt创作 | 在Kik上不可用 |
+| dictionary <英语词语> | 查阅第五版朗文现代英语词典 | |
 | dog | 随机给一只汪星人萌图 | |
-| expand | 拓展一个Bitly链接 | |
+| feed | 喂你两下 | |
+| expand | 扩展一个Bitly链接 | |
 | flickr | 查找Flickr照片 | 在Kik上不可用 |
 | hug | 随机给一个拥抱 | |
 | [imgur \<关键词\>](../images#imgur) | 查找Imgur图片 | 在Kik上不可用 |
@@ -31,9 +34,10 @@ title: Metagon使用指南 － 简体中文 / Simple Metagon Guide - Simplified 
 | mcuser <用户名／UUID> | 查询Minecraft正版用户信息 | |
 | paste <内容> | 将文字贴到pastebin.com | |
 | pat | 拍两下头 | |
+| poke | 戳你两下 | |
 | [pixiv \<关键词\>](../images#pixiv) | 查找P站（pixiv.net）创作 | 会询问是否显示R18内容，在Kik上不可用 |
+| slap | 抽你两下 | |
 | shorten <链接> | 缩短一个链接 | |
-| smug | 沾沾自喜 | |
 | snake | 随机给一只蛇的萌图 | |
 | ud <单词> | 查询城市词典（Urban Dictionary） | |
 | weather <地方> | 天气预报 | 地名需使用英语输入 |
