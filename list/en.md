@@ -18,9 +18,12 @@ All commands have the `/` prefix (Or `@Metagon /` prefix in Skype groups)
 | 9gag search <Query> | Search for posts on 9gag | |
 | bunny | Random Bunny Image/Video | |
 | cat | Random Cat Image | |
+| cuddle | Cuddle your friend! | |
 | design | Random designer quote | |
 | deviantart <Query> | Search for images from DeviantArt | Not available on Kik |
+| dictionary <Word> | Look up the Longman Dictionary of Contemporary English (5th edition) | |
 | dog | Random Dog Image | |
+| feed | Awu~ | |
 | expand | Expand a Bitly link | |
 | flickr | Search for photos from Flickr | Not available on Kik |
 | hug | Get an Anime hug | |
@@ -32,9 +35,12 @@ All commands have the `/` prefix (Or `@Metagon /` prefix in Skype groups)
 | paste <Content> | Paste contents to pastebin.com | |
 | pat | Get an Anime pat | |
 | [pixiv \<Query\>](../images#pixiv) | Search for images from pixiv.net | Will ask for NSFW filter, not available on Kik |
+| poke | Poke your friend! | |
 | shorten <Link> | Shorten links via Bitly | |
+| slap | AAAAAAAAAAA IT HURTS | |
 | smug | Show an Anime smug | |
 | snake | Random Snake Image | |
+| tickle | Tickle your friend! | |
 | ud <Word> | Define a word in Urban Dictionary | |
 | weather <Place> | Weather forecast for a place | |
 | yoda | Random Yoda quote | |
