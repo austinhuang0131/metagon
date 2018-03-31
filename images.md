@@ -10,9 +10,9 @@ I don't think I need to explain it.
 * Command Entry: `/cat` `/snake` `/bunny` `/dog`
 
 ## Anime actions
-Kiss/Pat/Hug yourself or your buddy. Or give them a smug.
+Gives an image of the prescribed anime action. There are 8 of them.
 
-* Command Entry: `/kiss` `/pat` `/hug` `/smug`
+* Command Entry: `/kiss` `/pat` `/hug` `/feed` `/cuddle` `/tickle` `/slap` `/poke`
 
 ## Illustrations
 ### DeviantArt
