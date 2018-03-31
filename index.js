@@ -523,7 +523,7 @@ bot.dialog('/cat', function (session) {
 			session.endDialog("ERROR! I could not connect to http://aws.random.cat/meow. Please retry. If the problem persists, please contact im@austinhuang.me");
 		}
 	});
-})/*.triggerAction({ matches: /^( ||Metagon )\/cat/g})*/;
+}).triggerAction({ matches: /^( ||Metagon )\/cat/g});
 bot.dialog('/snake', function (session) {
 	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
 	request('http://fur.im/snek', function(error, response, body) {
@@ -627,11 +627,10 @@ bot.dialog('/bunny', function (session) {
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/bunny/g});
 
-bot.beginDialogAction("kph", "/kph", { matches: /^( ||Metagon )\/(kiss|pat|hug|poke|slap|cuddle)/g});
-bot.beginDialogAction("smug", "/smug", { matches: /^( ||Metagon )\/smug/g});
+bot.beginDialogAction("kph", "/kph", { matches: /^( ||Metagon )\/(kiss|pat|hug|poke|slap|cuddle|feed)/g});
 bot.dialog('/anime', [
 	function (session) {
-		if (session.message.source !== "line") builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Smug|Poke|Slap|Cuddle|Back to Image Menu|Quit", { listStyle: 3 });
+		if (session.message.source !== "line") builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Feed|Poke|Slap|Cuddle|Back to Image Menu|Quit", { listStyle: 3 });
 		else {
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel);
@@ -653,12 +652,12 @@ bot.dialog('/anime', [
 				new builder.HeroCard(session)
 					.text("Due to Line API restrictions, all GIFs will NOT be displayed properly.")
 					.buttons([
-						builder.CardAction.imBack(session, "Smug", "Smug"),
+						builder.CardAction.imBack(session, "Feed", "Feed"),
 						builder.CardAction.imBack(session, "Back to Image Menu", "Back to Image Menu"),
 						builder.CardAction.imBack(session, "Quit", "Quit")
 					])
 			]);
-			builder.Prompts.choice(session, msg, "Kiss|Pat|Hug|Smug|Poke|Slap|Cuddle|Back to Image Menu|Quit");
+			builder.Prompts.choice(session, msg, "Kiss|Pat|Hug|Feed|Poke|Slap|Cuddle|Back to Image Menu|Quit");
 		}
 
 	},
@@ -666,9 +665,6 @@ bot.dialog('/anime', [
 		switch (results.response.entity) {
 			case "Back to Image Menu":
 				session.beginDialog("/image");
-			break;
-			case "Smug":
-				session.beginDialog("/smug");
 			break;
 			case "Quit":
 				session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
@@ -686,6 +682,7 @@ bot.dialog('/kph', function (session) {
 	else if (session.message.text.search(/poke/gi) > -1) {endpoint = "poke"}
 	else if (session.message.text.search(/slap/gi) > -1) {endpoint = "slap"}
 	else if (session.message.text.search(/cuddle/gi) > -1) {endpoint = "cuddle"}
+	else if (session.message.text.search(/feed/gi) > -1) {endpoint = "feed"}
 	request('https://nekos.life/api/v2/img/'+endpoint, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
@@ -703,26 +700,6 @@ bot.dialog('/kph', function (session) {
 		}
 		else {
 			session.endDialog("ERROR! I could not connect to https://nekos.life/api. Please retry. If the problem persists, please contact im@austinhuang.me");
-		}
-	});
-});
-bot.dialog('/smug', function (session) {
-	request("https://smug.z0ne.moe/", function(error, response, body) {
-		if (!error && response.statusCode === 200) {
-			session.send({
-				attachments: [
-					{
-						contentType: "image/*",
-						contentUrl: "https://smug.z0ne.moe"+body.replace("<img src=\"", "").replace("\">", "")
-					}
-				]
-			});
-			if (!session.message.text.includes("/")) {
-				session.replaceDialog("/image");
-			}
-		}
-		else {
-			session.endDialog("ERROR! I could not connect to https://smug.z0ne.moe/. Please retry. If the problem persists, please contact im@austinhuang.me");
 		}
 	});
 });
