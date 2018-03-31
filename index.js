@@ -627,10 +627,10 @@ bot.dialog('/bunny', function (session) {
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/bunny/g});
 
-bot.beginDialogAction("kph", "/kph", { matches: /^( ||Metagon )\/(kiss|pat|hug|poke|slap|cuddle|feed)/g});
+bot.beginDialogAction("kph", "/kph", { matches: /^( ||Metagon )\/(kiss|pat|hug|poke|slap|cuddle|feed|tickle)/g});
 bot.dialog('/anime', [
 	function (session) {
-		if (session.message.source !== "line") builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Feed|Poke|Slap|Cuddle|Back to Image Menu|Quit", { listStyle: 3 });
+		if (session.message.source !== "line") builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Feed|Poke|Slap|Cuddle|Tickle|Back to Image Menu|Quit", { listStyle: 3 });
 		else {
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel);
@@ -653,11 +653,11 @@ bot.dialog('/anime', [
 					.text("Due to Line API restrictions, all GIFs will NOT be displayed properly.")
 					.buttons([
 						builder.CardAction.imBack(session, "Feed", "Feed"),
+						builder.CardAction.imBack(session, "Tickle", "Tickle"),
 						builder.CardAction.imBack(session, "Back to Image Menu", "Back to Image Menu"),
-						builder.CardAction.imBack(session, "Quit", "Quit")
 					])
 			]);
-			builder.Prompts.choice(session, msg, "Kiss|Pat|Hug|Feed|Poke|Slap|Cuddle|Back to Image Menu|Quit");
+			builder.Prompts.choice(session, msg, "Kiss|Pat|Hug|Feed|Poke|Slap|Cuddle|Tickle|Back to Image Menu|Quit");
 		}
 
 	},
