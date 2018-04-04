@@ -1,7 +1,7 @@
 const express = require('express'),
       builder = require('botbuilder'),
       fs = require('fs'),
-      request = require('request'),
+      request = require('request').defaults({headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}),
 	  bodyParser = require('body-parser'),
       cloudinary = require('cloudinary'),
 	  connector = new builder.ChatConnector({
@@ -885,7 +885,7 @@ bot.dialog('/deviantart1',[
 	function (session, results) {
 		if (results.response.replace(/^Metagon /g, "") !== "Back to Image Menu") {
 			if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
-			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response.replace(/^Metagon /g, ""), {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
+			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response.replace(/^Metagon /g, "")}, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					parseString(body, function (err, result) {
 						if (!result.rss.channel[0].item) {
@@ -924,7 +924,7 @@ bot.dialog('/deviantart2', function (session) {
 	}
 	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
 	if (session.message.text.replace(/( |)\/deviantart/, "") !== "") {
-		request("https://backend.deviantart.com/rss.xml?type=deviation&q="+session.message.text.replace(/( |)\/deviantart/, ""), {headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}, function(error, response, body) {
+		request("https://backend.deviantart.com/rss.xml?type=deviation&q="+session.message.text.replace(/( |)\/deviantart/, ""), function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				parseString(body, function (err, result) {
 					if (!result.rss.channel[0].item) {
