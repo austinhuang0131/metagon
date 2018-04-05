@@ -56,6 +56,7 @@ In most situations you can just use the startup menu. However, if you're on VK, 
 # Rate me
 Thanks!
 
+* [BotDirectory.net](https://botdirectory.net/solutions/metagon/)
 * [<img src="/BotList-badge-white.svg" alt="BotList.co" width="135">](https://botlist.co/bots/metagon)
 * ChatBottle.co ([Kik](https://chatbottle.co/bots/metagon-for-kik), [Skype](https://chatbottle.co/bots/metagon-for-skype), [Slack](https://chatbottle.co/bots/metagon-for-slack), [Telegram](https://chatbottle.co/bots/metagon-for-telegram))
 * [Product Hunt](https://www.producthunt.com/posts/metagon)
