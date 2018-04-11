@@ -885,7 +885,7 @@ bot.dialog('/deviantart1',[
 	function (session, results) {
 		if (results.response.replace(/^Metagon /g, "") !== "Back to Image Menu") {
 			if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
-			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response.replace(/^Metagon /g, "")}, function(error, response, body) {
+			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response.replace(/^Metagon /g, ""), function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					parseString(body, function (err, result) {
 						if (!result.rss.channel[0].item) {
