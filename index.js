@@ -1941,11 +1941,8 @@ bot.dialog('/unstuck', function (session) {
 	session.clearDialogStack();
 });
 bot.dialog('/', function (session) {
-	if (session.message.source !== "slack" && session.message.source !== "telegram") {
+	if ((session.message.source !== "slack" && session.message.source !== "telegram" && session.message.source !== "line") || ((session.message.source === "slack" || session.message.source === "line" || session.message.source === "telegram") && !session.message.address.conversation.isGroup)) {
 		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
-	}
-	else if ((session.message.source === "slack" || session.message.source === "telegram") && !session.message.address.conversation.isGroup) {
-		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');		
 	}
 	else {
 		session.endDialog();
