@@ -16,7 +16,7 @@
     "express": "^4.16.2",
     "cloudinary": "^1.9.1",
     "botbuilder-mongodb": "^3.0.9",
-    "botbuilder-line": "^0.0.2",
+    "botbuilder-line": "austinhuang0131/botbuilder-line",
     "botbuilder-vk": "austinhuang0131/botbuilder-vk",
     "pixiv-app-api": "^0.11.0",
     "pixiv-img": "^0.3.1",
