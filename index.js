@@ -129,7 +129,7 @@ const Pixiv = require('pixiv-app-api'),
 const lineConnector = require("botbuilder-line")({
     channelSecret: process.env.line2,
     channelAccessToken: process.env.line3,
-	debug: true
+	debug: false
 });
 bot.connector("directline", lineConnector);
 
@@ -231,7 +231,7 @@ bot.dialog('/menu', [
 			break;
 		}
 	}
-]).triggerAction({ matches: /(\/|Metagon |)start/gi});
+]).triggerAction({ matches: /^(\/|Metagon |)start/gi});
 bot.dialog('/image', [
 	function (session) {
 		switch (session.message.source) {
