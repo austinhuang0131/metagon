@@ -227,7 +227,7 @@ bot.dialog('/menu', [
 				session.replaceDialog("/feedback");
 			break;
 			case "Quit":
-				session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
+				session.endDialog("You have quit the keyboard mode. You can start again by typing \"start\".");
 			break;
 		}
 	}
@@ -315,7 +315,7 @@ bot.dialog('/image', [
 				session.beginDialog("/menu");
 			break;
 			case "Quit":
-				session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
+				session.endDialog("You have quit the keyboard mode. You can start again by typing \"start\".");
 			break;
 		}
 	}
@@ -383,7 +383,7 @@ bot.dialog('/utility', [
 				session.beginDialog("/menu");
 			break;
 			case "Quit":
-				session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
+				session.endDialog("You have quit the keyboard mode. You can start again by typing \"start\".");
 			break;
 		}
 	}
@@ -438,7 +438,7 @@ bot.dialog('/fun', [
 				session.beginDialog("/menu");
 			break;
 			case "Quit":
-				session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
+				session.endDialog("You have quit the keyboard mode. You can start again by typing \"start\".");
 			break;
 		}
 	}
@@ -667,7 +667,7 @@ bot.dialog('/anime', [
 				session.beginDialog("/image");
 			break;
 			case "Quit":
-				session.endDialog("You have quitted the keyboard mode. You can start again by typing \"start\".");
+				session.endDialog("You have quit the keyboard mode. You can start again by typing \"start\".");
 			break;
 			default:
 				session.beginDialog("/kph");
