@@ -129,7 +129,7 @@ const Pixiv = require('pixiv-app-api'),
 const lineConnector = require("botbuilder-line")({
     channelSecret: process.env.line2,
     channelAccessToken: process.env.line3,
-	debug: false
+	debug: true
 });
 bot.connector("directline", lineConnector);
 
