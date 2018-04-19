@@ -6,8 +6,9 @@ Metagon does a lot. From bringing you the nicest pictures, to providing you the 
 * 🐱 Random animal images (Cat, Bunnies, Snake)
 * 💏 Anime actions (Kiss, pat, hug, smug)
 * 🖼 Check out Imgur & Flickr images
-* 🔧Useful tools like Yahoo Weather, Pastebin and Bitly
+* 🔧 Useful tools like Yahoo Weather, Pastebin and Bitly
 * 😂 9gag posts & Chuck Norris joke
+* ❓ Trivia!
 
 ...and more coming up!
 
@@ -16,10 +17,10 @@ Metagon does a lot. From bringing you the nicest pictures, to providing you the 
 [![forthebadge](https://forthebadge.com/images/badges/contains-cat-gifs.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/uses-badges.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/uses-js.svg)](http://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)
 
 # Invite Me!
-[![GroupMe](https://dev.botframework.com/client/images/channels/icons/groupme.png)](https://groupme.botframework.com/?botId=metagon) [![Kik](https://dev.botframework.com/client/images/channels/icons/kik.png)](https://bots.kik.com/#/metagon) [![Line](https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/112px-LINE_logo.svg.png)](https://line.me/R/ti/p/d5IppPNQOK) [![MSTeams](https://dev.botframework.com/client/images/channels/icons/msteams.png)](https://teams.microsoft.com/l/chat/0/0?users=28:b02aeeb5-27a7-44a7-9e33-ba79a0a10246) [![Skype](https://dev.botframework.com/client/images/channels/icons/skype.png)](https://join.skype.com/bot/b02aeeb5-27a7-44a7-9e33-ba79a0a10246) [![Skype for Business](https://dev.botframework.com/client/images/channels/icons/skypeforbusiness.png)](https://skypeappregistration.azurewebsites.net/bot/b02aeeb5-27a7-44a7-9e33-ba79a0a10246) [![Slack](https://dev.botframework.com/client/images/channels/icons/slack.png)](https://slack.com/oauth/authorize?scope=bot&client_id=102106011378.101401841504&redirect_uri=https%3a%2f%2fslack.botframework.com%2fHome%2fauth&state=metagon) [![Telegram](https://dev.botframework.com/client/images/channels/icons/telegram.png)](https://t.me/metagon_bot) [![VK](https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/VK.com-logo.svg/112px-VK.com-logo.svg.png)](https://vk.com/im?sel=-160574258)
+[![GroupMe](https://dev.botframework.com/client/images/channels/icons/groupme.png)](https://groupme.botframework.com/?botId=metagon) [![Kik](https://dev.botframework.com/client/images/channels/icons/kik.png)](https://bots.kik.com/#/metagon) [![Line](https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/112px-LINE_logo.svg.png)](https://line.me/R/ti/p/d5IppPNQOK) [![MSTeams](https://dev.botframework.com/client/images/channels/icons/msteams.png)](https://teams.microsoft.com/l/chat/0/0?users=28:b02aeeb5-27a7-44a7-9e33-ba79a0a10246) [![Skype](https://dev.botframework.com/client/images/channels/icons/skype.png)](https://join.skype.com/bot/b02aeeb5-27a7-44a7-9e33-ba79a0a10246) [![Skype for Business](https://dev.botframework.com/client/images/channels/icons/skypeforbusiness.png)](https://skypeappregistration.azurewebsites.net/bot/b02aeeb5-27a7-44a7-9e33-ba79a0a10246) [![Slack](https://dev.botframework.com/client/images/channels/icons/slack.png)](https://slack.com/oauth/authorize?scope=bot&client_id=102106011378.101401841504&redirect_uri=https%3a%2f%2fslack.botframework.com%2fHome%2fauth&state=metagon) [![Telegram](https://dev.botframework.com/client/images/channels/icons/telegram.png)](https://t.me/metagon_bot)
 
 * On Kik, Line, Microsoft Teams, Skype, Slack, Telegram: You can type `start` to start up.
-* On GroupMe, Skype for Business, VK: Read the Command Reference.
+* On GroupMe, Skype for Business: Read the Command Reference.
 
 <sup>Yes, there was a Facebook version, but Facebook temporarily banned my account 3 times and at the last time permanently banned it for literally nothing. The only way to get Metagon back on its original account is to provide them my ID, which is stupid, considering Facebook is one of the most privacy-invading company of all time. That account was only used for creating the bot, so I'm not planning to get it back to Facebook.</sup>
 
@@ -28,7 +29,7 @@ Metagon does a lot. From bringing you the nicest pictures, to providing you the 
 If the bot is stuck (Stopped responding / Not functioning properly) during any moment of your use, you can type `unstuck!!!` to effectively expel your trouble.
 
 # Command Reference
-In most situations you can just use the startup menu. However, if you're on VK, GroupMe, or Skype for Business, or you'd like to get results by only typing out 1 message, you must read the following.
+In most situations you can just use the startup menu. However, if you're on GroupMe or Skype for Business, or you'd like to get results by only typing out 1 message, you must read the following.
 
 * [Images](/images)
 * [Utility](/utility)
@@ -40,7 +41,7 @@ In most situations you can just use the startup menu. However, if you're on VK, 
 * [Legal (Privacy/ToS)](/legal)
 
 # IMPORTANT! Per-Platform Issues
-* There is **no keyboard mode** on <u>GroupMe, Skype for Business, and VK</u>. **Commands only.** That's because these platforms don't support buttons.
+* There is **no keyboard mode** on <u>GroupMe and Skype for Business</u>. **Commands only.** That's because these platforms don't support buttons.
 * On <u>Skype and Slack</u>, **a <kbd>  SPACE  </kbd> is required before `/` commands in the command mode**.
 * To comply with <u>Kik</u> regulations, some commands are [not available](/kik-disabled) for good.
 
