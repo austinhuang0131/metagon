@@ -1757,7 +1757,7 @@ bot.dialog('/trivia2', function (session) {
 	request("https://opentdb.com/api.php?amount=1", (error, response, body) => {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
-			session.endDialog("Category: "+body.results[0].category+"\n\n"++body.results[0].question+"\n\nAnswer: "+body.results[0].correct_answer);
+			session.endDialog("Category: "+body.results[0].category+"\n\n"+body.results[0].question+"\n\nAnswer: "+body.results[0].correct_answer);
 		}
 		else {
 			session.endDialog("ERROR! I could not connect to https://opentdb.com/api.php. Please retry. If the problem persists, please contact im@austinhuang.me");
