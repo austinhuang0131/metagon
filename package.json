@@ -14,6 +14,7 @@
     "botbuilder": "^3.11.0",
     "request": "^2.83.0",
     "express": "^4.16.2",
+    "decode-html": "^2.0.0",
     "cloudinary": "^1.9.1",
     "botbuilder-mongodb": "^3.0.9",
     "botbuilder-line": "austinhuang0131/botbuilder-line",

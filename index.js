@@ -4,6 +4,7 @@ const express = require('express'),
       request = require('request').defaults({headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}),
 	  bodyParser = require('body-parser'),
       cloudinary = require('cloudinary'),
+	  decode = require('decode-html'),
 	  connector = new builder.ChatConnector({
 		  appId: process.env.appid,
 		  appPassword: process.env.appkey
@@ -1736,26 +1737,27 @@ bot.dialog('/trivia1', [
 			request("https://opentdb.com/api.php?amount=1", (error, response, body) => {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
-				nsfw.push({user: session.message.address.user.id, answer: body.results[0].correct_answer});
+				nsfw.push({user: session.message.address.user.id, answer: decode(body.results[0].correct_answer)});
 				if (body.results[0].type === "multiple") {
 					var choices = body.results[0].incorrect_answers;
 					choices.push(body.results[0].correct_answer);
-					builder.Prompts.choice(session, "Category: "+body.results[0].category+"\n\n"+body.results[0].question, shuffle(choices).join("|"), {listStyle: 3});
+					builder.Prompts.choice(session, "Category: "+body.results[0].category+"\n\n"+decode(body.results[0].question), decode(shuffle(choices).join("|")), {listStyle: 3});
 				}
-				else if (body.results[0].type === "boolean") builder.Prompts.confirm(session, "Category: "+body.results[0].category+"\n\n"+body.results[0].question, {listStyle: 3});
+				else if (body.results[0].type === "boolean") builder.Prompts.confirm(session, "Category: "+body.results[0].category+"\n\n"+decode(body.results[0].question), {listStyle: 3});
 			}
 			else {
 				session.endDialog("ERROR! I could not connect to https://opentdb.com/api.php. Please retry. If the problem persists, please contact im@austinhuang.me");
 			}
 		});
 	},
-	function(session) {
-		builder.Prompts.confirm(session, "The answer is "+nsfw.find(r => r.user === session.message.address.user.id).answer+"! Wanna play again?", {listStyle: 3});
+	function(session, results) {
+		var game = results.response.entity === nsfw.find(r => r.user === session.message.address.user.id).answer ? "You're right!" : "Oops... The answer is "+nsfw.find(r => r.user === session.message.address.user.id).answer".";
+		builder.Prompts.confirm(session, game+" Wanna play again?", {listStyle: 3});
 		// Line differentiation
 		nsfw.splice(nsfw.indexOf(nsfw.find(r => r.user === session.message.address.user.id)), 1);
 	},
-	function(session) {
-		if (session.response.entity === true) session.reset("/trivia1");
+	function(session, results) {
+		if (results.response.entity === true) session.reset("/trivia1");
 		else session.replaceDialog("/fun");
 	}
 ]);
