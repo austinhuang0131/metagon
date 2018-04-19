@@ -134,13 +134,6 @@ const lineConnector = require("botbuilder-line")({
 });
 bot.connector("directline", lineConnector);
 
-const vk = require('botbuilder-vk')({
-	access_token: process.env.vk1,
-	callback_key: process.env.vk2,
-	group_id: process.env.vk3
-});
-bot.connector(vk.channelId, vk);
-
 function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;
 	return c.toFixed();
@@ -194,8 +187,8 @@ bot.on('contactRelationUpdate', function (message) {
 // Menus
 bot.dialog('/menu', [
 	function (session) {
-		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness" || session.message.source === vk.channelId) {
-			session.send("Keyboard Mode is not available on GroupMe / Skype for Business / VK. Please use only commands.\nFor more information, type \"help\".");
+		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
+			session.send("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
 		}
 		else if (session.message.source !== "line") {
 			builder.Prompts.choice(session, "What would you like to do right now?\n\nNew commands: Birb and Duck in Images category, as well as Trivia and Cat Facts in Fun category!", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
@@ -471,7 +464,7 @@ bot.dialog('/about', function (session) {
 	else {
 		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation/Contact Us: http://metagon.cf\n\nDo I help you a lot? Consider a small donation (Detail in documentation)! The simplest way to use this bot is by typing \"start\".");
 	}
-	if (session.message.source !== "groupme" && session.message.source !== vk.channelId && session.message.text !== ("/help")) {
+	if (session.message.source !== "groupme" && session.message.text !== ("/help")) {
 		session.replaceDialog("/menu");
 	}
 	else {
@@ -485,7 +478,7 @@ bot.dialog('/feedback', [
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("Have an idea? Found a bug? Write to us here!")
-			.subtitle("Don't spam. GroupMe/Slack/SfB/MSTeams users: Leave me your email if you need support. Line/VK users: Leave me your username.")
+			.subtitle("Don't spam. GroupMe/Slack/SfB/MSTeams users: Leave me your email if you need support. Line users: Leave me your username.")
 			.buttons([
 				builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu")
 			])
@@ -513,7 +506,7 @@ bot.dialog('/feedback', [
 
 // Image
 bot.dialog('/cat', function (session) {
-	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+	if (session.message.source !== "line") {session.sendTyping();}
 	request('https://aws.random.cat/meow', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
@@ -534,7 +527,7 @@ bot.dialog('/cat', function (session) {
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/cat/g});
 bot.dialog('/snake', function (session) {
-	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+	if (session.message.source !== "line") {session.sendTyping();}
 	request('http://fur.im/snek', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
@@ -559,7 +552,7 @@ bot.dialog('/snake', function (session) {
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/snake/g});
 bot.dialog('/dog', function (session) {
-	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+	if (session.message.source !== "line") {session.sendTyping();}
 	request('https://random.dog/woof.json', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
@@ -594,7 +587,7 @@ bot.dialog('/dog', function (session) {
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/dog/g});
 bot.dialog('/bunny', function (session) {
-	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+	if (session.message.source !== "line") {session.sendTyping();}
 	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', function(error, response, body) {
 		if (!error && response.statusCode === 200 && session.message.source.includes("skype")) {
 			body = JSON.parse(body);
@@ -636,7 +629,7 @@ bot.dialog('/bunny', function (session) {
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/bunny/g});
 bot.dialog('/birb', function (session) {
-	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+	if (session.message.source !== "line") {session.sendTyping();}
 	request('https://random.birb.pw/tweet', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			var type = body.endsWith(".gif") ? "gif" : "*";
@@ -656,7 +649,7 @@ bot.dialog('/birb', function (session) {
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/bir(b|d)/g});
 bot.dialog('/duck', function (session) {
-	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+	if (session.message.source !== "line") {session.sendTyping();}
 	request('https://random-d.uk/api/v1/random', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
@@ -826,7 +819,7 @@ bot.dialog('/flickr1',[
 	},
 	function (session, results, next) {
 		if (results.response.replace(/^Metagon /g, "") !== "Back to Image Menu") {
-			if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+			if (session.message.source !== "line") {session.sendTyping();}
 			request("https://api.flickr.com/services/rest?api_key="+process.env.flickr+"&method=flickr.photos.search&text="+results.response.replace(/^Metagon /g, "")+"&format=json&per_page=500&nojsoncallback=1&media=photos", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					body = JSON.parse(body);
@@ -930,7 +923,7 @@ bot.dialog('/deviantart1',[
 	},
 	function (session, results) {
 		if (results.response.replace(/^Metagon /g, "") !== "Back to Image Menu") {
-			if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+			if (session.message.source !== "line") {session.sendTyping();}
 			request("https://backend.deviantart.com/rss.xml?type=deviation&q="+results.response.replace(/^Metagon /g, ""), function(error, response, body) {
 				if (!error && response.statusCode === 200) {
 					parseString(body, function (err, result) {
@@ -968,7 +961,7 @@ bot.dialog('/deviantart2', function (session) {
 		session.send('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
 		return;
 	}
-	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+	if (session.message.source !== "line") {session.sendTyping();}
 	if (session.message.text.replace(/( |)\/deviantart/, "") !== "") {
 		request("https://backend.deviantart.com/rss.xml?type=deviation&q="+session.message.text.replace(/( |)\/deviantart/, ""), function(error, response, body) {
 			if (!error && response.statusCode === 200) {
@@ -1041,7 +1034,7 @@ bot.dialog('/pixiv1',[
 			session.replaceDialog("/image");
 			return;
 		}
-		if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+		if (session.message.source !== "line") {session.sendTyping();}
 		pixiv.searchIllust(results.response.replace(/^Metagon /g, "")+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
 			var illust = json.illusts[Math.floor(Math.random() * json.illusts.length)];
 			if (illust === undefined) {
@@ -1087,7 +1080,7 @@ bot.dialog('/pixiv1',[
 			session.replaceDialog("/image");
 		}
 		else if (results.response.entity === "View all pages") {
-			if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+			if (session.message.source !== "line") {session.sendTyping();}
 			pixiv.illustDetail(nsfw.find(i => {return i.user === session.message.address.user.id;}).illust).then(json => {
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 				fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
@@ -1155,7 +1148,7 @@ bot.dialog('/pixiv2',[
 		}
 	},
 	function (session, results) {
-		if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+		if (session.message.source !== "line") {session.sendTyping();}
 		var rating = "";
 		if (results.response === false) {rating = " -R-18 -R-18G";}
 		pixiv.searchIllust(nsfw.find(i => {return i.user === session.message.address.user.id;}).query+rating, {per_page: 100, mode: "tag"}).then(json => {
@@ -2018,7 +2011,7 @@ bot.dialog('/unstuck', function (session) {
 	session.clearDialogStack();
 }).triggerAction({ matches: /^unstuck!!!/g});
 bot.dialog('/hello', function(session) {
-	if (session.message.source !== "groupme" && session.message.source !== "skypeforbusiness" && session.message.source !== vk.channelId && (session.message.source !== "slack" && session.message.source !== "telegram" && session.message.source !== "line") || ((session.message.source === "slack" || session.message.source === "line" || session.message.source === "telegram") && !session.message.address.conversation.isGroup)) session.endDialog("Hello there! To use me, type \"start\".");
+	if (session.message.source !== "groupme" && session.message.source !== "skypeforbusiness" && (session.message.source !== "slack" && session.message.source !== "telegram" && session.message.source !== "line") || ((session.message.source === "slack" || session.message.source === "line" || session.message.source === "telegram") && !session.message.address.conversation.isGroup)) session.endDialog("Hello there! To use me, type \"start\".");
 	else session.endDialog("Hello there! To use me, visit https://metagon.cf for documentation.");
 }).triggerAction({matches: /(hi|hello|what's up|bored|what do you do)/i});
 bot.dialog('/', function (session) {
@@ -2035,7 +2028,6 @@ var server = express();
 server.use(bodyParser.json({type: "*/*"}));
 server.post('/api/messages', connector.listen());
 server.post('/linebot', lineConnector.listen);
-server.post('/vk', vk.listen());
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
 });
