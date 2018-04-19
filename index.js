@@ -1750,9 +1750,9 @@ bot.dialog('/trivia1', [
 		});
 	},
 	function(session) {
-		nsfw.splice(nsfw.indexOf(nsfw.find(r => r.user === session.message.address.user.id)), 1);
 		builder.Prompts.confirm(session, "The answer is "+nsfw.find(r => r.user === session.message.address.user.id).answer+"! Wanna play again?", {listStyle: 3});
 		// Line differentiation
+		nsfw.splice(nsfw.indexOf(nsfw.find(r => r.user === session.message.address.user.id)), 1);
 	},
 	function(session) {
 		if (session.response.entity === true) session.reset("/trivia1");
