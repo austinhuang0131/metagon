@@ -1767,7 +1767,7 @@ bot.dialog('/trivia1', [
 		nsfw.splice(nsfw.indexOf(nsfw.find(r => r.user === session.message.address.user.id)), 1);
 	},
 	function(session, results) {
-		if (results.response.entity === true) session.reset("/trivia1");
+		if (results.response === true) session.reset("/trivia1");
 		else session.replaceDialog("/fun");
 	}
 ]);
@@ -1782,7 +1782,6 @@ bot.dialog('/trivia2', function (session) {
 		}
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/trivia/g});
-
 
 bot.dialog('/9gag1',[
 	function (session) {
