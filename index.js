@@ -144,6 +144,17 @@ function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;
 	return c.toFixed();
 }
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+}
 
 bot.on('conversationUpdate', function (message) {
     if (message.address.conversation.isGroup) {
@@ -266,42 +277,27 @@ bot.dialog('/image', [
 					new builder.HeroCard(session)
 						.text("What would you like to do right now?")
 						.buttons([
-							builder.CardAction.imBack(session, "Hey Line, stop enforcing consistencies on button counts!", "(Click for Suprise)"),
+							builder.CardAction.imBack(session, "Duck", "Duck"),
+							builder.CardAction.imBack(session, "Birb", "Birb"),
 							builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu"),
-							builder.CardAction.imBack(session, "Quit", "Quit")
 						])
 				]);
-				builder.Prompts.choice(session, msg, "Imgur|Flickr|Pixiv (Anime)|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Back to Start Menu|Quit");
+				builder.Prompts.choice(session, msg, "Imgur|Flickr|Pixiv (Anime)|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Duck|Birb|Back to Start Menu|Quit");
 			break;
 			default:
-				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|Pixiv (Anime)|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|Pixiv (Anime)|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Duck|Birb|Back to Start Menu|Quit", { listStyle: 3 });
 				// IbSearch (Anime) should be added to the list whenever the function comes back
 			break;
 		}
 	},
 	function (session, results) {
 		switch (results.response.entity) {
-			case "Cat":
-				session.replaceDialog("/cat");
-			break;
-			case "Snake":
-				session.replaceDialog("/snake");
-			break;
-			case "Dog":
-				session.replaceDialog("/dog");
-			break;
-			case "Bunny":
-				session.replaceDialog("/bunny");
-			break;
 			case "Imgur":
 				session.replaceDialog("/imgur1");
 			break;
 			case "Flickr":
 				session.replaceDialog("/flickr1");
 			break;
-			/*case "IbSearch (Anime)":
-				session.replaceDialog("/ibsearch1");
-			break;*/
 			case "Pixiv (Anime)":
 				session.replaceDialog("/pixiv1");
 			break;
@@ -311,11 +307,15 @@ bot.dialog('/image', [
 			case "Anime actions":
 				session.replaceDialog("/anime");
 			break;
+			
 			case "Back to Start Menu":
 				session.beginDialog("/menu");
 			break;
 			case "Quit":
 				session.endDialog("You have quit the keyboard mode. You can start again by typing \"start\".");
+			break;
+			default:
+				session.replaceDialog("/"+results.response.entity.toLowerCase());
 			break;
 		}
 	}
@@ -358,12 +358,6 @@ bot.dialog('/utility', [
 	}, 
 	function (session, results) {
 		switch (results.response.entity) {
-			case "Weather":
-				session.replaceDialog("/weather1");
-			break;
-			case "Dictionary":
-				session.replaceDialog("/dictionary1");
-			break;
 			case "Shorten URLs":
 				session.replaceDialog("/shorten1");
 			break;
@@ -376,14 +370,14 @@ bot.dialog('/utility', [
 			case "Minecraft Server Status":
 				session.replaceDialog("/mcserver1");
 			break;
-			case "Pastebin":
-				session.replaceDialog("/paste1");
-			break;
 			case "Back to Start Menu":
 				session.beginDialog("/menu");
 			break;
 			case "Quit":
 				session.endDialog("You have quit the keyboard mode. You can start again by typing \"start\".");
+			break;
+			default:
+				session.replaceDialog("/"+results.response.entity.toLowerCase()+"1");
 			break;
 		}
 	}
@@ -400,20 +394,27 @@ bot.dialog('/fun', [
 						.buttons([
 							builder.CardAction.imBack(session, "9gag", "9gag"),
 							builder.CardAction.imBack(session, "Urban Dictionary", "Urban Dictionary"),
-							builder.CardAction.imBack(session, "Chuck Norris", "Chuck Norris")
+							builder.CardAction.imBack(session, "Cat Facts", "Cat Facts")
 						]),
 					new builder.HeroCard(session)
 						.text("What would you like to do right now?")
 						.buttons([
-							builder.CardAction.imBack(session, "Yoda Quote", "Yoda Quote"),
+							builder.CardAction.imBack(session, "Trivia", "Trivia"),
+							builder.CardAction.imBack(session, "Chuck Norris", "Chuck Norris"),
+							builder.CardAction.imBack(session, "Yoda Quote", "Yoda Quote")
+						]),
+					new builder.HeroCard(session)
+						.text("What would you like to do right now?")
+						.buttons([
 							builder.CardAction.imBack(session, "Quote on Design", "Quote on Design"),
-							builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu")
+							builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu"),
+							builder.CardAction.imBack(session, "Quit", "Quit")
 						])
 				]);
-				builder.Prompts.choice(session, msg, "9gag|Urban Dictionary|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit");
+				builder.Prompts.choice(session, msg, "9gag|Urban Dictionary|Cat Facts|Trivia|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit");
 			break;
 			default:		
-				builder.Prompts.choice(session, "What would you like to do right now?", "9gag|Urban Dictionary|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, "What would you like to do right now?", "9gag|Urban Dictionary|Cat Facts|Trivia|Chuck Norris|Yoda Quote|Quote on Design|Back to Start Menu|Quit", { listStyle: 3 });
 			break;
 		}
 	},
@@ -428,6 +429,12 @@ bot.dialog('/fun', [
 			case "Chuck Norris":
 				session.replaceDialog("/joke");
 			break;
+			case "Cat Facts":
+				session.replaceDialog("/catfact");
+			break;
+			case "Trivia":
+				session.replaceDialog("/trivia1");
+			break;
 			case "Yoda Quote":
 				session.replaceDialog("/yoda");
 			break;
@@ -436,7 +443,7 @@ bot.dialog('/fun', [
 			break;
 			case "Back to Start Menu":
 				session.beginDialog("/menu");
-			break;
+			break
 			case "Quit":
 				session.endDialog("You have quit the keyboard mode. You can start again by typing \"start\".");
 			break;
@@ -509,10 +516,11 @@ bot.dialog('/cat', function (session) {
 	request('https://aws.random.cat/meow', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
+			var type = body.file.endsWith(".gif") ? "gif" : "*";
 			session.endDialog({
 				attachments: [
 					{
-						contentType: "image/*",
+						contentType: "image/" + type,
 						contentUrl: body.file.replace("http://", "https://")
 					}
 				]
@@ -597,7 +605,7 @@ bot.dialog('/bunny', function (session) {
  					}
   				]
   			});
-			if (!session.message.text.includes("/cat")) {
+			if (!session.message.text.includes("/bunny")) {
 				session.replaceDialog("/image");
 			}
 			else {
@@ -626,8 +634,48 @@ bot.dialog('/bunny', function (session) {
 		}
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/bunny/g});
+bot.dialog('/birb', function (session) {
+	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+	request('https://random.birb.pw/tweet', function(error, response, body) {
+		if (!error && response.statusCode === 200) {
+			var type = body.endsWith(".gif") ? "gif" : "*";
+			session.endDialog({
+				attachments: [
+					{
+						contentType: "image/" + type,
+						contentUrl: "https://random.birb.pw/img/"+body
+					}
+				]
+			});
+			if (!session.message.text.includes("/bir")) session.beginDialog("/image");
+		}
+		else {
+			session.endDialog("ERROR! I could not connect to https://random.birb.pw/tweet. Please retry. If the problem persists, please contact im@austinhuang.me");
+		}
+	});
+}).triggerAction({ matches: /^( ||Metagon )\/bir(b|d)/g});
+bot.dialog('/duck', function (session) {
+	if (session.message.source !== "line" && session.message.source !== vk.channelId) {session.sendTyping();}
+	request('https://random-d.uk/api/v1/random', function(error, response, body) {
+		if (!error && response.statusCode === 200) {
+			body = JSON.parse(body);
+			var type = body.endsWith(".gif") ? "gif" : "jpeg";
+			session.endDialog({
+				attachments: [
+					{
+						contentType: "image/" + type,
+						contentUrl: body.url
+					}
+				]
+			});
+			if (!session.message.text.includes("/duck")) session.beginDialog("/image");
+		}
+		else {
+			session.endDialog("ERROR! I could not connect to https://random-d.uk/api/v1/random. Please retry. If the problem persists, please contact im@austinhuang.me");
+		}
+	});
+}).triggerAction({ matches: /^( ||Metagon )\/duck/g});
 
-bot.beginDialogAction("kph", "/kph", { matches: /^( ||Metagon )\/(kiss|pat|hug|poke|slap|cuddle|feed|tickle)/g});
 bot.dialog('/anime', [
 	function (session) {
 		if (session.message.source !== "line") builder.Prompts.choice(session, "What would you like to do right now?", "Kiss|Pat|Hug|Feed|Poke|Slap|Cuddle|Tickle|Back to Image Menu|Quit", { listStyle: 3 });
@@ -702,9 +750,8 @@ bot.dialog('/kph', function (session) {
 			session.endDialog("ERROR! I could not connect to https://nekos.life/api. Please retry. If the problem persists, please contact im@austinhuang.me");
 		}
 	});
-});
+}).triggerAction({ matches: /^( ||Metagon )\/(kiss|pat|hug|poke|slap|cuddle|feed|tickle)/g});
 
-bot.beginDialogAction("imgur", "/imgur2", { matches: /^( ||Metagon )\/imgur/g});
 bot.dialog('/imgur1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -761,9 +808,8 @@ bot.dialog('/imgur2', function (session) {
 	else {
 		session.endDialog("Missing search query! Correct usage: \"/imgur (Query)\"");
 	}
-});
+}).triggerAction({ matches: /^( ||Metagon )\/imgur/g});
 
-bot.beginDialogAction("flickr", "/flickr2", { matches: /^( ||Metagon )\/flickr/g});
 bot.dialog('/flickr1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -866,9 +912,8 @@ bot.dialog('/flickr2', function (session) {
 	else {
 		session.endDialog("Missing search query! Correct usage: \"/flickr (Query)\"");
 	}
-});
+}).triggerAction({ matches: /^( ||Metagon )\/flickr/g});
 
-bot.beginDialogAction("deviantart", "/deviantart2", { matches: /^( ||Metagon )\/deviantart/g});
 bot.dialog('/deviantart1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -953,9 +998,8 @@ bot.dialog('/deviantart2', function (session) {
 	else {
 		session.endDialog("Missing search query! Correct usage: \"/deviantart (Query)\"");
 	}
-});
+}).triggerAction({ matches: /^( ||Metagon )\/deviantart/g});
 
-bot.beginDialogAction("pixiv", "/pixiv2", { matches: /^( ||Metagon )\/pixiv/g});
 bot.dialog('/pixiv1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1141,10 +1185,9 @@ bot.dialog('/pixiv2',[
 		});
 		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
     }
-]);
+]).triggerAction({ matches: /^( ||Metagon )\/pixiv/g});
 
 // Utility
-bot.beginDialogAction("shorten", "/shorten2", { matches: /^( ||Metagon )\/shorten/g});
 bot.dialog('/shorten1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1213,9 +1256,8 @@ bot.dialog('/shorten2', function (session) {
 			session.endDialog("An error occured. Invalid address, or retry?\n\n/shorten (URL)");
 		}
 	});
-});
+}).triggerAction({ matches: /^( ||Metagon )\/shorten/g});
 
-bot.beginDialogAction("expand", "/expand2", { matches: /^( ||Metagon )\/expand/g});
 bot.dialog('/expand1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1284,9 +1326,8 @@ bot.dialog('/expand2', function (session){
 			session.endDialog("An error occured. Invalid address, or retry?\n\n/expand (Bitly URL)");
 		}
 	});
-});
+}).triggerAction({ matches: /^( ||Metagon )\/expand/g});
 
-bot.beginDialogAction("mcuser", "/mcuser2", { matches: /^( ||Metagon )\/mcuser/g});
 bot.dialog('/mcuser1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1369,9 +1410,8 @@ bot.dialog('/mcuser2', function (session) {
 			session.endDialog("An error occurred.");
 		}
 	});
-});
+}).triggerAction({ matches: /^( ||Metagon )\/mcuser/g});
 
-bot.beginDialogAction("mcserver", "/mcserver2", { matches: /^( ||Metagon )\/mcserver/g});
 bot.dialog('/mcserver1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1457,10 +1497,9 @@ bot.dialog('/mcserver2', function (session) {
 			session.endDialog("An error occurred.");
 		}
 	});
-});
+}).triggerAction({ matches: /^( ||Metagon )\/mcserver/g});
 
-bot.beginDialogAction("paste", "/paste2", { matches: /^( ||Metagon )\/paste/g});
-bot.dialog('/paste1',[
+bot.dialog('/pastebin1',[
 	function (session) {
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.list);
@@ -1490,7 +1529,7 @@ bot.dialog('/paste1',[
 		});
     }
 ]);
-bot.dialog('/paste2', function (session) {
+bot.dialog('/pastebin2', function (session) {
 	if (session.message.text.replace("/mcserver", "").replace(" ", "") === "") {
 		session.send("Nothing to paste! /paste (Stuff)");
 		return;
@@ -1503,9 +1542,8 @@ bot.dialog('/paste2', function (session) {
 			session.endDialog("An error occurred.");
 		}
 	});
-});
+}).triggerAction({ matches: /^( ||Metagon )\/paste/g});
 
-bot.beginDialogAction("dictionary", "/dictionary2", { matches: /^( ||Metagon )\/dictionary/g});
 bot.dialog('/dictionary1', [
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1544,9 +1582,8 @@ bot.dialog('/dictionary2', function (session) {
 		if (!session.message.text.match(/^(Metagon | |)\/dictionary/g)) session.replaceDialog("/utility");
 		else session.endDialog();
 	});
-});
+}).triggerAction({ matches: /^( ||Metagon )\/dictionary/g});
 
-bot.beginDialogAction("weather", "/weather2", { matches: /^( ||Metagon )\/weather/g});
 bot.dialog('/weather1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1588,10 +1625,9 @@ bot.dialog('/weather2', function (session) {
 			session.endDialog("An error occurred.");
 		}
 	});
-});
+}).triggerAction({ matches: /^( ||Metagon )\/weather/g});
 
 // Fun
-bot.beginDialogAction("ud", "/ud2", { matches: /^( ||Metagon )\/ud/g});
 bot.dialog('/ud1',[
 	function (session) {
 		var msg = new builder.Message(session);
@@ -1638,20 +1674,15 @@ bot.dialog('/ud2', function (session) {
 			session.endDialog("An error occurred.");
 		}
 	});
-});
+}).triggerAction({ matches: /^( ||Metagon )\/ud/g});
 
-bot.beginDialogAction("joke", "/joke", { matches: /^( ||Metagon )\/joke/g});
 bot.dialog('/joke', function (session) {
 	if (session.message.source === "kik") {
 		request('http://api.icndb.com/jokes/random?escape=javascript?exclude=[explicit]', function(error, response, body) {
-			if (!error && response.statusCode === 200 && session.message.text === "/joke") {
-				body = JSON.parse(body);
-				session.endDialog(body.value.joke);
-			}
-			else if (!error && response.statusCode === 200) {
+			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
 				session.send(body.value.joke);
-				session.replaceDialog("/fun");
+				if (!session.message.text.includes("/")) session.replaceDialog("/fun");
 			}
 			else {
 				session.send("ERROR! I could not connect to http://api.icndb.com/jokes/random. Please retry. If the problem persists, please contact im@austinhuang.me");
@@ -1660,52 +1691,81 @@ bot.dialog('/joke', function (session) {
 	}
 	else {
 		request('http://api.icndb.com/jokes/random?escape=javascript', function(error, response, body) {
-			if (!error && response.statusCode === 200 && session.message.text === "/joke") {
-				body = JSON.parse(body);
-				session.endDialog(body.value.joke);
-			}
-			else if (!error && response.statusCode === 200) {
+			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
 				session.send(body.value.joke);
-				session.replaceDialog("/fun");
+				if (!session.message.text.includes("/")) session.replaceDialog("/fun");
 			}
 			else {
 				session.endDialog("ERROR! I could not connect to http://api.icndb.com/jokes/random. Please retry. If the problem persists, please contact im@austinhuang.me");
 			}
 		});
 	}
-});
-
-bot.beginDialogAction("yoda", "/yoda", { matches: /^( ||Metagon )\/yoda/g});
+}).triggerAction({ matches: /^( ||Metagon )\/joke/g});
 bot.dialog('/yoda', function (session) {
-		if (session.message.text === "/yoda") {
-			session.send(yoda_said[Math.floor(Math.random() * yoda_said.length)]);
-		}
-		else {
-			session.send(yoda_said[Math.floor(Math.random() * yoda_said.length)]);
-			session.replaceDialog("/fun");
-		}
-});
-
-bot.beginDialogAction("design", "/design", { matches: /^( ||Metagon )\/design/g});
+	session.send(yoda_said[Math.floor(Math.random() * yoda_said.length)]);
+	if (!session.message.text.includes("/")) session.replaceDialog("/fun");
+}).triggerAction({ matches: /^( ||Metagon )\/yoda/g});
 bot.dialog('/design', function (session) {
 	request('http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1', function(error, response, body) {
-		if (!error && response.statusCode === 200 && session.message.text === "/design") {
+		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
 			session.send(body[0].content.replace("<p>", "").replace("</p>", "")+"\n\n--- "+body[0].title);
-		}
-		else if (!error && response.statusCode === 200) {
-			body = JSON.parse(body);
-			session.send(body[0].content.replace("<p>", "").replace("</p>", "")+"\n\n--- "+body[0].title);
-			session.replaceDialog("/fun");
+			if (!session.message.text.includes("/")) session.replaceDialog("/fun");
 		}
 		else {
 			session.endDialog("ERROR! I could not connect to http://quotesondesign.com/wp-json/posts. Please retry. If the problem persists, please contact im@austinhuang.me");
 		}
 	});
-});
+}).triggerAction({ matches: /^( ||Metagon )\/design/g});
+bot.dialog('/catfact', function (session) {
+	request('https://catfact.ninja/fact', function(error, response, body) {
+		if (!error && response.statusCode === 200) {
+			body = JSON.parse(body);
+			session.send(body.fact);
+			if (!session.message.text.includes("/")) session.replaceDialog("/fun");
+		}
+		else {
+			session.endDialog("ERROR! I could not connect to http://catfact.ninja/fact. Please retry. If the problem persists, please contact im@austinhuang.me");
+		}
+	});
+}).triggerAction({ matches: /^( ||Metagon )\/catfact/g});
 
-bot.beginDialogAction("9gag", "/9gag2", { matches: /^( ||Metagon )\/9gag/g});
+bot.dialog('/trivia1', [
+	function(session) {
+			request("https://opentdb.com/api.php?amount=1", (error, response, body) => {
+			if (!error && response.statusCode === 200) {
+				body = JSON.parse(body);
+				session.answer = body.results[0].correct_answer;
+				if (body.results[0].type === "multiple") {
+					var choices = body.results[0].incorrect_answers;
+					choices.push(body.results[0].correct_answer);
+					builder.Prompts.choice(session, "Category: "+body.results[0].category+"\n\n"+body.results[0].question, shuffle(choices).join("|"), {listStyle: 3});
+				}
+				else if (body.results[0].type === "boolean") builder.Prompts.confirm(session, "Category: "+body.results[0].category+"\n\n"+body.results[0].question, {listStyle: 3});
+			}
+			else {
+				session.endDialog("ERROR! I could not connect to https://opentdb.com/api.php. Please retry. If the problem persists, please contact im@austinhuang.me");
+			}
+		});
+	},
+	function(session) {
+		session.send(session.answer);
+	}
+]);
+bot.dialog('/trivia2', function (session) {
+	request("https://opentdb.com/api.php?amount=1", (error, response, body) => {
+		if (!error && response.statusCode === 200) {
+			body = JSON.parse(body);
+			session.endDialog("Category: "+body.results[0].category+"\n\n"++body.results[0].question+"\n\nAnswer: "+body.results[0].correct_answer);
+		}
+		else {
+			session.endDialog("ERROR! I could not connect to https://opentdb.com/api.php. Please retry. If the problem persists, please contact im@austinhuang.me");
+		}
+	});
+}).triggerAction({ matches: /^( ||Metagon )\/trivia/g});
+
+
 bot.dialog('/9gag1',[
 	function (session) {
 		if (session.message.source === "line") {
@@ -1932,14 +1992,17 @@ bot.dialog('/9gag2', function (session) {
 	else {
 		session.endDialog("Invalid arguments!\n* /9gag (section) (hot/fresh)\n* /9gag search (Query)");
 	}
-});
+}).triggerAction({ matches: /^( ||Metagon )\/9gag/g});
 
 // General Guidance
-bot.beginDialogAction("unstuck", "/unstuck", { matches: /^unstuck!!!/g});
 bot.dialog('/unstuck', function (session) {
 	session.endConversation("Your session data should be cleared. You can now safely re`start` the bot. That means:\n* If you typed something wrong in the last step and I started to hate you, your sin has been forgiven.\n* If you found a bug but can't get out after I was fixed, sorry for the inconvenience.");
 	session.clearDialogStack();
-});
+}).triggerAction({ matches: /^unstuck!!!/g});
+bot.dialog('/hello', function(session) {
+	if (session.message.source !== "groupme" && session.message.source !== "skypeforbusiness" && session.message.source !== vk.channelId && (session.message.source !== "slack" && session.message.source !== "telegram" && session.message.source !== "line") || ((session.message.source === "slack" || session.message.source === "line" || session.message.source === "telegram") && !session.message.address.conversation.isGroup)) session.endDialog("Hello there! To use me, type \"start\".");
+	else session.endDialog("Hello there! To use me, visit https://metagon.cf for documentation.");
+}).triggerAction({matches: /(hi|hello|what's up|bored|what do you do)/i});
 bot.dialog('/', function (session) {
 	if ((session.message.source !== "slack" && session.message.source !== "telegram" && session.message.source !== "line") || ((session.message.source === "slack" || session.message.source === "line" || session.message.source === "telegram") && !session.message.address.conversation.isGroup)) {
 		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
