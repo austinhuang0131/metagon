@@ -1751,7 +1751,7 @@ bot.dialog('/trivia1', [
 		});
 	},
 	function(session, results) {
-		var game = results.response.entity === nsfw.find(r => r.user === session.message.address.user.id).answer ? "You're right!" : "Oops... The answer is "+nsfw.find(r => r.user === session.message.address.user.id).answer".";
+		var game = results.response.entity === nsfw.find(r => r.user === session.message.address.user.id).answer ? "You're right!" : "Oops... The answer is "+nsfw.find(r => r.user === session.message.address.user.id).answer+".";
 		builder.Prompts.confirm(session, game+" Wanna play again?", {listStyle: 3});
 		// Line differentiation
 		nsfw.splice(nsfw.indexOf(nsfw.find(r => r.user === session.message.address.user.id)), 1);
