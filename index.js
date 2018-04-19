@@ -25,7 +25,8 @@ cloudinary.config({
   api_key: process.env.cloudinary1, 
   api_secret: process.env.cloudinary2 
 });
-var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
+var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8")),
+    triv = JSON.parse(fs.readFileSync("./triv.json", "utf8"));
 const Pixiv = require('pixiv-app-api'),
       pixiv = new Pixiv(process.env.pixiv_username, process.env.pixiv_password),
       pixivImg = require('pixiv-img'),
@@ -1736,7 +1737,7 @@ bot.dialog('/trivia1', [
 			request("https://opentdb.com/api.php?amount=1", (error, response, body) => {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
-				session.answer = body.results[0].correct_answer;
+				nsfw.push({user: session.message.address.user.id, answer: body.results[0].correct_answer});
 				if (body.results[0].type === "multiple") {
 					var choices = body.results[0].incorrect_answers;
 					choices.push(body.results[0].correct_answer);
@@ -1750,7 +1751,8 @@ bot.dialog('/trivia1', [
 		});
 	},
 	function(session) {
-		session.send(session.answer);
+		session.send("The answer is "+nsfw.find(r => r.user === session.message.address.user.id).answer+"!");
+		session.reset("/trivia1");
 	}
 ]);
 bot.dialog('/trivia2', function (session) {
