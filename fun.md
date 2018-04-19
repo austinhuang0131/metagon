@@ -6,12 +6,15 @@ These commands are located in the Fun category of the startup menu.
 
 ## 9gag
 Returns a random post from 9gag. Either from one section, or by a search query.
-
 * Command Entry:
   * `/9gag trending`
   * `/9gag <Section> <Hot/Fresh>`
   * `/9gag search <Query>`
 * Available sections are defined [here](https://github.com/austinhuang0131/metagon/blob/master/index.js#L21).
+
+## Cat facts
+Returns a cat fact.
+* Command Entry: `/catfact`
 
 ## Chuck Norris
 Returns a Chuck Norris joke.
