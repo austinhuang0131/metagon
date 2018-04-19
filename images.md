@@ -7,7 +7,7 @@ These commands are located in the Images category of the startup menu.
 ## Animal Images
 I don't think I need to explain it.
 
-* Command Entry: `/cat` `/snake` `/bunny` `/dog`
+* Command Entry: `/cat` `/snake` `/bunny` `/dog` `/bird` `/duck`
 
 ## Anime actions
 Gives an image of the prescribed anime action. There are 8 of them.
