@@ -1752,8 +1752,18 @@ bot.dialog('/trivia1', [
 	},
 	function(session, results) {
 		var game = results.response.entity === nsfw.find(r => r.user === session.message.address.user.id).answer ? "You're right!" : "Oops... The answer is "+nsfw.find(r => r.user === session.message.address.user.id).answer+".";
-		builder.Prompts.confirm(session, game+" Wanna play again?", {listStyle: 3});
-		// Line differentiation
+		var msg = new builder.Message(session);
+			msg.attachmentLayout(builder.AttachmentLayout.carousel);
+			msg.attachments([
+				new builder.HeroCard(session)
+					.text(game+" Wanna play again?")
+					.buttons([
+						builder.CardAction.imBack(session, "Yes", "Yes"),
+						builder.CardAction.imBack(session, "No", "No")
+					])
+			]);
+
+		builder.Prompts.confirm(session, session.message.source === "line" ? msg : (game+" Wanna play again?"), {listStyle: 3});
 		nsfw.splice(nsfw.indexOf(nsfw.find(r => r.user === session.message.address.user.id)), 1);
 	},
 	function(session, results) {
