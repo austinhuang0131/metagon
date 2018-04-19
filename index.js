@@ -25,8 +25,7 @@ cloudinary.config({
   api_key: process.env.cloudinary1, 
   api_secret: process.env.cloudinary2 
 });
-var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8")),
-    triv = JSON.parse(fs.readFileSync("./triv.json", "utf8"));
+var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 const Pixiv = require('pixiv-app-api'),
       pixiv = new Pixiv(process.env.pixiv_username, process.env.pixiv_password),
       pixivImg = require('pixiv-img'),
