@@ -198,7 +198,7 @@ bot.dialog('/menu', [
 			session.send("Keyboard Mode is not available on GroupMe / Skype for Business / VK. Please use only commands.\nFor more information, type \"help\".");
 		}
 		else if (session.message.source !== "line") {
-			builder.Prompts.choice(session, "What would you like to do right now?\n\nDue to the recent Facebook scandal, we'd like to reaffirm that we do not collect your messages nor session data unless absolutely necessary as required by our operational providers. See <https://metagon.cf/legal>", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
+			builder.Prompts.choice(session, "What would you like to do right now?\n\nNew commands: Birb and Duck in Images category, as well as Trivia and Cat Facts in Fun category!", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
 		}
 		else {
 			var msg = new builder.Message(session);
@@ -212,7 +212,7 @@ bot.dialog('/menu', [
 						builder.CardAction.imBack(session, "Fun", "Fun")
 					]),
 				new builder.HeroCard(session)
-					.text("Discovered a bug? Press the \"Feedback\" button to contact the owner.")
+					.text("New commands: Birb and Duck in Images category, as well as Trivia and Cat Facts in Fun category!")
 					.buttons([
 						builder.CardAction.imBack(session, "About", "About"),
 						builder.CardAction.imBack(session, "Feedback", "Feedback"),
@@ -1752,6 +1752,7 @@ bot.dialog('/trivia1', [
 	},
 	function(session, results) {
 		var game = results.response.entity === nsfw.find(r => r.user === session.message.address.user.id).answer ? "You're right!" : "Oops... The answer is "+nsfw.find(r => r.user === session.message.address.user.id).answer+".";
+		if (typeof results.response === "boolean") game = results.response.toString() === nsfw.find(r => r.user === session.message.address.user.id).answer.toLowerCase() ? "You're right!" : "Oops... The answer is "+nsfw.find(r => r.user === session.message.address.user.id).answer+".";
 		var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel);
 			msg.attachments([
