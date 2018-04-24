@@ -2013,7 +2013,7 @@ bot.dialog('/unstuck', function (session) {
 bot.dialog('/hello', function(session) {
 	if (session.message.source !== "groupme" && session.message.source !== "skypeforbusiness" && (session.message.source !== "slack" && session.message.source !== "telegram" && session.message.source !== "line") || ((session.message.source === "slack" || session.message.source === "line" || session.message.source === "telegram") && !session.message.address.conversation.isGroup)) session.endDialog("Hello there! To use me, type \"start\".");
 	else session.endDialog("Hello there! To use me, visit https://metagon.cf for documentation.");
-}).triggerAction({matches: /(hi|hello|what's up|bored|what do you do)/i});
+}).triggerAction({matches: /^( ||Metagon )(hi|hello|what's up|bored|what do you do)/i});
 bot.dialog('/', function (session) {
 	if ((session.message.source !== "slack" && session.message.source !== "telegram" && session.message.source !== "line") || ((session.message.source === "slack" || session.message.source === "line" || session.message.source === "telegram") && !session.message.address.conversation.isGroup)) {
 		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
