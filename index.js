@@ -1065,6 +1065,7 @@ bot.dialog('/pixiv1',[
 						}
 						fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 						fs.unlink(output);
+						setTimeout(() => {cloudinary.v2.uploader.destroy(urls.public_id,function(error, result){console.log(result);});}, 10000);
 					});
 				});
 			}
@@ -1173,6 +1174,7 @@ bot.dialog('/pixiv2',[
 							]
 						});
 						fs.unlink(output);
+						setTimeout(() => {cloudinary.v2.uploader.destroy(urls.public_id,function(error, result){console.log(result);});}, 10000);
 					});
 				});
 			}
