@@ -129,10 +129,14 @@ const Pixiv = require('pixiv-app-api'),
 
 const lineConnector = require("botbuilder-line")({
     channelSecret: process.env.line2,
-    channelAccessToken: process.env.line3,
-	debug: false
+    channelAccessToken: process.env.line3
 });
 bot.connector("directline", lineConnector);
+
+const cisco = require("botbuilder-ciscospark")({
+	name: "metagon@sparkbot.io"
+});
+bot.connector("ciscospark", cisco);
 
 function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;
