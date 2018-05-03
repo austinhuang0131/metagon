@@ -20,14 +20,8 @@ const express = require('express'),
 			password: process.env.appkey,
 			queryString: "heroku_fs0bkx2s"
 		})
-	  );
-cloudinary.config({ 
-  cloud_name: 'metagon', 
-  api_key: process.env.cloudinary1, 
-  api_secret: process.env.cloudinary2 
-});
-var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
-const Pixiv = require('pixiv-app-api'),
+	  ),
+	  Pixiv = require('pixiv-app-api'),
       pixiv = new Pixiv(process.env.pixiv_username, process.env.pixiv_password),
       pixivImg = require('pixiv-img'),
 	  gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "politics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf", "starwars", "classicalartmemes", "travel", "surrealmemes"],
@@ -126,6 +120,12 @@ const Pixiv = require('pixiv-app-api'),
   '"Yoda, you seek?" -- Yoda\n', '"My ally is the Force" -- Yoda\n'
 ],
       parseString = require('xml2js').parseString;
+cloudinary.config({ 
+  cloud_name: 'metagon', 
+  api_key: process.env.cloudinary1, 
+  api_secret: process.env.cloudinary2 
+});
+var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 
 const lineConnector = require("botbuilder-line")({
     channelSecret: process.env.line2,
@@ -134,6 +134,9 @@ const lineConnector = require("botbuilder-line")({
 bot.connector("directline", lineConnector);
 
 const cisco = require("botbuilder-ciscospark")({
+	token: process.env.SPARK_TOKEN,
+	webhookUrl: "https://discoin.herokuapp.com/cisco",
+	port: process.env.PORT,
 	name: "metagon@sparkbot.io"
 });
 bot.connector("ciscospark", cisco);
