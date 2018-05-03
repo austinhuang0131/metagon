@@ -141,7 +141,7 @@ const cisco = require("botbuilder-ciscospark")({
 	name: "metagon@sparkbot.io",
 	debug: true
 });
-bot.connector("ciscospark", cisco);
+bot.connector("directline", cisco);
 
 function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;
