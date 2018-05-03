@@ -195,7 +195,7 @@ bot.on('contactRelationUpdate', function (message) {
 // Menus
 bot.dialog('/menu', [
 	function (session) {
-		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness") {
+		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness" || session.message.source === "ciscospark") {
 			session.send("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
 		}
 		else if (session.message.source !== "line") {
@@ -472,7 +472,7 @@ bot.dialog('/about', function (session) {
 	else {
 		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation/Contact Us: http://metagon.cf\n\nDo I help you a lot? Consider a small donation (Detail in documentation)! The simplest way to use this bot is by typing \"start\".");
 	}
-	if (session.message.source !== "groupme" && session.message.text !== ("/help")) {
+	if (session.message.source !== "groupme" && session.message.source !== "skypeforbusiness" && session.message.source !== "ciscospark" && session.message.text !== ("/help")) {
 		session.replaceDialog("/menu");
 	}
 	else {
@@ -1138,7 +1138,7 @@ bot.dialog('/pixiv2',[
 		else {
 			nsfw.push({user: session.message.address.user.id, query: session.message.text.substring(8)});
 			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
-			if (session.message.source !== "groupme" && session.message.source !== "line") {
+			if (session.message.source !== "groupme" && session.message.source !== "skypeforbusiness" && session.message.source !== "ciscospark") {
 				var msg = new builder.Message(session);
 				msg.attachmentLayout(builder.AttachmentLayout.list);
 				msg.attachments([
