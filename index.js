@@ -130,7 +130,7 @@ var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 const lineConnector = require("botbuilder-line")({
     channelSecret: process.env.line2,
     channelAccessToken: process.env.line3,
-	debug: false
+	debug: true
 });
 bot.connector("directline", lineConnector);
 
