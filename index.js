@@ -127,7 +127,7 @@ const express = require('express'),
 		}),
       cisco = require("botbuilder-ciscospark")({
 			token: process.env.SPARK_TOKEN,
-			webhookUrl: "https://discoin.herokuapp.com/cisco",
+			path: "/cisco",
 			port: process.env.PORT,
 			name: "metagon@sparkbot.io",
 			debug: false
