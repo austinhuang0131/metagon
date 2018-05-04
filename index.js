@@ -2039,8 +2039,11 @@ bot.dialog('/', function (session) {
 var server = express();
 server.use(bodyParser.json({type: "*/*"}));
 server.post('/api/messages', connector.listen());
-server.post(/^\/linebot$/, lineConnector.listen);
-server.post(/^\/cisco$/, cisco.hears);
+server.use((req, res) => {
+	if (req.path === "/linebot") lineConnector.listen(req, res);
+	else if (req.path === "/cisco") cisco.hears(req, res);
+	else if (req.path === "/") res.sendRaw(200, "Cannot GET /");
+});
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
 });
