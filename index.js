@@ -134,6 +134,7 @@ const lineConnector = require("botbuilder-line")({
 });
 bot.connector("line", lineConnector);
 
+/*
 const cisco = require("botbuilder-ciscospark")({
 	token: process.env.SPARK_TOKEN,
 	webhookUrl: "https://discoin.herokuapp.com/cisco",
@@ -142,6 +143,7 @@ const cisco = require("botbuilder-ciscospark")({
 	debug: false
 });
 bot.connector("cisco", cisco);
+*/
 
 function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;
@@ -2039,7 +2041,7 @@ bot.dialog('/', function (session) {
 var server = express();
 server.use(bodyParser.json({type: "*/*"}));
 server.post('/api/messages', connector.listen());
-server.post(/^\/cisco$/, cisco.listen);
+// server.post(/^\/cisco$/, cisco.listen);
 server.post(/^\/linebot$/, lineConnector.listen);
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
