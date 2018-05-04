@@ -2039,9 +2039,9 @@ var server = express();
 server.use(bodyParser.json({type: "*/*"}));
 server.post('/api/messages', connector.listen());
 server.use((req, res) => {
-	console.log(req.path, req.body);
-	if (req.method === "POST" && req.path === "/linebot" && req.body.events.length > 0) lineConnector.listen(req, res);
-	else if (req.path !== "/linebot" && req.method === "POST" && req.path === "/cisco") cisco.hears(req, res);
+	console.log(req.path === "/cisco", req.body);
+	if (req.method === "POST" && req.path === "/cisco") cisco.hears(req, res);
+	else if (req.method === "POST" && req.path === "/linebot") lineConnector.listen(req, res);
 	else if (req.method === "GET" && req.path === "/") res.send(200, "Cannot GET /");
 });
 server.listen(process.env.PORT || 5000, function () {
