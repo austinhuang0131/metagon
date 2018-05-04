@@ -119,7 +119,19 @@ const express = require('express'),
   '"To the Force, look for guidance. Accept what fate has placed before us." -- Yoda\n',
   '"Yoda, you seek?" -- Yoda\n', '"My ally is the Force" -- Yoda\n'
 ],
-      parseString = require('xml2js').parseString;
+      parseString = require('xml2js').parseString,
+	  lineConnector = require("botbuilder-line")({
+			channelSecret: process.env.line2,
+			channelAccessToken: process.env.line3,
+			debug: false
+		}),
+      cisco = require("botbuilder-ciscospark")({
+			token: process.env.SPARK_TOKEN,
+			webhookUrl: "https://discoin.herokuapp.com/cisco",
+			port: process.env.PORT,
+			name: "metagon@sparkbot.io",
+			debug: false
+		});
 cloudinary.config({ 
   cloud_name: 'metagon', 
   api_key: process.env.cloudinary1, 
@@ -127,20 +139,7 @@ cloudinary.config({
 });
 var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 
-const lineConnector = require("botbuilder-line")({
-    channelSecret: process.env.line2,
-    channelAccessToken: process.env.line3,
-	debug: false
-});
 bot.connector("line", lineConnector);
-
-const cisco = require("botbuilder-ciscospark")({
-	token: process.env.SPARK_TOKEN,
-	webhookUrl: "https://discoin.herokuapp.com/cisco",
-	port: process.env.PORT,
-	name: "metagon@sparkbot.io",
-	debug: false
-});
 bot.connector("cisco", cisco);
 
 function f2c(f) {
