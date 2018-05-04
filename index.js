@@ -2040,8 +2040,7 @@ var server = express();
 server.use(bodyParser.json({type: "*/*"}));
 server.post('/api/messages', connector.listen());
 server.use((req, res) => {
-	if (req.body.events[0].replyToken === "00000000000000000000000000000000") res.send(200);
-	else if (req.method === "POST" && req.path === "/linebot") lineConnector.listen(req, res);
+	if (req.method === "POST" && req.path === "/linebot" && req.body.events.length > 0) lineConnector.listen(req, res);
 	else if (req.method === "POST" && req.path === "/cisco") cisco.hears(req, res);
 	else if (req.method === "GET" && req.path === "/") res.send(200, "Cannot GET /");
 });
