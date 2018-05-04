@@ -2039,7 +2039,6 @@ var server = express();
 server.use(bodyParser.json({type: "*/*"}));
 server.post('/api/messages', connector.listen());
 server.use((req, res) => {
-	console.log(req.path === "/cisco", req.body);
 	if (req.method === "POST" && req.path === "/cisco") cisco.hears(req, res);
 	else if (req.method === "POST" && req.path === "/line") lineConnector.listen(req, res);
 	else if (req.method === "GET" && req.path === "/") res.send(200, "Cannot GET /");
