@@ -132,7 +132,7 @@ const lineConnector = require("botbuilder-line")({
     channelAccessToken: process.env.line3,
 	debug: true
 });
-bot.connector("directline", lineConnector);
+bot.connector("line", lineConnector);
 
 const cisco = require("botbuilder-ciscospark")({
 	token: process.env.SPARK_TOKEN,
@@ -141,7 +141,7 @@ const cisco = require("botbuilder-ciscospark")({
 	name: "metagon@sparkbot.io",
 	debug: true
 });
-bot.connector("directline", cisco);
+bot.connector("cisco", cisco);
 
 function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;
