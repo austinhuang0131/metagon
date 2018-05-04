@@ -134,7 +134,6 @@ const lineConnector = require("botbuilder-line")({
 });
 bot.connector("line", lineConnector);
 
-/*
 const cisco = require("botbuilder-ciscospark")({
 	token: process.env.SPARK_TOKEN,
 	webhookUrl: "https://discoin.herokuapp.com/cisco",
@@ -143,7 +142,6 @@ const cisco = require("botbuilder-ciscospark")({
 	debug: false
 });
 bot.connector("cisco", cisco);
-*/
 
 function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;
