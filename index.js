@@ -123,14 +123,14 @@ const express = require('express'),
 	  lineConnector = require("botbuilder-line")({
 			channelSecret: process.env.line2,
 			channelAccessToken: process.env.line3,
-			debug: false
+			debug: true
 		}),
       cisco = require("botbuilder-ciscospark")({
 			token: process.env.SPARK_TOKEN,
 			path: "/cisco",
 			port: process.env.PORT,
 			name: "metagon@sparkbot.io",
-			debug: false
+			debug: true
 		});
 cloudinary.config({ 
   cloud_name: 'metagon', 
@@ -2041,7 +2041,7 @@ server.post('/api/messages', connector.listen());
 server.use((req, res) => {
 	if (req.method === "POST" && req.path === "/cisco") cisco.hears(req, res);
 	else if (req.method === "POST" && req.path === "/line") lineConnector.listen(req, res);
-	else if (req.method === "GET" && req.path === "/") res.send(200, "Cannot GET /");
+	else if (req.method === "GET" && req.path === "/") res.send("Cannot GET /");
 });
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
