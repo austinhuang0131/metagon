@@ -124,14 +124,14 @@ const express = require('express'),
 			channelSecret: process.env.line2,
 			channelAccessToken: process.env.line3,
 			debug: true
-		}),
+		})/*,
       cisco = require("botbuilder-ciscospark")({
 			token: process.env.SPARK_TOKEN,
 			path: "/cisco",
 			port: process.env.PORT,
 			name: "metagon@sparkbot.io",
 			debug: true
-		});
+		})*/;
 cloudinary.config({ 
   cloud_name: 'metagon', 
   api_key: process.env.cloudinary1, 
@@ -140,7 +140,7 @@ cloudinary.config({
 var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 
 bot.connector("line", lineConnector);
-bot.connector("cisco", cisco);
+// bot.connector("cisco", cisco);
 
 function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;
@@ -2034,15 +2034,12 @@ bot.dialog('/', function (session) {
 	}
 });
 
-// Setup Restify Server
+// Setup Express Server
 var server = express();
 server.use(bodyParser.json({type: "*/*"}));
 server.post('/api/messages', connector.listen());
-server.use((req, res) => {
-	if (req.method === "POST" && req.path === "/cisco") cisco.hears(req, res);
-	else if (req.method === "POST" && req.path === "/line") lineConnector.listen(req, res);
-	else if (req.method === "GET" && req.path === "/") res.send("Cannot GET /");
-});
+server.post('/line', lineConnector.listen);
+// server.post('/cisco', cisco.hears);
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
 });
