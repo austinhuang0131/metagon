@@ -1741,11 +1741,11 @@ bot.dialog('/trivia1', [
 			request("https://opentdb.com/api.php?amount=1", (error, response, body) => {
 			if (!error && response.statusCode === 200) {
 				body = JSON.parse(body);
-				nsfw.push({user: session.message.address.user.id, answer: decode(body.results[0].correct_answer)});
+				nsfw.push({user: session.message.address.user.id, answer: decode(body.results[0].correct_answer.replace("&‌#039;", "'").replace("&pi;", "π"))});
 				if (body.results[0].type === "multiple") {
 					var choices = body.results[0].incorrect_answers;
 					choices.push(body.results[0].correct_answer);
-					builder.Prompts.choice(session, "Category: "+body.results[0].category+"\n\n"+decode(body.results[0].question), decode(shuffle(choices).join("|")), {listStyle: 3});
+					builder.Prompts.choice(session, "Category: "+body.results[0].category+"\n\n"+decode(body.results[0].question.replace("&‌#039;", "'").replace("&pi;", "π")), decode(shuffle(choices).map(c => c.replace("&‌#039;", "'").replace("&pi;", "π")).join("|")), {listStyle: 3});
 				}
 				else if (body.results[0].type === "boolean") builder.Prompts.confirm(session, "Category: "+body.results[0].category+"\n\n"+decode(body.results[0].question), {listStyle: 3});
 			}
@@ -1780,7 +1780,7 @@ bot.dialog('/trivia2', function (session) {
 	request("https://opentdb.com/api.php?amount=1", (error, response, body) => {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
-			session.endDialog("Category: "+body.results[0].category+"\n\n"+body.results[0].question+"\n\nAnswer: "+body.results[0].correct_answer);
+			session.endDialog("Category: "+body.results[0].category+"\n\n"+body.results[0].question.replace("&‌#039;", "'").replace("&pi;", "π")+"\n\nAnswer: "+body.results[0].correct_answer.replace("&‌#039;", "'").replace("&pi;", "π"));
 		}
 		else {
 			session.endDialog("ERROR! I could not connect to https://opentdb.com/api.php. Please retry. If the problem persists, please contact im@austinhuang.me");
@@ -2021,13 +2021,12 @@ bot.dialog('/unstuck', function (session) {
 	session.endConversation("Your session data should be cleared. You can now safely re`start` the bot. That means:\n* If you typed something wrong in the last step and I started to hate you, your sin has been forgiven.\n* If you found a bug but can't get out after I was fixed, sorry for the inconvenience.");
 	session.clearDialogStack();
 }).triggerAction({ matches: /^unstuck!!!/g});
-bot.dialog('/hello', function(session) {
-	if (session.message.source !== "groupme" && session.message.source !== "skypeforbusiness" && (session.message.source !== "slack" && session.message.source !== "telegram" && session.message.source !== "line") || ((session.message.source === "slack" || session.message.source === "line" || session.message.source === "telegram") && !session.message.address.conversation.isGroup)) session.endDialog("Hello there! To use me, type \"start\".");
-	else session.endDialog("Hello there! To use me, visit https://metagon.cf for documentation.");
-}).triggerAction({matches: /^( ||Metagon )(hi|hello|what's up|bored|what do you do)/i});
 bot.dialog('/', function (session) {
-	if ((session.message.source !== "slack" && session.message.source !== "telegram" && session.message.source !== "line") || ((session.message.source === "slack" || session.message.source === "line" || session.message.source === "telegram") && !session.message.address.conversation.isGroup)) {
-		session.endDialog('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
+	if ((session.message.source !== "groupme" && session.message.source !== "skypeforbusiness" && session.message.source !== "ciscospark") && (session.message.source !== "slack" && session.message.source !== "telegram" && session.message.source !== "line") || ((session.message.source === "slack" || session.message.source === "line" || session.message.source === "telegram") && !session.message.address.conversation.isGroup)) {
+		session.endDialog(/^( ||Metagon )(hi|hello|what's up|bored|what do you do)/i.test(session.message.text) ? "Hello there! To use me, type \"start\"." : "It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.");
+	}
+	else if (session.message.source === "groupme" || session.message.source === "skypeforbusiness" || session.message.source === "ciscospark") {
+		session.endDialog(/^( ||Metagon )(hi|hello|what's up|bored|what do you do)/.test(session.message.text) ? "Hello there! To use me, read the documentation at https://metagon.cf." : "It seems like you\'re confused. Please refer to our documentation at https://metagon.cf.");
 	}
 	else {
 		session.endDialog();
