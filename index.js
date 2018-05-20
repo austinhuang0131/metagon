@@ -2043,7 +2043,6 @@ bot.dialog('/', function (session) {
 // Setup Express Server
 var server = express();
 server.use(/^\/(?!viber)/g, bodyParser.json({type: "*/*"}));
-server.use('/viber', bodyParser.text({type: "*/*"}));
 server.post('/api/messages', connector.listen());
 server.post('/line', lineConnector.listen);
 server.post('/viber', viberChannel.listen());
