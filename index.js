@@ -124,7 +124,13 @@ const express = require('express'),
 			channelSecret: process.env.line2,
 			channelAccessToken: process.env.line3,
 			debug: true
-		})/*,
+		}),
+	  viber = require('botbuilder-viber'),
+	  viberChannel = new viber.ViberEnabledConnector({
+		  Token: process.env.VIBER_TOKEN,
+		  Name: 'Metagon',  
+		  AvatarUrl: 'https://soviet-union.got-themselves-a-hot.date/87a1lc.png'
+	  })/*,
       cisco = require("botbuilder-ciscospark")({
 			token: process.env.SPARK_TOKEN,
 			path: "/cisco",
@@ -140,6 +146,7 @@ cloudinary.config({
 var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 
 bot.connector("line", lineConnector);
+bot.connector("viber", viberChannel);
 // bot.connector("cisco", cisco);
 
 function f2c(f) {
@@ -2038,7 +2045,7 @@ var server = express();
 server.use(bodyParser.json({type: "*/*"}));
 server.post('/api/messages', connector.listen());
 server.post('/line', lineConnector.listen);
-server.post('/viber', (req, res) => {res.sendStatus(200);});
+server.post('/viber', viberChannel.listen());
 // server.post('/cisco', cisco.hears);
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
