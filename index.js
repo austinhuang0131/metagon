@@ -129,7 +129,6 @@ const express = require('express'),
 	  spark = require("botbuilder-ciscospark"),
       cisco = new spark.connector({
 			token: process.env.SPARK_TOKEN,
-			path: "/cisco",
 			port: process.env.PORT,
 			name: "metagon@sparkbot.io",
 			debug: true
