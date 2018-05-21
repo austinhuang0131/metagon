@@ -147,7 +147,7 @@ var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 
 bot.connector("line", lineConnector);
 bot.connector("viber", viberChannel);
-// bot.connector("cisco", cisco);
+bot.connector("cisco", cisco);
 
 function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;
