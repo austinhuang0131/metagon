@@ -130,14 +130,14 @@ const express = require('express'),
 		  Token: process.env.VIBER_TOKEN,
 		  Name: 'Metagon',  
 		  AvatarUrl: 'https://soviet-union.got-themselves-a-hot.date/87a1lc.png'
-	  })/*,
+	  }),
       cisco = require("botbuilder-ciscospark")({
 			token: process.env.SPARK_TOKEN,
 			path: "/cisco",
 			port: process.env.PORT,
 			name: "metagon@sparkbot.io",
 			debug: true
-		})*/;
+		});
 cloudinary.config({ 
   cloud_name: 'metagon', 
   api_key: process.env.cloudinary1, 
@@ -2046,7 +2046,7 @@ server.use(/^\/(?!viber)/g, bodyParser.json({type: "*/*"}));
 server.post('/api/messages', connector.listen());
 server.post('/line', lineConnector.listen);
 server.post('/viber', viberChannel.listen());
-// server.post('/cisco', cisco.hears);
+server.post('/cisco', cisco.listen);
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
 });
