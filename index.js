@@ -120,12 +120,14 @@ const express = require('express'),
   '"Yoda, you seek?" -- Yoda\n', '"My ally is the Force" -- Yoda\n'
 ],
       parseString = require('xml2js').parseString,
-	  lineConnector = new require("botbuilder-line")({
+	  line = require("botbuilder-line"),
+	  lineConnector = new line({
 			channelSecret: process.env.line2,
 			channelAccessToken: process.env.line3,
 			debug: true
 		}),
-      cisco = new require("botbuilder-line")({
+		spark = require("botbuilder-ciscospark"),
+      cisco = new spark({
 			token: process.env.SPARK_TOKEN,
 			port: process.env.PORT,
 			name: "metagon@sparkbot.io",
