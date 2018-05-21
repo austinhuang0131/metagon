@@ -121,7 +121,7 @@ const express = require('express'),
 ],
       parseString = require('xml2js').parseString,
 	  line = require("botbuilder-line"),
-	  lineConnector = new line({
+	  lineConnector = new line.connector({
 			channelSecret: process.env.line2,
 			channelAccessToken: process.env.line3,
 			debug: true
