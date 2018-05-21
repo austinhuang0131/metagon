@@ -125,12 +125,6 @@ const express = require('express'),
 			channelAccessToken: process.env.line3,
 			debug: true
 		}),
-	  viber = require('botbuilder-viber'),
-	  viberChannel = new viber.ViberEnabledConnector({
-		  Token: process.env.VIBER_TOKEN,
-		  Name: 'Metagon',  
-		  AvatarUrl: 'https://soviet-union.got-themselves-a-hot.date/87a1lc.png'
-	  }),
       cisco = require("botbuilder-ciscospark")({
 			token: process.env.SPARK_TOKEN,
 			path: "/cisco",
