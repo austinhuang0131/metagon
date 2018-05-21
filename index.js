@@ -146,7 +146,6 @@ cloudinary.config({
 var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 
 bot.connector("line", lineConnector);
-bot.connector("viber", viberChannel);
 bot.connector("cisco", cisco);
 
 function f2c(f) {
@@ -2042,11 +2041,10 @@ bot.dialog('/', function (session) {
 
 // Setup Express Server
 var server = express();
-server.use(/^\/(?!viber)/g, bodyParser.json({type: "*/*"}));
+server.use(bodyParser.json({type: "*/*"}));
 server.post('/api/messages', connector.listen());
 server.post('/line', lineConnector.listen);
-server.post('/viber', viberChannel.listen());
-server.post('/cisco', cisco.hears);
+server.post('/cisco', cisco.listen);
 server.listen(process.env.PORT || 5000, function () {
     console.log('%s listening to %s', server.name, server.url); 
 });
