@@ -662,7 +662,7 @@ bot.dialog('/duck', function (session) {
 	request('https://random-d.uk/api/v1/random', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
-			var type = body.endsWith(".gif") ? "gif" : "jpeg";
+			var type = body.url.endsWith(".gif") ? "gif" : "jpeg";
 			session.endDialog({
 				attachments: [
 					{
