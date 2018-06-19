@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo THERE IS NO TEST COMMAND, JUST START THE APP",
-    "start": "node index"
+    "start": "node index",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [],
   "author": "austinhuang",
@@ -22,7 +24,8 @@
     "pixiv-app-api": "^0.11.0",
     "pixiv-img": "^0.3.1",
     "html-entities": "^1.2.1",
-    "xml2js": "0.4.19"
+    "xml2js": "0.4.19",
+    "snyk": "^1.83.0"
   },
   "devDependencies": {},
   "repository": {
@@ -32,5 +35,6 @@
   "bugs": {
     "url": "https://github.com/austinhuang0131/metagon_plus/issues"
   },
-  "homepage": "https://github.com/austinhuang0131/metagon_plus#readme"
+  "homepage": "https://github.com/austinhuang0131/metagon_plus#readme",
+  "snyk": true
 }

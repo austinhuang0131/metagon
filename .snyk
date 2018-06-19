@@ -1,0 +1,14 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.12.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:hoek:20180212':
+    - botbuilder > jsonwebtoken > joi > hoek:
+        patched: '2018-06-19T06:56:33.014Z'
+    - botbuilder > jsonwebtoken > joi > topo > hoek:
+        patched: '2018-06-19T06:56:33.014Z'
+    - botbuilder-line > botbuilder > jsonwebtoken > joi > hoek:
+        patched: '2018-06-19T06:56:33.014Z'
+    - botbuilder-line > botbuilder > jsonwebtoken > joi > topo > hoek:
+        patched: '2018-06-19T06:56:33.014Z'
