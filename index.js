@@ -143,6 +143,15 @@ var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 bot.connector("line", lineConnector);
 //bot.connector("cisco", cisco);
 
+bot.use({
+     botbuilder: function (session, next) {
+          session.error = function (err) {
+              session.endDialog("An error occured. Please report this, along with the chat history, to \"im@austinhuang.me\".\n\n"+err);
+          };
+          next(); 
+     }
+});
+
 function f2c(f) {
 	var c = (parseInt(f) - 32) / 1.8;
 	return c.toFixed();
