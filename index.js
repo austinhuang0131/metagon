@@ -2064,11 +2064,13 @@ bot.dialog('/', function (session) {
 
 // Test
 bot.dialog('/test1', function (session) {
-	session.userData.a = "ok this is gud";
+	session.userData.a = session.message.address;
 	session.send("ok now do \"test2\"");
 }).triggerAction({ matches: /^test1/g});
 bot.dialog('/test2', function (session) {
-	session.send(session.userData.a);
+	session.delete(session.userData.a);
+	delete session.userData.a;
+	session.send("prev message should be gone");
 }).triggerAction({ matches: /^test2/g});
 
 // Setup Express Server
