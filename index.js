@@ -2,29 +2,29 @@ const express = require('express'),
       builder = require('botbuilder'),
       fs = require('fs'),
       request = require('request').defaults({headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}),
-	  bodyParser = require('body-parser'),
+      bodyParser = require('body-parser'),
       cloudinary = require('cloudinary'),
-	  decode = require('decode-html'),
-	  connector = new builder.ChatConnector({
-		  appId: process.env.appid,
-		  appPassword: process.env.appkey
-	  }),
-	  botbuilderMongodb = require("botbuilder-mongodb"),
-	  bot = new builder.UniversalBot(connector).set("storage",
-	  	botbuilderMongodb.GetMongoDBLayer({
-			ip: "ds213199.mlab.com",
-			port: "13199",
-			database: "heroku_fs0bkx2s",
-			collection: "metagon",
-			username: "mikhail_gorbachev",
-			password: process.env.appkey,
-			queryString: "heroku_fs0bkx2s"
-		})
-	  ),
-	  Pixiv = require('pixiv-app-api'),
+      decode = require('decode-html'),
+      connector = new builder.ChatConnector({
+      	  appId: process.env.appid,
+	  appPassword: process.env.appkey
+      }),
+      botbuilderMongodb = require("botbuilder-mongodb"),
+      bot = new builder.UniversalBot(connector).set("storage",
+            botbuilderMongodb.GetMongoDBLayer({
+                  ip: "ds213199.mlab.com",
+                  port: "13199",
+                  database: "heroku_fs0bkx2s",
+                  collection: "metagon",
+                  username: "mikhail_gorbachev",
+                  password: process.env.appkey,
+                  queryString: "heroku_fs0bkx2s"
+            })
+      ),
+      Pixiv = require('pixiv-app-api'),
       pixiv = new Pixiv(process.env.pixiv_username, process.env.pixiv_password),
       pixivImg = require('pixiv-img'),
-	  gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "politics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf", "starwars", "classicalartmemes", "travel", "surrealmemes"],
+      gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "politics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf", "starwars", "classicalartmemes", "travel", "surrealmemes"],
       gagsubs = ["hot", "fresh"],
       yoda_said = [
   '"Fear is the path to the dark side. Fear leads to anger, anger leads to hate, hate leads to suffering." -- Yoda \n',
@@ -2061,6 +2061,15 @@ bot.dialog('/', function (session) {
 		session.endDialog();
 	}
 });
+
+// Test
+bot.dialog('/test1', function (session) {
+	session.userData.a = "ok this is gud";
+	session.send("ok now do \"test2\"");
+}).triggerAction({ matches: /^test1/g});
+bot.dialog('/test2', function (session) {
+	session.send(session.userData.a);
+}).triggerAction({ matches: /^test2/g});
 
 // Setup Express Server
 var server = express();
