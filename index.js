@@ -1576,7 +1576,7 @@ bot.dialog('/dictionary1', [
 	}
 ]);
 bot.dialog('/dictionary2', function (session) {
-	if (session.message.text.replace("/dictionary", "").replace(" ", "") === "") {
+	if (session.message.text.replace("/dictionary ", "").trim() === "") {
 		session.send("Nothing to look up! /dictionary (Stuff)");
 		return;
 	}
@@ -1584,12 +1584,17 @@ bot.dialog('/dictionary2', function (session) {
 		session.replaceDialog("/utility");
 		return;
 	}
-	request("http://api.pearson.com/v2/dictionaries/ldoce5/entries?headword="+session.message.text.replace(/^((Metagon | |)\/dictionary |Metagon )/g, ""), {json: true}, function(error, response, body) {
+	let headword = session.message.text.replace(/^((Metagon | |)\/dictionary |Metagon )/g, "").toLowerCase();
+	request("http://api.pearson.com/v2/dictionaries/ldoce5/entries?headword="+headword, {json: true}, function(error, response, body) {
 		if (!error && body.results.length === 0) {
 			session.send("No results! Is this a word?")
 		}
 		else if (!error) {
-			session.send(body.results.filter(e => {return e.headword === session.message.text.replace(/^((Metagon | |)\/dictionary |Metagon )/g, "") && e.senses[0].definition !== undefined;}).map(r => "* " + r.headword + ": " + r.senses[0].definition).join("\n\n"));
+			let defs = body.results.filter(e => {return e.headword === headword && e.senses[0].definition !== undefined;});
+			session.send(defs.length !== 0
+				     ? defs.map(r => "* " + r.headword + ": " + r.senses[0].definition).join("\n\n")
+				     : "No results for this exact word. Did you mean any of the following?\n" + body.results.filter(r => {return !r.homnum || r.homnum === 1}).map(r => r.headword).slice(0, 3).join(", ")
+			);
 		}
 		else {
 			session.send("An error occurred.");
