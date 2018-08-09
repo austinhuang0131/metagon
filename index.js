@@ -2068,7 +2068,7 @@ bot.dialog('/test1', function (session) {
 	session.send("ok now do \"test2\"");
 }).triggerAction({ matches: /^test1/g});
 bot.dialog('/test2', function (session) {
-	session.delete(session.userData.a);
+	connector.delete(session.userData.a);
 	delete session.userData.a;
 	session.send("prev message should be gone");
 }).triggerAction({ matches: /^test2/g});
