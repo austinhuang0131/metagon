@@ -2064,12 +2064,15 @@ bot.dialog('/', function (session) {
 
 // Test
 bot.dialog('/test1', function (session) {
-	session.userData.a = session.message.address;
-	session.send("ok now do \"test2\"");
+	session.send("ok wait some sec then do \"test2\"");
+	setTimeout(() => {
+		session.userData.a = session.message.address;
+		session.send(session.message.text);
+	}, 5000);
 }).triggerAction({ matches: /^test1/g});
 bot.dialog('/test2', function (session) {
 	connector.delete(session.userData.a, (e) => {
-		if (e) session.send(e);
+		if (e) session.send("error:"+e);
 		else session.send("ok");
 		setTimeout(() => {delete session.userData.a;}, 3000);
 	});
