@@ -1064,12 +1064,17 @@ bot.dialog('/pixiv1',[
 				if (illust.metaSinglePage) {url = illust.metaSinglePage.originalImageUrl;}
 				if (!url) url = illust.metaPages[0].imageUrls;
 				pixivImg(url).then(output => {
-					cloudinary.uploader.upload(output, urls => {
+					cloudinary.v2.uploader.upload(output, (e, r) => {
+						if (e) {
+							session.send("An error occured (Cloudinary). Please report this using the Feedback fuction.");
+							session.replaceDialog("/image");
+							return;
+						}
 						session.send({
 							attachments: [
 								{
 									contentType: "image/*",
-									contentUrl: urls.secure_url
+									contentUrl: r.secure_url
 								}
 							]
 						});
@@ -1083,7 +1088,7 @@ bot.dialog('/pixiv1',[
 						}
 						fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 						fs.unlink(output);
-						setTimeout(() => {cloudinary.v2.uploader.destroy(urls.public_id,{invalidate: true},function(error, result){console.log(result);});}, 10000);
+						setTimeout(() => {cloudinary.v2.uploader.destroy(r.public_id,{invalidate: true},function(error, result){console.log(result);});}, 15000);
 					});
 				});
 			}
@@ -1107,7 +1112,11 @@ bot.dialog('/pixiv1',[
 				function doNext() {
 					var p = json.illust.metaPages[idx];
 					pixivImg(p.imageUrls.original).then(output => {
-						cloudinary.uploader.upload(output, urls => {
+						cloudinary.v2.uploader.upload(output, (e, urls) => {
+							if (e) {
+								session.send("An error occured (Cloudinary). Please report this using the Feedback fuction.");
+								return;
+							}
 							const order = json.illust.metaPages.indexOf(p) + 1;
 							session.send({
 								text: "Page "+order,
@@ -1119,7 +1128,7 @@ bot.dialog('/pixiv1',[
 								]
 							});
 							fs.unlink(output);
-							setTimeout(() => {cloudinary.v2.uploader.destroy(urls.public_id,{invalidate: true},function(error, result){console.log(result);});}, 10000);
+							setTimeout(() => {cloudinary.v2.uploader.destroy(urls.public_id,{invalidate: true},function(error, result){console.log(result);});}, 15000);
 						});
 					});
 					idx++;
@@ -1182,7 +1191,12 @@ bot.dialog('/pixiv2',[
 				var url = illust.imageUrls.large || illust.imageUrls.medium;
 				if (illust.metaSinglePage) {url = illust.metaSinglePage.originalImageUrl;}
 				pixivImg(url).then(output => {
-					cloudinary.uploader.upload(output, urls => {
+					cloudinary.v2.uploader.upload(output, (e, urls) => {
+						if (e) {
+							session.send("An error occured (Cloudinary). Please report this using the Feedback fuction.");
+							session.replaceDialog("/image");
+							return;
+						}
 						session.endDialog({
 							text: msg,
 							attachments: [
@@ -1193,7 +1207,7 @@ bot.dialog('/pixiv2',[
 							]
 						});
 						fs.unlink(output);
-						setTimeout(() => {cloudinary.v2.uploader.destroy(urls.public_id,{invalidate: true},function(error, result){console.log(result);});}, 10000);
+						setTimeout(() => {cloudinary.v2.uploader.destroy(urls.public_id,{invalidate: true},function(error, result){console.log(result);});}, 15000);
 					});
 				});
 			}
