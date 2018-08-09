@@ -2068,9 +2068,11 @@ bot.dialog('/test1', function (session) {
 	session.send("ok now do \"test2\"");
 }).triggerAction({ matches: /^test1/g});
 bot.dialog('/test2', function (session) {
-	connector.delete(session.userData.a);
-	delete session.userData.a;
-	session.send("prev message should be gone");
+	connector.delete(session.userData.a, (e) => {
+		if (e) session.send(e);
+		else session.send("ok");
+		setTimeout(() => {delete session.userData.a;}, 3000);
+	});
 }).triggerAction({ matches: /^test2/g});
 
 // Setup Express Server
