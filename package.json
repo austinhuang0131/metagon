@@ -18,7 +18,6 @@
     "cloudinary": "^1.9.1",
     "botbuilder-mongodb": "^3.0.9",
     "botbuilder-line": "austinhuang0131/botbuilder-line",
-    "botbuilder-ciscospark": "austinhuang0131/botbuilder-ciscospark",
     "pixiv-app-api": "^0.11.0",
     "pixiv-img": "^0.3.1",
     "html-entities": "^1.2.1",
