@@ -17,7 +17,7 @@
     "decode-html": "^2.0.0",
     "cloudinary": "^1.9.1",
     "botbuilder-mongodb": "^3.0.9",
-    "botbuilder-line": "austinhuang0131/botbuilder-line#master",
+    "botbuilder-line": "austinhuang0131/botbuilder-line#9d8f0a81b49c5f11d0ff2239f8c5c171b062d124",
     "pixiv-app-api": "^0.11.0",
     "pixiv-img": "^0.3.1",
     "html-entities": "^1.2.1",
