@@ -125,14 +125,7 @@ const express = require('express'),
 			channelSecret: process.env.line2,
 			channelAccessToken: process.env.line3,
 			debug: true
-		})/*,
-		spark = require("botbuilder-ciscospark"),
-      cisco = new spark.connector({
-			token: process.env.SPARK_TOKEN,
-			port: process.env.PORT,
-			name: "metagon@sparkbot.io",
-			debug: true
-		})*/;
+		});
 cloudinary.config({ 
   cloud_name: 'metagon', 
   api_key: process.env.cloudinary1, 
