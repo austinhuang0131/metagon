@@ -124,7 +124,7 @@ const express = require('express'),
 	  lineConnector = line({
 			channelSecret: process.env.line2,
 			channelAccessToken: process.env.line3,
-			debug: true
+			debug: false
 		});
 cloudinary.config({ 
   cloud_name: 'metagon', 
