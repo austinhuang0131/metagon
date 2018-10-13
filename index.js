@@ -1617,7 +1617,7 @@ bot.dialog('/weather1',[
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
-			.title("Type the name of the city you'd like to check the weather for.")
+			.title("Enter the name of the city to check.")
 			.buttons([
 				builder.CardAction.imBack(session, "Back to Utility Menu", "Back to Utility Menu")
 			])
