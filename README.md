@@ -24,8 +24,6 @@ Metagon does a lot. From bringing you the nicest pictures, to providing you the 
 
 <sup>Yes, there was a Facebook version, but Facebook temporarily banned my account 3 times and at the last time permanently banned it for literally nothing. The only way to get Metagon back on its original account is to provide them my ID, which is stupid, considering Facebook is one of the most privacy-invading company of all time. That account was only used for creating the bot, so I'm not planning to get it back to Facebook.</sup>
 
-<sup>Yes, there was a Discord version, and it will come back since I decided to code it separately from the BotBuilder version.</sup>
-
 If the bot is stuck (Stopped responding / Not functioning properly) during any moment of your use, you can type `unstuck!!!` to effectively expel your trouble.
 
 # Command Reference
@@ -41,7 +39,7 @@ In most situations you can just use the startup menu. However, if you're on Grou
 * [Legal (Privacy/ToS)](/legal)
 
 # IMPORTANT! Per-Platform Issues
-* There is **no keyboard mode** on <u>GroupMe and Skype for Business</u>. **Commands only.** That's because these platforms don't support buttons.
+* There is **no keyboard mode** on <u>GroupMe and Skype for Business</u>, as well as <u>LINE Lite</u>. **Commands only.** That's because these platforms don't support buttons.
 * On <u>Skype and Slack</u>, **a <kbd>  SPACE  </kbd> is required before `/` commands in the command mode**.
 * To comply with <u>Kik</u> regulations, some commands are [not available](/kik-disabled) for good.
 
