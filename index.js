@@ -1907,6 +1907,7 @@ bot.dialog('/9gag1',[
 			msg.attachments([
 				new builder.HeroCard(session)
 				.title("Input a search query.")
+				.text("Debug: "+session.message.address.user.id)
 				.buttons([
 					builder.CardAction.imBack(session, "Back to Fun Menu", "Back to Fun Menu")
 				])
@@ -1921,7 +1922,7 @@ bot.dialog('/9gag1',[
 	function (session, results) {
 		if (nsfw.find(i => {return i.user === session.message.address.user.id;}).gag === "search") {
 			request("https://9gag.com/search?query="+results.response.replace(/^Metagon /g, ""), function(err, response, body) {
-				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'gplus', 'recaptcha']);")[0]).data;
+				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").")[0]).data;
 				if (err || !res) {
 					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
