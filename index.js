@@ -1907,7 +1907,6 @@ bot.dialog('/9gag1',[
 			msg.attachments([
 				new builder.HeroCard(session)
 				.title("Input a search query.")
-				.text("Debug: "+session.message.address.user.id)
 				.buttons([
 					builder.CardAction.imBack(session, "Back to Fun Menu", "Back to Fun Menu")
 				])
