@@ -1079,7 +1079,7 @@ bot.dialog('/pixiv1',[
 						}
 						fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
 						fs.unlink(output);
-						setTimeout(() => {cloudinary.v2.uploader.destroy(r.public_id,{invalidate: true},function(error, result){console.log(result);});}, 15000);
+						setTimeout(() => {cloudinary.v2.uploader.destroy(r.public_id,{invalidate: true},function(error, result){console.log(result);});}, 60000);
 					});
 				}).catch(e => {
 					session.send("An error occured (Pixiv-Img). Please report this, along with the chat history, to \"im@austinhuang.me\".\n\n"+e);
@@ -1127,7 +1127,7 @@ bot.dialog('/pixiv1',[
 								]
 							});
 							fs.unlink(output);
-							setTimeout(() => {cloudinary.v2.uploader.destroy(urls.public_id,{invalidate: true},function(error, result){console.log(result);});}, 15000);
+							setTimeout(() => {cloudinary.v2.uploader.destroy(urls.public_id,{invalidate: true},function(error, result){console.log(result);});}, 60000);
 						});
 					});
 					idx++;
@@ -1206,7 +1206,7 @@ bot.dialog('/pixiv2',[
 							]
 						});
 						fs.unlink(output);
-						setTimeout(() => {cloudinary.v2.uploader.destroy(urls.public_id,{invalidate: true},function(error, result){console.log(result);});}, 15000);
+						setTimeout(() => {cloudinary.v2.uploader.destroy(urls.public_id,{invalidate: true},function(error, result){console.log(result);});}, 60000);
 					});
 				});
 			}
