@@ -202,7 +202,7 @@ bot.dialog('/menu', [
 			session.send("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
 		}
 		else if (session.message.source !== "line") {
-			builder.Prompts.choice(session, "What would you like to do right now?\n\nNew commands: Birb and Duck in Images category, as well as Trivia and Cat Facts in Fun category!", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
+			builder.Prompts.choice(session, "What would you like to do right now?", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
 		}
 		else {
 			var msg = new builder.Message(session);
@@ -216,7 +216,7 @@ bot.dialog('/menu', [
 						builder.CardAction.imBack(session, "Fun", "Fun")
 					]),
 				new builder.HeroCard(session)
-					.text("New commands: Birb and Duck in Images category, as well as Trivia and Cat Facts in Fun category!")
+					.text("What would you like to do right now?")
 					.buttons([
 						builder.CardAction.imBack(session, "About", "About"),
 						builder.CardAction.imBack(session, "Feedback", "Feedback"),
@@ -1054,12 +1054,10 @@ bot.dialog('/pixiv1',[
 			}
 			else {
 				var url = illust.imageUrls.large || illust.imageUrls.medium;
-				if (illust.metaSinglePage) {url = illust.metaSinglePage.originalImageUrl;}
-				if (!url) url = illust.metaPages[0].imageUrls;
 				pixivImg(url).then(output => {
 					cloudinary.v2.uploader.upload(output, (e, r) => {
 						if (e) {
-							session.send("An error occured (Cloudinary). Please report this using the Feedback fuction.");
+              						session.send("An error occured (Cloudinary). Please report this, along with the chat history, to \"im@austinhuang.me\".\n\n"+e);
 							session.replaceDialog("/image");
 							return;
 						}
@@ -1083,8 +1081,16 @@ bot.dialog('/pixiv1',[
 						fs.unlink(output);
 						setTimeout(() => {cloudinary.v2.uploader.destroy(r.public_id,{invalidate: true},function(error, result){console.log(result);});}, 15000);
 					});
+				}).catch(e => {
+					session.send("An error occured (Pixiv-Img). Please report this, along with the chat history, to \"im@austinhuang.me\".\n\n"+e);
+					session.replaceDialog("/image");
+					return;
 				});
 			}
+		}).catch(e => {
+			session.send("An error occured (Pixiv). Please report this, along with the chat history, to \"im@austinhuang.me\".\n\n"+e);
+			session.replaceDialog("/image");
+			return;
 		});
     },
 	function (session, results) {
