@@ -1,7 +1,7 @@
 const express = require('express'),
       builder = require('botbuilder'),
       fs = require('fs'),
-      request = require('request').defaults({headers: {"User-Agent": "https://metagon.cf / im@austinhuang.me / Montreal, Canada"}}),
+      request = require('request').defaults({headers: {"User-Agent": "Metagon / im@austinhuang.me"}}),
       bodyParser = require('body-parser'),
       cloudinary = require('cloudinary'),
       decode = require('decode-html'),
@@ -168,7 +168,7 @@ bot.on('conversationUpdate', function (message) {
                 if (identity.id === message.address.bot.id) {
                     var reply = new builder.Message()
                             .address(message.address)
-                            .text("Hello everyone! This is Metagon. You can reply \"start\" to start using me! For more info, visit http://metagon.cf.");
+                            .text("Hello everyone! This is Metagon. You can reply \"start\" to start using me! For more info, visit http://metagon.austinhuang.me.");
                     bot.send(reply);
                 }
             });
@@ -178,7 +178,7 @@ bot.on('conversationUpdate', function (message) {
                 if (identity.id === message.address.bot.id) {
                     var reply = new builder.Message()
                         .address(message.address)
-                        .text("Sorry to see you go! If you experienced issue, or you'd like to see a better Metagon, please tell us at http://metagon.cf/#contact-us.");
+                        .text("Sorry to see you go! If you experienced issue, or you'd like to see a better Metagon, please tell us at http://metagon.austinhuang.me/#contact-us.");
                     bot.send(reply);
                 }
             });
@@ -190,7 +190,7 @@ bot.on('contactRelationUpdate', function (message) {
         var name = message.user ? message.user.name : null;
         var reply = new builder.Message()
                 .address(message.address)
-                .text("Hello there! This is Metagon. You can reply \"start\" to start using me! For more info, visit http://metagon.cf.");
+                .text("Hello there! This is Metagon. You can reply \"start\" to start using me! For more info, visit http://metagon.austinhuang.me.");
         bot.send(reply);
     }
 });
@@ -458,22 +458,22 @@ bot.dialog('/fun', [
 
 bot.dialog('/about', function (session) {
 	if (session.message.source === "kik") {
-		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at @austinhuang0131.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.austinhuang.me\n* If you have any questions, feel free to contact my master at @austinhuang0131.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "telegram") {
-		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at @austinhuang.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.austinhuang.me\n* If you have any questions, feel free to contact my master at @austinhuang.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "line") {
-		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master by adding me (line://ti/p/eCQ4745xqO).\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.austinhuang.me\n* If you have any questions, feel free to contact my master by adding me (line://ti/p/eCQ4745xqO).\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "skype") {
-		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.cf\n* If you have any questions, feel free to contact my master at \"live:austin.0131\".\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.austinhuang.me\n* If you have any questions, feel free to contact my master at \"live:austin.0131\".\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "slack" && session.message.address.conversation.isGroup) {
 		session.send();
 	}
 	else {
-		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation/Contact Us: http://metagon.cf\n\nDo I help you a lot? Consider a small donation (Detail in documentation)! The simplest way to use this bot is by typing \"start\".");
+		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation/Contact Us: http://metagon.austinhuang.me\n\nDo I help you a lot? Consider a small donation (Detail in documentation)! The simplest way to use this bot is by typing \"start\".");
 	}
 	if (session.message.source !== "groupme" && session.message.source !== "skypeforbusiness" && session.message.source !== "ciscospark" && session.message.text !== ("/help")) {
 		session.replaceDialog("/menu");
@@ -1902,7 +1902,7 @@ bot.dialog('/9gag1',[
 			session.replaceDialog("/fun");
 		}
 		else if (results.response.entity.endsWith("nsfw") && session.message.source === "kik") {
-			session.send("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			session.send("Function unavailable due to Kik regulations. Visit https://metagon.austinhuang.me/kik-disabled for details.");
 			session.replaceDialog("/fun");
 			return;
 		}
@@ -2001,7 +2001,7 @@ bot.dialog('/9gag2', function (session) {
 	}
 	if (gagbrds.indexOf(args[0]) > -1 && gagsubs.indexOf(args[1]) > -1) {
 		if (args[0] === "nsfw" && session.message.source === "kik") {
-			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.cf/kik-disabled for details.");
+			session.endDialog("Function unavailable due to Kik regulations. Visit https://metagon.austinhuang.me/kik-disabled for details.");
 			return;
 		}
 		request("https://9gag.com/"+args[0]+"/"+args[1], function(err, response, body) {
@@ -2054,7 +2054,7 @@ bot.dialog('/', function (session) {
 		session.endDialog(/^( ||Metagon )(hi|hello|what's up|bored|what do you do)/i.test(session.message.text) ? "Hello there! To use me, type \"start\"." : "It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.");
 	}
 	else if (session.message.source === "groupme" || session.message.source === "skypeforbusiness" || session.message.source === "ciscospark") {
-		session.endDialog(/^( ||Metagon )(hi|hello|what's up|bored|what do you do)/.test(session.message.text) ? "Hello there! To use me, read the documentation at https://metagon.cf." : "It seems like you\'re confused. Please refer to our documentation at https://metagon.cf.");
+		session.endDialog(/^( ||Metagon )(hi|hello|what's up|bored|what do you do)/.test(session.message.text) ? "Hello there! To use me, read the documentation at https://metagon.austinhuang.me." : "It seems like you\'re confused. Please refer to our documentation at https://metagon.austinhuang.me.");
 	}
 	else {
 		session.endDialog();
