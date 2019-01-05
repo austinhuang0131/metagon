@@ -263,7 +263,7 @@ bot.dialog('/image', [
 						.buttons([
 							builder.CardAction.imBack(session, "Imgur", "Imgur"),
 							builder.CardAction.imBack(session, "Flickr", "Flickr"),
-							builder.CardAction.imBack(session, "Pixiv (Anime)", "Pixiv (Anime)")
+							builder.CardAction.imBack(session, "Pixiv", "Pixiv")
 						]),
 					new builder.HeroCard(session)
 						.text("What would you like to do right now?")
@@ -287,10 +287,10 @@ bot.dialog('/image', [
 							builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu"),
 						])
 				]);
-				builder.Prompts.choice(session, msg, "Imgur|Flickr|Pixiv (Anime)|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Duck|Birb|Back to Start Menu|Quit");
+				builder.Prompts.choice(session, msg, "Imgur|Flickr|Pixiv|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Duck|Birb|Back to Start Menu|Quit");
 			break;
 			default:
-				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|Pixiv (Anime)|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Duck|Birb|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|Pixiv|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Duck|Birb|Back to Start Menu|Quit", { listStyle: 3 });
 				// IbSearch (Anime) should be added to the list whenever the function comes back
 			break;
 		}
@@ -303,7 +303,7 @@ bot.dialog('/image', [
 			case "Flickr":
 				session.replaceDialog("/flickr1");
 			break;
-			case "Pixiv (Anime)":
+			case "Pixiv":
 				session.replaceDialog("/pixiv1");
 			break;
 			case "DeviantArt":
@@ -748,7 +748,7 @@ bot.dialog('/kph', function (session) {
 				]
 			});
 			if (!session.message.text.includes("/")) {
-				session.replaceDialog("/image");
+				session.replaceDialog("/anime");
 			}
 		}
 		else {
@@ -1011,8 +1011,8 @@ bot.dialog('/pixiv1',[
 		msg.attachmentLayout(builder.AttachmentLayout.list);
 		msg.attachments([
 			new builder.HeroCard(session)
-			.title("Show NSFW content?")
-			.subtitle("Make sure you're legal to do this, because we're not liable for anything you've done!")
+			.title("Show NSFW content (R-18 and R-18G tags)?")
+			.subtitle("Make sure you're legal to do this, because we're not liable for anything you've done! This does NOT guarantee results (Some English users don't apply R-18 tags properly).")
 			.buttons([
 				builder.CardAction.imBack(session, "Yes", "Yes"),
 				builder.CardAction.imBack(session, "No", "No")
@@ -1046,6 +1046,7 @@ bot.dialog('/pixiv1',[
 			return;
 		}
 		if (session.message.source !== "line") {session.sendTyping();}
+		console.log(results.response.replace(/^Metagon /g, "")+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw);
 		pixiv.searchIllust(results.response.replace(/^Metagon /g, "")+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
 			var illust = json.illusts[Math.floor(Math.random() * json.illusts.length)];
 			if (illust === undefined) {
