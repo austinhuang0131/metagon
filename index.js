@@ -140,6 +140,7 @@ bot.use({
      botbuilder: function (session, next) {
           session.error = function (err) {
               session.endDialog("An error occured. Please report this, along with the chat history, to \"im@austinhuang.me\".\n\n"+err);
+	      console.error(err.stack);
           };
           next(); 
      }
@@ -1012,7 +1013,7 @@ bot.dialog('/pixiv1',[
 		msg.attachments([
 			new builder.HeroCard(session)
 			.title("Show NSFW content (R-18 and R-18G tags)?")
-			.subtitle("Make sure you're legal to do this, because we're not liable for anything you've done! This does NOT guarantee results (Some English users don't apply R-18 tags properly).")
+			.subtitle("This does NOT guarantee results (Some English users don't apply these tags properly). No liability on our side.")
 			.buttons([
 				builder.CardAction.imBack(session, "Yes", "Yes"),
 				builder.CardAction.imBack(session, "No", "No")
