@@ -1376,36 +1376,22 @@ bot.dialog('/mcuser1',[
 			session.replaceDialog("/utility");
 			return;
 		}
-		request('http://mcapi.de/api/user/' + results.response.replace(/^Metagon /g, ""), function(error, response, body) {
-			if (!error) {
-				var mcapi = JSON.parse(body);
-				if (mcapi.result.status === "Ok") {
-					session.send(mcapi.username+" (UUID: "+mcapi.uuid+")\n* Name history: "+mcapi.history.map(h => h.name).splice(mcapi.history.length - 1, 1).join(", ")+"\n\n== Appearance ==\n* Body: https://crafatar.com/renders/body/"+mcapi.uuid+"\n* Skin: https://crafatar.com/skins/"+mcapi.uuid+"\n* Cape: https://crafatar.com/cape/"+mcapi.uuid);
-					request('http://mcapi.de/api/user/'+mcapi.uuid+'/reputation', function(error, response, body) {
-						var mcrep = JSON.parse(body);
-						if (!body.includes('"services":[]')) {
-							session.send("Reputation: "+mcrep.reputation+"/10\n\nRecorded bans:\n\nMCBans: "+mcrep.services.mcbans[0].amount+" / Glizer: "+mcrep.services.glizer[0].amount+" / MCBouncer: "+mcrep.services.mcbouncer[0].amount);
-							session.replaceDialog("/utility");
-						}
-						else {
-							
-							session.replaceDialog("/utility");
-						}
-					});
-				}
-				else if (mcapi.result.status === "The service is currently cooling down and cannot perform any requests. Please try it later again.") {
-					session.send("The user should be cracked (Not registered with Mojang). Or the Mojang server broke. Who knows.");
-					session.replaceDialog("/utility");
-				}
-				else {
-					session.send("An error occurred.");
-					session.replaceDialog("/utility");
-				}
+		let username = results.response.replace(/^Metagon /g, "").replace(/-/g, "");
+		request('https://api.mojang.com/users/profiles/minecraft/' + username, {json: true}, function(error, response, body) {
+			if (response.statusCode === 204 && username.length !== 32) {
+				session.send("This is not a valid Minecraft username.");
+			}
+			else if (!error) {
+				username = username.length !== 32 ? body.id : username;
+				request("https://api.mojang.com/user/profiles/"+username+"/names", {json: true}, (e1, r1, b1) => {
+					let names = !e1 ? body.map(r => r.name).join(", ") : "*Not available*";
+					session.send("* UUID: " + username + "\n* Name history: " + names);
+				});
 			}
 			else {
 				session.send("An error occurred.");
-				session.replaceDialog("/utility");
 			}
+			session.replaceDialog("/utility");
 		});
     }
 ]);
