@@ -1460,18 +1460,14 @@ bot.dialog('/mcserver1',[
 			session.replaceDialog("/utility");
 			return;
 		}
-		var ip = {};
-		if (results.response.replace(/^Metagon /g, "").split(":")[1] === undefined) {
-			ip = {ip: results.response.replace(/^Metagon /g, "")};
-		}
-		else {
-			ip = {ip: results.response.replace(/^Metagon /g, "").split(":")[0], port: results.response.replace(/^Metagon /g, "").split(":")[1]};
-		}
-		request.post('https://mcapi.de/api/server/', {json: ip}, function(error, response, body) {
+		request.get('https://api.mcsrvstat.us/1/'+results.response.replace(/^Metagon /g, ""), {json: true}, function(error, response, body) {
 			if (!error) {
-				if (body.result.status === "success") {
+				if (body.offline) {
+					session.send("This server seems to be offline. \n\nIP: " + (!body.ip ? "Cannot detect" : body.ip) + ", Port: " + (!body.port ? "Cannot detect" : body.port) + ", Hostname: " + (!body.hostname ? "Cannot detect" : body.hostname));
+				 }
+				else {
 					session.send({
-						text: results.response.replace(/^Metagon /g, "")+" ("+body.hostname+")\n* Players: "+body.players.online+"/"+body.players.max+"\n* Blocked by Mojang: "+body.blocked.status+"\n* Software: "+body.software.name+", MC Version "+body.software.version+"\n* Ping: "+body.list.ping+"ms",
+						text: body.ip+":"+body.port+" ("+body.hostname+")\n* Players: "+body.players.online+"/"+body.players.max+"\n* Software: "+body.software+", Version: "+body.version+"\n* MOTD: "+body.motd.clean.join("\n\n"),
 						attachments: [
 							{
 								contentType: "image/*",
@@ -1479,12 +1475,8 @@ bot.dialog('/mcserver1',[
 							}
 						]
 					});
-					session.replaceDialog("/utility");
 				}
-				else {
-					session.send('Your input is invalid, or the server you requested is offline, or maybe you just need a retry.\nYour input is '+results.response.replace(/^Metagon /g, ""));
-					session.replaceDialog("/utility");
-				}
+				session.replaceDialog("/utility");
 			}
 			else {
 				session.send("An error occurred.");
@@ -1498,29 +1490,21 @@ bot.dialog('/mcserver2', function (session) {
 		session.send("Missing search query! /mcserver (Hostname or IP)");
 		return;
 	}
-	var ip = {};
-	if (session.message.text.replace("/mcserver", "").replace(" ", "").split(":")[1] === undefined) {
-		ip.ip = session.message.text.replace("/mcserver", "").replace(" ", "");
-	}
-	else {
-		ip.ip = session.message.text.replace("/mcserver", "").replace(" ", "").split(":")[0];
-		ip.port = session.message.text.replace("/mcserver", "").replace(" ", "").split(":")[1];
-	}
-	request.post('https://mcapi.de/api/server/', {json: ip}, function(error, response, body) {
+	request.get('https://api.mcsrvstat.us/1/'+session.message.text.replace(/^Metagon /g, "").replace("/mcserver ", ""), {json: true}, function(error, response, body) {
 		if (!error) {
-			if (body.result.status === "success") {
-				session.endDialog({
-					text: session.message.text.substring(10)+" ("+body.hostname+")\n* Players: "+body.players.online+"/"+body.players.max+"\n* Blocked by Mojang: "+body.blocked.status+"\n* Software: "+body.software.name+", MC Version "+body.software.version+"\n* Ping: "+body.list.ping+"ms",
+			if (body.offline) {
+				session.send("This server seems to be offline. \n\nIP: " + (!body.ip ? "Cannot detect" : body.ip) + ", Port: " + (!body.port ? "Cannot detect" : body.port) + ", Hostname: " + (!body.hostname ? "Cannot detect" : body.hostname));
+			 }
+			else {
+				session.send({
+					text: body.ip+":"+body.port+" ("+body.hostname+")\n* Players: "+body.players.online+"/"+body.players.max+"\n* Software: "+body.software+", Version: "+body.version+"\n* MOTD: "+body.motd.clean.join("\n\n"),
 					attachments: [
 						{
 							contentType: "image/*",
-							contentUrl: "https://api.minetools.eu/favicon/"+session.message.text.substring(10).replace(" ", "").replace(":", "/")
+							contentUrl: "https://api.minetools.eu/favicon/"+session.message.text.replace(/^Metagon /g, "").replace("/mcserver ", "").replace(":", "/")
 						}
 					]
 				});
-			}
-			else {
-				session.endDialog('Your input is invalid, or the server you requested is offline, or maybe you just need a retry.\nYour input is '+session.message.text.substring(10));
 			}
 		}
 		else {
