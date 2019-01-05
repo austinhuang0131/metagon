@@ -1024,11 +1024,11 @@ bot.dialog('/pixiv1',[
 	function (session, results) {
 		if (results.response === false) {
 			nsfw.push({user: session.message.address.user.id, nsfw: " -R-18 -R-18G"});
-			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
+			fs.writeFileSync("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		}
 		else if (results.response === true) {
 			nsfw.push({user: session.message.address.user.id, nsfw: ""});
-			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
+			fs.writeFileSync("./nsfw.json", JSON.stringify(nsfw), "utf8");
 		}
 		var msg = new builder.Message(session);
 		msg.attachmentLayout(builder.AttachmentLayout.list);
@@ -1079,7 +1079,7 @@ bot.dialog('/pixiv1',[
 						else {
 							session.replaceDialog("/image");
 						}
-						fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
+						fs.writeFileSync("./nsfw.json", JSON.stringify(nsfw), "utf8");
 						fs.unlink(output);
 						setTimeout(() => {cloudinary.v2.uploader.destroy(r.public_id,{invalidate: true},function(error, result){console.log(result);});}, 60000);
 					});
@@ -1108,7 +1108,7 @@ bot.dialog('/pixiv1',[
 			if (session.message.source !== "line") {session.sendTyping();}
 			pixiv.illustDetail(nsfw.find(i => {return i.user === session.message.address.user.id;}).illust).then(json => {
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
-				fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
+				fs.writeFileSync("./nsfw.json", JSON.stringify(nsfw), "utf8");
 				var idx = 0;
 				function doNext() {
 					var p = json.illust.metaPages[idx];
@@ -1157,7 +1157,7 @@ bot.dialog('/pixiv2',[
 		}
 		else {
 			nsfw.push({user: session.message.address.user.id, query: session.message.text.substring(8)});
-			fs.writeFile("./nsfw.json", JSON.stringify(nsfw), "utf8");
+			fs.writeFileSync("./nsfw.json", JSON.stringify(nsfw), "utf8");
 			if (session.message.source !== "groupme" && session.message.source !== "skypeforbusiness" && session.message.source !== "ciscospark") {
 				var msg = new builder.Message(session);
 				msg.attachmentLayout(builder.AttachmentLayout.list);
