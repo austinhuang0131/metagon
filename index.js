@@ -1,7 +1,7 @@
 const express = require('express'),
       builder = require('botbuilder'),
       fs = require('fs'),
-      request = require('request').defaults({headers: {"User-Agent": "Metagon / im@austinhuang.me"}}),
+      request = require('request').defaults({headers: {"User-Agent": "https://metagon.austinhuang.me / im@austinhuang.me"}}),
       bodyParser = require('body-parser'),
       cloudinary = require('cloudinary'),
       decode = require('decode-html'),
@@ -459,22 +459,22 @@ bot.dialog('/fun', [
 
 bot.dialog('/about', function (session) {
 	if (session.message.source === "kik") {
-		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.austinhuang.me\n* If you have any questions, feel free to contact my master at @austinhuang0131.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\n* Documentation: http://metagon.austinhuang.me\n* Suggestions: https://feedback.austinhuang.me\n* If you have any questions, feel free to contact my master at @austinhuang0131.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "telegram") {
-		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.austinhuang.me\n* If you have any questions, feel free to contact my master at @austinhuang.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\n* Documentation: http://metagon.austinhuang.me\n* Suggestions: https://feedback.austinhuang.me\n* If you have any questions, feel free to contact my master at @austinhuang.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "line") {
-		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.austinhuang.me\n* If you have any questions, feel free to contact my master by adding me (line://ti/p/eCQ4745xqO).\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\n* Documentation: http://metagon.austinhuang.me\n* Suggestions: https://feedback.austinhuang.me\n* If you have any questions, feel free to contact my master by adding me (line://ti/p/eCQ4745xqO).\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "skype") {
-		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation: http://metagon.austinhuang.me\n* If you have any questions, feel free to contact my master at \"live:austin.0131\".\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\n* Documentation: http://metagon.austinhuang.me\n* Suggestions: https://feedback.austinhuang.me\n* If you have any questions, feel free to contact my master at \"live:austin.0131\".\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "slack" && session.message.address.conversation.isGroup) {
 		session.send();
 	}
 	else {
-		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\nDocumentation/Contact Us: http://metagon.austinhuang.me\n\nDo I help you a lot? Consider a small donation (Detail in documentation)! The simplest way to use this bot is by typing \"start\".");
+		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\n* Documentation: https://metagon.austinhuang.me\n* Contact us: https://austinhuang.me/contact\n* Suggestions: https://feedback.austinhuang.me\n\nDo I help you a lot? Consider a small donation (Detail in documentation)! The simplest way to use this bot is by typing \"start\".");
 	}
 	if (session.message.source !== "groupme" && session.message.source !== "skypeforbusiness" && session.message.source !== "ciscospark" && session.message.text !== ("/help")) {
 		session.replaceDialog("/menu");
@@ -483,38 +483,10 @@ bot.dialog('/about', function (session) {
 		session.endDialog();
 	}
 }).triggerAction({ matches: /^(\/|)help/i});
-bot.dialog('/feedback', [
-	function (session) {
-		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.list);
-		msg.attachments([
-			new builder.HeroCard(session)
-			.title("Have an idea? Found a bug? Write to us here!")
-			.subtitle("Don't spam. GroupMe/Slack/SfB/MSTeams users: Leave me your email if you need support. Line users: Leave me your username.")
-			.buttons([
-				builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu")
-			])
-		]);
-		builder.Prompts.text(session, msg);
-	},
-	function (session, results) {
-		if (results.response.replace(/^Metagon /g, "") !== "Back to Start Menu") {
-			request.post("https://maker.ifttt.com/trigger/feedback/with/key/kDnVlmQo6Z_Py2bwvlCGyLNh2y05mL_rL0CF7cAflOE", {json: {value1: session.message.address.user.name + " (" + session.message.address.user.id + ")", value2: session.message.source, value3: results.response.replace(/^Metagon /g, "")}}, function(error, response, body) {
-				// This URL is public. If you guys spam it, I'll remove it. This webhook connects to my Telegram.
-				if (!error && response.statusCode === 200 && body === "Congratulations! You've fired the feedback event") {
-					session.send("Your message is sent successfully.\n* If you are a Telegram/Kik/Skype user, or you provided your email: I'll get you in touch within 48 hours.");
-					session.replaceDialog("/menu");
-				}
-				else {
-				}
-			});
-		}
-		else {
-			session.send();
-			session.replaceDialog("/menu");
-		}
-    }
-]);
+bot.dialog('/feedback', function (session) {
+	session.send("https://feedback.austinhuang.me");
+	session.replaceDialog("/menu")
+});
 
 // Image
 bot.dialog('/cat', function (session) {
@@ -1073,7 +1045,7 @@ bot.dialog('/pixiv1',[
 						});
 						nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
 						if (illust.pageCount > 1) {
-							builder.Prompts.choice(session, "\nThis illustration contains "+illust.page_count+" pages. You can choose to...\n\nWARNING: \"View all pages\" will spam your conversation with "+illust.page_count+" images. Use with caution!", "View all pages|Restart a Search|Back to Image Menu", { listStyle: 3 });
+							builder.Prompts.choice(session, "\nThis illustration contains "+illust.pageCount+" pages. You can choose to...", "View all pages|Restart a Search|Back to Image Menu", { listStyle: 3 });
 							nsfw.push({user: session.message.address.user.id, illust: illust.id});
 						}
 						else {
@@ -1141,7 +1113,7 @@ bot.dialog('/pixiv1',[
 					}
 				}
 				doNext()
-				setTimeout(function() {session.replaceDialog("/image")}, json.response[0].metadata.pages.length * 1000 + 1000);;
+				setTimeout(function() {session.replaceDialog("/image")}, json.illust.metaPages.length * 1000 + 1000);;
 			});
 		}
 	}
@@ -1385,7 +1357,7 @@ bot.dialog('/mcuser1',[
 				username = username.length !== 32 ? body.id : username;
 				request("https://api.mojang.com/user/profiles/"+username+"/names", {json: true}, (e1, r1, b1) => {
 					let names = !e1 ? body.map(r => r.name).join(", ") : "*Not available*";
-					session.send("* UUID: " + username + "\n* Name history: " + names);
+					session.send("* UUID: " + username + "\n* Name history: " + names + "\n\n== Appearance ==\n* Body: https://crafatar.com/renders/body/"+username+"\n* Skin: https://crafatar.com/skins/"+username+"\n* Cape: https://crafatar.com/cape/"+username);
 				});
 			}
 			else {
@@ -1396,34 +1368,24 @@ bot.dialog('/mcuser1',[
     }
 ]);
 bot.dialog('/mcuser2', function (session) {
-	if (session.message.text.replace("/mcuser", "").replace(" ", "") === "") {
+	if (session.message.text.replace("/mcuser ", "").replace(/^Metagon /g, "").replace(/-/g, "") === "") {
 		session.send("Missing search query! /mcuser (Username or UUID)");
 		return;
 	}
-	request('http://mcapi.de/api/user/' + session.message.text.replace("/mcuser", "").replace(" ", ""), function(error, response, body) {
-		if (!error) {
-			var mcapi = JSON.parse(body);
-			if (mcapi.result.status === "Ok") {
-				request('http://mcapi.de/api/user/'+mcapi.uuid+'/reputation', function(error, response, body) {
-					var mcrep = JSON.parse(body);
-					session.endDialog(mcapi.username+" (UUID: "+mcapi.uuid+")\n* Name history: "+mcapi.history.map(h => h.name).splice(mcapi.history.length - 1, 1).join(", ")+"\n\n== Appearance ==\n* Body: https://crafatar.com/renders/body/"+mcapi.uuid+"\n* Skin: https://crafatar.com/skins/"+mcapi.uuid+"\n* Cape: https://crafatar.com/cape/"+mcapi.uuid);
-					request('http://mcapi.de/api/user/'+mcapi.uuid+'/reputation', function(error, response, body) {
-						var mcrep = JSON.parse(body);
-						if (!body.includes('"services":[]')) {
-							session.endDialog("Reputation: "+mcrep.reputation+"/10\n\nRecorded bans:\n\nMCBans: "+mcrep.services.mcbans[0].amount+" / Glizer: "+mcrep.services.glizer[0].amount+" / MCBouncer: "+mcrep.services.mcbouncer[0].amount);
-						}
-					});
-				});
-			}
-			else if (mcapi.result.status === "The service is currently cooling down and cannot perform any requests. Please try it later again.") {
-				session.endDialog("The user should be cracked (Not registered with Mojang). Or the Mojang server broke. Who knows.");
-			}
-			else {
-				session.endDialog("An error occurred.");
-			}
+	let username = session.message.text.replace("/mcuser ", "").replace(/^Metagon /g, "").replace(/-/g, "");
+	request('https://api.mojang.com/users/profiles/minecraft/' + username, {json: true}, function(error, response, body) {
+		if (response.statusCode === 204 && username.length !== 32) {
+			session.send("This is not a valid Minecraft username.");
+		}
+		else if (!error) {
+			username = username.length !== 32 ? body.id : username;
+			request("https://api.mojang.com/user/profiles/"+username+"/names", {json: true}, (e1, r1, b1) => {
+				let names = !e1 ? body.map(r => r.name).join(", ") : "*Not available*";
+				session.send("* UUID: " + username + "\n* Name history: " + names + "\n\n== Appearance ==\n* Body: https://crafatar.com/renders/body/"+username+"\n* Skin: https://crafatar.com/skins/"+username+"\n* Cape: https://crafatar.com/cape/"+username);
+			});
 		}
 		else {
-			session.endDialog("An error occurred.");
+			session.send("An error occurred.");
 		}
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/mcuser/g});
@@ -1446,6 +1408,7 @@ bot.dialog('/mcserver1',[
 			session.replaceDialog("/utility");
 			return;
 		}
+		if (session.message.source !== "line") {session.sendTyping();}
 		request.get('https://api.mcsrvstat.us/1/'+results.response.replace(/^Metagon /g, ""), {json: true}, function(error, response, body) {
 			if (!error) {
 				if (body.offline) {
@@ -1476,6 +1439,7 @@ bot.dialog('/mcserver2', function (session) {
 		session.send("Missing search query! /mcserver (Hostname or IP)");
 		return;
 	}
+	if (session.message.source !== "line") {session.sendTyping();}
 	request.get('https://api.mcsrvstat.us/1/'+session.message.text.replace(/^Metagon /g, "").replace("/mcserver ", ""), {json: true}, function(error, response, body) {
 		if (!error) {
 			if (body.offline) {
