@@ -459,10 +459,10 @@ bot.dialog('/fun', [
 
 bot.dialog('/about', function (session) {
 	if (session.message.source === "kik") {
-		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\n* Documentation: http://metagon.austinhuang.me\n* Suggestions: https://feedback.austinhuang.me\n* If you have any questions, feel free to contact my master at @austinhuang0131.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\n* Documentation: http://metagon.austinhuang.me\n* Suggestions: https://feedback.austinhuang.me\n* If you have any questions, feel free to contact my master at @austinhuang0131 .\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "telegram") {
-		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\n* Documentation: http://metagon.austinhuang.me\n* Suggestions: https://feedback.austinhuang.me\n* If you have any questions, feel free to contact my master at @austinhuang.\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
+		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\n* Documentation: http://metagon.austinhuang.me\n* Suggestions: https://feedback.austinhuang.me\n* If you have any questions, feel free to contact my master at @austinhuang .\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
 	}
 	else if (session.message.source === "line") {
 		session.send("Thank you for using Metagon. I am a multi-platform multi-function bot to suit your needs!\n\n* Documentation: http://metagon.austinhuang.me\n* Suggestions: https://feedback.austinhuang.me\n* If you have any questions, feel free to contact my master by adding me (line://ti/p/eCQ4745xqO).\n* Do I help you a lot? Consider a small donation (Detail in documentation)!\n* The simplest way to use this bot is by typing \"start\".");
