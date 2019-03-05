@@ -119,13 +119,7 @@ const express = require('express'),
   '"To the Force, look for guidance. Accept what fate has placed before us." -- Yoda\n',
   '"Yoda, you seek?" -- Yoda\n', '"My ally is the Force" -- Yoda\n'
 ],
-      parseString = require('xml2js').parseString,
-	  line = require("botbuilder-line"),
-	  lineConnector = line({
-			channelSecret: process.env.line2,
-			channelAccessToken: process.env.line3,
-			debug: false
-		});
+      parseString = require('xml2js').parseString;
 cloudinary.config({ 
   cloud_name: 'metagon', 
   api_key: process.env.cloudinary1, 
@@ -133,7 +127,6 @@ cloudinary.config({
 });
 var nsfw = JSON.parse(fs.readFileSync("./nsfw.json", "utf8"));
 
-bot.connector("line", lineConnector);
 //bot.connector("cisco", cisco);
 
 bot.use({
