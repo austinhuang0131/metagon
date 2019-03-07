@@ -195,7 +195,7 @@ bot.dialog('/menu', [
 		if (session.message.source === "groupme" || session.message.source === "skypeforbusiness" || session.message.source === "ciscospark") {
 			session.send("Keyboard Mode is not available on GroupMe / Skype for Business. Please use only commands.\nFor more information, type \"help\".");
 		}
-		else if (session.message.source !== "line") {
+		else if (session.message.source !== "line" && session.message.source !== "facebook") {
 			builder.Prompts.choice(session, "What would you like to do right now?", "Images|Utility|Fun|About|Feedback|Quit", { listStyle: 3 });
 		}
 		else {
@@ -249,6 +249,7 @@ bot.dialog('/image', [
 				builder.Prompts.choice(session, "What would you like to do right now?", "Cat|Dog|Snake|Bunny|Anime actions|Back to Start Menu|Quit", { listStyle: 3 });
 			break;
 			case "line":
+			case "facebook":
 				var msg = new builder.Message(session);
 				msg.attachmentLayout(builder.AttachmentLayout.carousel);
 				msg.attachments([
@@ -323,6 +324,7 @@ bot.dialog('/utility', [
 	function (session) {
 		switch (session.message.source) {
 			case "line":
+			case "facebook":
 				var msg = new builder.Message(session);
 				msg.attachmentLayout(builder.AttachmentLayout.carousel);
 				msg.attachments([
@@ -385,6 +387,7 @@ bot.dialog('/fun', [
 	function (session) {
 		switch (session.message.source) {
 			case "line":
+			case "facebook":
 				var msg = new builder.Message(session);
 				msg.attachmentLayout(builder.AttachmentLayout.carousel);
 				msg.attachments([
@@ -487,12 +490,12 @@ bot.dialog('/cat', function (session) {
 	request('https://aws.random.cat/meow', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
-			var type = body.file.endsWith(".gif") ? "gif" : "*";
+			var type = body.file.endsWith(".gif") ? "gif" : "jpeg";
 			session.endDialog({
 				attachments: [
 					{
 						contentType: "image/" + type,
-						contentUrl: body.file.replace("http://", "https://")
+						contentUrl: body.file
 					}
 				]
 			});
@@ -1747,7 +1750,7 @@ bot.dialog('/trivia2', function (session) {
 
 bot.dialog('/9gag1',[
 	function (session) {
-		if (session.message.source === "line") {
+		if (session.message.source === "line" || session.message.source === "facebook") {
 			var msg = new builder.Message(session);
 			msg.attachmentLayout(builder.AttachmentLayout.carousel);
 			msg.attachments([
@@ -1989,22 +1992,6 @@ bot.dialog('/', function (session) {
 		session.endDialog();
 	}
 });
-
-// Test
-bot.dialog('/test1', function (session) {
-	session.send("ok wait some sec then do \"test2\"");
-	setTimeout(() => {
-		session.userData.a = session.message.address;
-		session.send(session.message.text);
-	}, 5000);
-}).triggerAction({ matches: /^test1/g});
-bot.dialog('/test2', function (session) {
-	connector.delete(session.userData.a, (e) => {
-		if (e) session.send("error:"+e);
-		else session.send("ok");
-		setTimeout(() => {delete session.userData.a;}, 3000);
-	});
-}).triggerAction({ matches: /^test2/g});
 
 // Setup Express Server
 var server = express();
