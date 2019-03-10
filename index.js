@@ -490,14 +490,14 @@ bot.dialog('/cat', function (session) {
 	request('https://aws.random.cat/meow', {json: true}, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			console.log(body.file.replace("http://", "https://"));
-			session.endDialog({
+			session.send({
 				attachments: [
 					{
 						contentType: "image/*",
 						contentUrl: body.file.replace("http://", "https://")
 					}
 				]
-			}).catch(console.log);
+			});
 			if (!session.message.text.includes("/cat")) session.beginDialog("/image");
 		}
 		else {
