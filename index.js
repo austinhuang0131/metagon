@@ -286,7 +286,6 @@ bot.dialog('/image', [
 			break;
 			default:
 				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|Pixiv|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Duck|Birb|Back to Start Menu|Quit", { listStyle: 3 });
-				// IbSearch (Anime) should be added to the list whenever the function comes back
 			break;
 		}
 	},
@@ -494,7 +493,8 @@ bot.dialog('/cat', function (session) {
 				attachments: [
 					{
 						contentType: "image/"+type,
-						contentUrl: body.file
+						contentUrl: body.file,
+						name: "cat."+type.replace("jpeg", "jpg")
 					}
 				]
 			});
