@@ -489,7 +489,7 @@ bot.dialog('/cat', function (session) {
 	if (session.message.source !== "line") {session.sendTyping();}
 	request('http://aws.random.cat/meow', {json: true}, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
-			var type = body.endsWith(".gif") ? "gif" : "jpeg";
+			var type = body.file.endsWith(".gif") ? "gif" : "jpeg";
 			session.send({
 				attachments: [
 					{
