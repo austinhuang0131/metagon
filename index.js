@@ -487,21 +487,21 @@ bot.dialog('/feedback', function (session) {
 // Image
 bot.dialog('/cat', function (session) {
 	if (session.message.source !== "line") {session.sendTyping();}
-	request('https://aws.random.cat/meow', {json: true}, function(error, response, body) {
+	request('http://aws.random.cat/meow', {json: true}, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
-			console.log(body.file.replace("http://", "https://"));
+			var type = body.endsWith(".gif") ? "gif" : "jpeg";
 			session.send({
 				attachments: [
 					{
-						contentType: "image/*",
-						contentUrl: body.file.replace("http://", "https://")
+						contentType: "image/"+type,
+						contentUrl: body.file
 					}
 				]
 			});
 			if (!session.message.text.includes("/cat")) session.beginDialog("/image");
 		}
 		else {
-			session.endDialog("ERROR! I could not connect to https://aws.random.cat/meow. Please retry. If the problem persists, please contact im@austinhuang.me");
+			session.endDialog("ERROR! I could not connect to http://aws.random.cat/meow. Please retry. If the problem persists, please contact im@austinhuang.me");
 		}
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/cat/g});
