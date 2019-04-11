@@ -567,7 +567,7 @@ bot.dialog('/dog', function (session) {
 bot.dialog('/bunny', function (session) {
 	if (session.message.source !== "line") {session.sendTyping();}
 	request('https://api.bunnies.io/v2/loop/random/?media=gif,mp4', function(error, response, body) {
-		if (!error && response.statusCode === 200 && session.message.source.includes("skype")) {
+		if (!error && response.statusCode === 200 && session.message.source.includes("skype") && session.message.source.includes("kik")) {
 			body = JSON.parse(body);
 			session.send({
   				attachments: [
