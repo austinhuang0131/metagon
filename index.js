@@ -1727,7 +1727,7 @@ bot.dialog('/trivia1', [
 			]);
 
 		builder.Prompts.confirm(session, session.message.source === "line" ? msg : (game+" Wanna play again?"), {listStyle: 3});
-		setTimeout(() => nsfw.splice(nsfw.indexOf(nsfw.find(r => r.user === session.message.address.user.id)), 1), 1000);
+		setTimeout(() => nsfw.splice(nsfw.indexOf(nsfw.find(r => r.user === session.message.address.user.id)), 1), 100);
 	},
 	function(session, results) {
 		if (results.response === true) session.reset("/trivia1");
