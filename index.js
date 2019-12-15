@@ -1727,7 +1727,7 @@ bot.dialog('/trivia1', [
 			]);
 
 		builder.Prompts.confirm(session, session.message.source === "line" ? msg : (game+" Wanna play again?"), {listStyle: 3});
-		nsfw.splice(nsfw.indexOf(nsfw.find(r => r.user === session.message.address.user.id)), 1);
+		setTimeout(() => nsfw.splice(nsfw.indexOf(nsfw.find(r => r.user === session.message.address.user.id)), 1), 1000);
 	},
 	function(session, results) {
 		if (results.response === true) session.reset("/trivia1");
@@ -1878,7 +1878,7 @@ bot.dialog('/9gag1',[
 		}
 		else if (results.response.entity.endsWith("Hot")) {
 			request("https://9gag.com/"+nsfw.find(i => {return i.user === session.message.address.user.id;}).gag+"/hot", function(err, response, body) {
-				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'recaptcha']);")[0]).data;
+				var res = JSON.parse(body.split("<script type=\"text/javascript\">window._config = JSON.parse(\"")[1].split("</script>\n<script type=\"text/javascript\" src=\"https://assets-9gag-fun.9cache.com/s/fab0aa49/b7627c95f4d2850eda63e6acc0329587b8189741/static/dist/web6/js/manifest.js\" crossorigin></script>")[0].replace(/\\/gi)).data;
 				if (err || !res) {
 					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
@@ -1899,7 +1899,7 @@ bot.dialog('/9gag1',[
 		}
 		else if (results.response.entity.endsWith("Fresh")) {
 			request("https://9gag.com/"+nsfw.find(i => {return i.user === session.message.address.user.id;}).gag+"/fresh", function(err, response, body) {
-				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'recaptcha']);")[0]).data;
+				var res = JSON.parse(body.split("<script type=\"text/javascript\">window._config = JSON.parse(\"")[1].split("</script>\n<script type=\"text/javascript\" src=\"https://assets-9gag-fun.9cache.com/s/fab0aa49/b7627c95f4d2850eda63e6acc0329587b8189741/static/dist/web6/js/manifest.js\" crossorigin></script>")[0].replace(/\\/gi)).data;
 				if (err || !res) {
 					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
@@ -1935,7 +1935,7 @@ bot.dialog('/9gag2', function (session) {
 			return;
 		}
 		request("https://9gag.com/"+args[0]+"/"+args[1], function(err, response, body) {
-			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'recaptcha']);")[0]).data;
+				var res = JSON.parse(body.split("<script type=\"text/javascript\">window._config = JSON.parse(\"")[1].split("</script>\n<script type=\"text/javascript\" src=\"https://assets-9gag-fun.9cache.com/s/fab0aa49/b7627c95f4d2850eda63e6acc0329587b8189741/static/dist/web6/js/manifest.js\" crossorigin></script>")[0].replace(/\\/gi)).data;
 			if (err || !res) {
 				session.endDialog("An error occured. Retry?");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
@@ -1953,7 +1953,7 @@ bot.dialog('/9gag2', function (session) {
 	}
 	else if (args[0] === "search" && args[1] !== undefined) {
 		request("https://9gag.com/search?query="+args[1], function(err, response, body) {
-			var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").loadAsynScripts(['facebook', 'twitter', 'recaptcha']);")[0]).data;
+				var res = JSON.parse(body.split("<script type=\"text/javascript\">window._config = JSON.parse(\"")[1].split("</script>\n<script type=\"text/javascript\" src=\"https://assets-9gag-fun.9cache.com/s/fab0aa49/b7627c95f4d2850eda63e6acc0329587b8189741/static/dist/web6/js/manifest.js\" crossorigin></script>")[0].replace(/\\/gi)).data;
 			if (err || !res) {
 				session.endDialog("An error occured. Retry?");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
