@@ -1899,7 +1899,7 @@ bot.dialog('/9gag1',[
 		}
 		else if (results.response.entity.endsWith("Fresh")) {
 			request("https://9gag.com/"+nsfw.find(i => {return i.user === session.message.address.user.id;}).gag+"/fresh", function(err, response, body) {
-				var res = JSON.parse(body.split("<script type=\"text/javascript\">window._config = JSON.parse(\"")[1].split("</script>\n<script type=\"text/javascript\" src=\"https://assets-9gag-fun.9cache.com/s/fab0aa49/b7627c95f4d2850eda63e6acc0329587b8189741/static/dist/web6/js/manifest.js\" crossorigin></script>")[0].replace(/\\/gi)).data;
+				var res = JSON.parse(body.split("<script type=\"text/javascript\">window._config = JSON.parse(\"")[1].split("\");</script>\n<script type=\"text/javascript\" src=\"")[0].replace(/\\/gi, "")).data;
 				if (err || !res) {
 					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
