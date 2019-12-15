@@ -1857,7 +1857,7 @@ bot.dialog('/9gag1',[
 	function (session, results) {
 		if (nsfw.find(i => {return i.user === session.message.address.user.id;}).gag === "search") {
 			request("https://9gag.com/search?query="+results.response.replace(/^Metagon /g, ""), function(err, response, body) {
-				var res = JSON.parse(body.split("GAG.App.loadConfigs(")[1].split(").")[0]).data;
+				var res = JSON.parse(body.split("<script type=\"text/javascript\">window._config = JSON.parse(\"")[1].split("\");</script>\n<script type=\"text/javascript\" src=\"")[0].replace(/\\/gi, "")).data;
 				if (err || !res) {
 					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
@@ -1878,7 +1878,7 @@ bot.dialog('/9gag1',[
 		}
 		else if (results.response.entity.endsWith("Hot")) {
 			request("https://9gag.com/"+nsfw.find(i => {return i.user === session.message.address.user.id;}).gag+"/hot", function(err, response, body) {
-				var res = JSON.parse(body.split("<script type=\"text/javascript\">window._config = JSON.parse(\"")[1].split("</script>\n<script type=\"text/javascript\" src=\"https://assets-9gag-fun.9cache.com/s/fab0aa49/b7627c95f4d2850eda63e6acc0329587b8189741/static/dist/web6/js/manifest.js\" crossorigin></script>")[0].replace(/\\/gi)).data;
+				var res = JSON.parse(body.split("<script type=\"text/javascript\">window._config = JSON.parse(\"")[1].split("\");</script>\n<script type=\"text/javascript\" src=\"")[0].replace(/\\/gi, "")).data;
 				if (err || !res) {
 					session.send("An error occured. Retry?");
 					session.replaceDialog("/fun");
@@ -1935,7 +1935,7 @@ bot.dialog('/9gag2', function (session) {
 			return;
 		}
 		request("https://9gag.com/"+args[0]+"/"+args[1], function(err, response, body) {
-				var res = JSON.parse(body.split("<script type=\"text/javascript\">window._config = JSON.parse(\"")[1].split("</script>\n<script type=\"text/javascript\" src=\"https://assets-9gag-fun.9cache.com/s/fab0aa49/b7627c95f4d2850eda63e6acc0329587b8189741/static/dist/web6/js/manifest.js\" crossorigin></script>")[0].replace(/\\/gi)).data;
+				var res = JSON.parse(body.split("<script type=\"text/javascript\">window._config = JSON.parse(\"")[1].split("\");</script>\n<script type=\"text/javascript\" src=\"")[0].replace(/\\/gi, "")).data;
 			if (err || !res) {
 				session.endDialog("An error occured. Retry?");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
@@ -1953,7 +1953,7 @@ bot.dialog('/9gag2', function (session) {
 	}
 	else if (args[0] === "search" && args[1] !== undefined) {
 		request("https://9gag.com/search?query="+args[1], function(err, response, body) {
-				var res = JSON.parse(body.split("<script type=\"text/javascript\">window._config = JSON.parse(\"")[1].split("</script>\n<script type=\"text/javascript\" src=\"https://assets-9gag-fun.9cache.com/s/fab0aa49/b7627c95f4d2850eda63e6acc0329587b8189741/static/dist/web6/js/manifest.js\" crossorigin></script>")[0].replace(/\\/gi)).data;
+				var res = JSON.parse(body.split("<script type=\"text/javascript\">window._config = JSON.parse(\"")[1].split("\");</script>\n<script type=\"text/javascript\" src=\"")[0].replace(/\\/gi, "")).data;
 			if (err || !res) {
 				session.endDialog("An error occured. Retry?");
 				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
