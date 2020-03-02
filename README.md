@@ -22,4 +22,4 @@ BSD-3
 * Even the license is BSD-3, rehosting the bot publicly is not allowed. If we caught so, we will ask appriopriate authorities to take it down. Don't even try.
 
 ## Documentation
-[Here](http://metagon.cf).
+[Here](https://metagon.austinhuang.me).
