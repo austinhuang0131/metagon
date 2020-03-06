@@ -1216,13 +1216,18 @@ bot.dialog('/shorten1',[
 		if (!site.startsWith("http")) {
 			site = "http://"+results.response.replace(/^Metagon /g, "");
 		}
-		request("https://api-ssl.bitly.com/v3/shorten?access_token="+process.env.bitly_token+"&longUrl="+site+"&format=txt", function(error, response, body) {
+		request("https://api-ssl.bitly.com/v4/shorten", 
+			{
+				headers: {Authorization: "Bearer "+process.env.bitly_token},
+				json: {long_url: site}
+			},
+			function(error, response, body) {
 			if (!error && response.statusCode === 200) {
-				session.send("Done! "+body);
+				session.endDialog("Done! "+body.link);
 				session.replaceDialog("/utility");
 			}
 			else {
-				session.send("An error occured. Invalid address, or retry?");
+				session.endDialog("An error occured. Invalid address, or retry?");
 				session.replaceDialog("/utility");
 			}
 		});
@@ -1244,9 +1249,14 @@ bot.dialog('/shorten2', function (session) {
 	if (!site.startsWith("http")) {
 		site = "http://"+session.message.text.replace("/shorten", "").replace(" ", "");
 	}
-	request("https://api-ssl.bitly.com/v3/shorten?access_token="+process.env.bitly_token+"&longUrl="+site+"&format=txt", function(error, response, body) {
+	request("https://api-ssl.bitly.com/v4/shorten", 
+		{
+			headers: {Authorization: "Bearer "+process.env.bitly_token},
+			json: {long_url: site}
+		},
+		function(error, response, body) {
 		if (!error && response.statusCode === 200) {
-			session.endDialog("Done! "+body);
+			session.endDialog("Done! "+body.link);
 		}
 		else {
 			session.endDialog("An error occured. Invalid address, or retry?\n\n/shorten (URL)");
@@ -1283,16 +1293,19 @@ bot.dialog('/expand1',[
 		else {
 			var site = results.response.replace(/^Metagon /g, "");
 		}
-		if (!site.startsWith("http")) {
-			site = "http://"+results.response.replace(/^Metagon /g, "");
-		}
-		request("https://api-ssl.bitly.com/v3/expand?access_token="+process.env.bitly_token+"&shortUrl="+site+"&format=txt", function(error, response, body) {
+		site = site.replace(/^http(|s):\/\//, "");
+		request("https://api-ssl.bitly.com/v4/expand", 
+			{
+				headers: {Authorization: "Bearer "+process.env.bitly_token},
+				json: {bitlink_id: site}
+			},
+			function(error, response, body) {
 			if (!error && response.statusCode === 200) {
-				session.send("Done! "+body);
+				session.endDialog("Done! "+body.long_url);
 				session.replaceDialog("/utility");
 			}
 			else {
-				session.send("An error occured. Invalid address, or retry?");
+				session.endDialog("An error occured. Invalid address, or retry?");
 				session.replaceDialog("/utility");
 			}
 		});
@@ -1311,17 +1324,21 @@ bot.dialog('/expand2', function (session){
 	else {
 		var site = session.message.text.replace("/expand", "").replace(" ", "");
 	}
-	if (!site.startsWith("http")) {
-		site = "http://"+session.message.text.replace("/expand", "").replace(" ", "");
-	}
-	request("https://api-ssl.bitly.com/v3/expand?access_token="+process.env.bitly_token+"&shortUrl="+site+"&format=txt", function(error, response, body) {
+	site = site.replace(/^http(|s):\/\//, "");
+	request("https://api-ssl.bitly.com/v4/expand", 
+		{
+			headers: {Authorization: "Bearer "+process.env.bitly_token},
+			json: {bitlink_id: site}
+		},
+		function(error, response, body) {
 		if (!error && response.statusCode === 200) {
-			session.endDialog("Done! "+body);
+			session.endDialog("Done! "+body.long_url);
 		}
 		else {
-			session.endDialog("An error occured. Invalid address, or retry?\n\n/expand (Bitly URL)");
+			session.endDialog("An error occured. Invalid address, or retry?\n\n/expand (URL)");
 		}
 	});
+
 }).triggerAction({ matches: /^( ||Metagon )\/expand/g});
 
 bot.dialog('/mcuser1',[
