@@ -12,13 +12,13 @@ const express = require('express'),
       botbuilderMongodb = require("botbuilder-mongodb"),
       bot = new builder.UniversalBot(connector).set("storage",
             botbuilderMongodb.GetMongoDBLayer({
-                  ip: "ds213199.mlab.com",
-                  port: "13199",
-                  database: "heroku_fs0bkx2s",
+                  ip: "discoin-i5e6f.mongodb.net",
+                  port: "27017",
+                  database: "metagon",
                   collection: "metagon",
-                  username: "mikhail_gorbachev",
-                  password: process.env.appkey,
-                  queryString: "heroku_fs0bkx2s"
+                  username: "austinhuang",
+                  password: process.env.MONGO_PASS,
+                  queryString: "heroku_fs0bkx2s?retryWrites=true&w=majority"
             })
       ),
       Pixiv = require('pixiv-app-api'),
