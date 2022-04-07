@@ -11,7 +11,7 @@
   "author": "austinhuang",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "botbuilder": "3.15.0",
+    "botbuilder": "4.0.6",
     "request": "^2.83.0",
     "express": "^4.16.2",
     "decode-html": "^2.0.0",
