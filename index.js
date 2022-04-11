@@ -21,9 +21,6 @@ const express = require('express'),
                   queryString: "heroku_fs0bkx2s?ssl=true&replicaSet=discoin-shard-0&authSource=admin&retryWrites=true&w=majority"
             })
       ),
-      Pixiv = require('pixiv-app-api'),
-      pixiv = new Pixiv(process.env.pixiv_username, process.env.pixiv_password),
-      pixivImg = require('pixiv-img'),
       gagbrds = ["cute", "anime-manga", "ask9gag", "awesome", "car", "comic", "darkhumor", "country", "food", "funny", "got", "gaming", "gif", "girl", "girly", "horror", "imadedis", "movie-tv", "music", "nsfw", "overwatch", "pcmr", "politics", "relationship", "satisfying", "savage", "science", "superhero", "sport", "school", "timely", "video", "wallpaper", "wtf", "starwars", "classicalartmemes", "travel", "surrealmemes"],
       gagsubs = ["hot", "fresh"],
       yoda_said = [
@@ -258,7 +255,6 @@ bot.dialog('/image', [
 						.buttons([
 							builder.CardAction.imBack(session, "Imgur", "Imgur"),
 							builder.CardAction.imBack(session, "Flickr", "Flickr"),
-							builder.CardAction.imBack(session, "Pixiv", "Pixiv")
 						]),
 					new builder.HeroCard(session)
 						.text("What would you like to do right now?")
@@ -282,10 +278,10 @@ bot.dialog('/image', [
 							builder.CardAction.imBack(session, "Back to Start Menu", "Back to Start Menu"),
 						])
 				]);
-				builder.Prompts.choice(session, msg, "Imgur|Flickr|Pixiv|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Duck|Birb|Back to Start Menu|Quit");
+				builder.Prompts.choice(session, msg, "Imgur|Flickr|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Duck|Birb|Back to Start Menu|Quit");
 			break;
 			default:
-				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|Pixiv|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Duck|Birb|Back to Start Menu|Quit", { listStyle: 3 });
+				builder.Prompts.choice(session, "What would you like to do right now?", "Imgur|Flickr|DeviantArt|Anime actions|Cat|Dog|Snake|Bunny|Duck|Birb|Back to Start Menu|Quit", { listStyle: 3 });
 			break;
 		}
 	},
@@ -296,9 +292,6 @@ bot.dialog('/image', [
 			break;
 			case "Flickr":
 				session.replaceDialog("/flickr1");
-			break;
-			case "Pixiv":
-				session.replaceDialog("/pixiv1");
 			break;
 			case "DeviantArt":
 				session.replaceDialog("/deviantart1");
@@ -972,217 +965,6 @@ bot.dialog('/deviantart2', function (session) {
 	}
 }).triggerAction({ matches: /^( ||Metagon )\/deviantart/g});
 
-bot.dialog('/pixiv1',[
-	function (session) {
-		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.list);
-		msg.attachments([
-			new builder.HeroCard(session)
-			.title("Show NSFW content (R-18 and R-18G tags)?")
-			.subtitle("This does NOT guarantee results (Some English users don't apply these tags properly). No liability on our side.")
-			.buttons([
-				builder.CardAction.imBack(session, "Yes", "Yes"),
-				builder.CardAction.imBack(session, "No", "No")
-			])
-		]);
-		builder.Prompts.confirm(session, msg);
-	},
-	function (session, results) {
-		if (results.response === false) {
-			nsfw.push({user: session.message.address.user.id, nsfw: " -R-18 -R-18G"});
-			fs.writeFileSync("./nsfw.json", JSON.stringify(nsfw), "utf8");
-		}
-		else if (results.response === true) {
-			nsfw.push({user: session.message.address.user.id, nsfw: ""});
-			fs.writeFileSync("./nsfw.json", JSON.stringify(nsfw), "utf8");
-		}
-		var msg = new builder.Message(session);
-		msg.attachmentLayout(builder.AttachmentLayout.list);
-		msg.attachments([
-			new builder.HeroCard(session)
-			.title("Input a search query.")
-			.buttons([
-				builder.CardAction.imBack(session, "Back to Image Menu", "Back to Image Menu")
-			])
-		]);
-		builder.Prompts.text(session, msg);
-	},
-	function (session, results) {
-		if (results.response.replace(/^Metagon /g, "").endsWith("Back to Image Menu")) {
-			session.replaceDialog("/image");
-			return;
-		}
-		if (session.message.source !== "line") {session.sendTyping();}
-		console.log(results.response.replace(/^Metagon /g, "")+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw);
-		pixiv.searchIllust(results.response.replace(/^Metagon /g, "")+nsfw.find(i => {return i.user === session.message.address.user.id;}).nsfw, {per_page: 100, mode: "tag"}).then(json => {
-			var illust = json.illusts[Math.floor(Math.random() * json.illusts.length)];
-			if (illust === undefined) {
-				session.send("No results.");
-				session.replaceDialog("/image");
-			}
-			else {
-				var url = illust.imageUrls.large || illust.imageUrls.medium;
-				pixivImg(url).then(output => {
-					cloudinary.v2.uploader.upload(output, (e, r) => {
-						if (e) {
-              						session.send("An error occured (Cloudinary). Please report this, along with the chat history, to \"im@austinhuang.me\".\n\n"+e);
-							session.replaceDialog("/image");
-							return;
-						}
-						session.send({
-							attachments: [
-								{
-									contentType: "image/*",
-									contentUrl: r.secure_url
-								}
-							]
-						});
-						nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
-						if (illust.pageCount > 1) {
-							builder.Prompts.choice(session, "\nThis illustration contains "+illust.pageCount+" pages. You can choose to...", "View all pages|Restart a Search|Back to Image Menu", { listStyle: 3 });
-							nsfw.push({user: session.message.address.user.id, illust: illust.id});
-						}
-						else {
-							session.replaceDialog("/image");
-						}
-						fs.writeFileSync("./nsfw.json", JSON.stringify(nsfw), "utf8");
-						fs.unlink(output);
-						setTimeout(() => {cloudinary.v2.uploader.destroy(r.public_id,{invalidate: true},function(error, result){console.log(result);});}, 60000);
-					});
-				}).catch(e => {
-					session.send("An error occured (Pixiv-Img). Please report this, along with the chat history, to \"im@austinhuang.me\".\n\n"+e);
-					session.replaceDialog("/image");
-					return;
-				});
-			}
-		}).catch(e => {
-			session.send("An error occured (Pixiv). Please report this, along with the chat history, to \"im@austinhuang.me\".\n\n"+e);
-			session.replaceDialog("/image");
-			return;
-		});
-    },
-	function (session, results) {
-		if (results.response.entity === "Restart a Search") {
-			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
-			session.reset("/pixiv1");
-		}
-		else if (results.response.entity === "Back to Image Menu") {
-			nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
-			session.replaceDialog("/image");
-		}
-		else if (results.response.entity === "View all pages") {
-			if (session.message.source !== "line") {session.sendTyping();}
-			pixiv.illustDetail(nsfw.find(i => {return i.user === session.message.address.user.id;}).illust).then(json => {
-				nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
-				fs.writeFileSync("./nsfw.json", JSON.stringify(nsfw), "utf8");
-				var idx = 0;
-				function doNext() {
-					var p = json.illust.metaPages[idx];
-					pixivImg(p.imageUrls.original).then(output => {
-						cloudinary.v2.uploader.upload(output, (e, urls) => {
-							if (e) {
-								session.send("An error occured (Cloudinary). Please report this using the Feedback fuction.");
-								return;
-							}
-							const order = json.illust.metaPages.indexOf(p) + 1;
-							session.send({
-								text: "Page "+order,
-								attachments: [
-									{
-										contentType: "image/*",
-										contentUrl: urls.secure_url
-									}
-								]
-							});
-							fs.unlink(output);
-							setTimeout(() => {cloudinary.v2.uploader.destroy(urls.public_id,{invalidate: true},function(error, result){console.log(result);});}, 60000);
-						});
-					});
-					idx++;
-					if (idx < json.illust.metaPages.length) {
-						setTimeout(doNext, 1000);
-					}
-					else {
-						return;
-					}
-				}
-				doNext()
-				setTimeout(function() {session.replaceDialog("/image")}, json.illust.metaPages.length * 1000 + 1000);;
-			});
-		}
-	}
-]);
-bot.dialog('/pixiv2',[
-	function (session) {
-		if (session.message.source === "kik") {
-			session.send('It seems like you\'re confused. Maybe try typing \"help\". Alternatively, type \"start\" to start the bot up.');
-			return;
-		}
-		else if (session.message.text.replace("/pixiv", "").replace(" ", "") === "") {
-			session.send("Missing search query! Correct usage: \"/pixiv (Query)\"")
-		}
-		else {
-			nsfw.push({user: session.message.address.user.id, query: session.message.text.substring(8)});
-			fs.writeFileSync("./nsfw.json", JSON.stringify(nsfw), "utf8");
-			if (session.message.source !== "groupme" && session.message.source !== "skypeforbusiness" && session.message.source !== "ciscospark") {
-				var msg = new builder.Message(session);
-				msg.attachmentLayout(builder.AttachmentLayout.list);
-				msg.attachments([
-					new builder.HeroCard(session)
-					.title("Show NSFW content?")
-					.subtitle("Make sure you're legal to do this, because we're not liable for anything you've done!")
-					.buttons([
-						builder.CardAction.imBack(session, "Yes", "Yes"),
-						builder.CardAction.imBack(session, "No", "No")
-					])
-				]);
-				builder.Prompts.confirm(session, msg);
-			}
-			else {
-				builder.Prompts.confirm(session, "Do you want me to show NSFW content? Make sure you're legal to do this, because we're not liable for anything you've done! Type \"yes\" or \"no\".");
-			}
-		}
-	},
-	function (session, results) {
-		if (session.message.source !== "line") {session.sendTyping();}
-		var rating = "";
-		if (results.response === false) {rating = " -R-18 -R-18G";}
-		pixiv.searchIllust(nsfw.find(i => {return i.user === session.message.address.user.id;}).query+rating, {per_page: 100, mode: "tag"}).then(json => {
-			var illust = json.illusts[Math.floor(Math.random() * json.illusts.length)];
-			if (illust === undefined) {
-				session.send("No results.");
-			}
-			else {
-				var msg = "";
-				if (illust.is_manga === true) {msg += "\nThis is a multiple-page illustration, so only the first page is shown. View the full content at http://www.pixiv.net/member_illust.php?mode=medium&illust_id="+illust.id;}
-				var url = illust.imageUrls.large || illust.imageUrls.medium;
-				if (illust.metaSinglePage) {url = illust.metaSinglePage.originalImageUrl;}
-				pixivImg(url).then(output => {
-					cloudinary.v2.uploader.upload(output, (e, urls) => {
-						if (e) {
-							session.send("An error occured (Cloudinary). Please report this using the Feedback fuction.");
-							session.replaceDialog("/image");
-							return;
-						}
-						session.endDialog({
-							text: msg,
-							attachments: [
-								{
-									contentType: "image/*",
-									contentUrl: urls.secure_url
-								}
-							]
-						});
-						fs.unlink(output);
-						setTimeout(() => {cloudinary.v2.uploader.destroy(urls.public_id,{invalidate: true},function(error, result){console.log(result);});}, 60000);
-					});
-				});
-			}
-		});
-		nsfw.splice(nsfw.indexOf(nsfw.find(i => {return i.user === session.message.address.user.id;})), 1);
-    }
-]).triggerAction({ matches: /^( ||Metagon )\/pixiv/g});
-
 // Utility
 bot.dialog('/shorten1',[
 	function (session) {
@@ -1237,7 +1019,7 @@ bot.dialog('/shorten2', function (session) {
 	if (session.message.text.replace("/shorten", "").replace(" ", "") === "") {
 		session.send("Missing query! /shorten (URL)")
 	}
-	if (session.message.text.replace("/shorten", "").replace(" ", "").startsWith("<") && session.message.text.replace("/pixiv", "").replace(" ", "").includes("|")) {
+	if (session.message.text.replace("/shorten", "").replace(" ", "").startsWith("<") && session.message.text.replace("/shorten", "").replace(" ", "").includes("|")) {
 		var site = session.message.text.replace("/shorten", "").replace(" ", "").split("|")[0].replace("<", "");
 	}
 	else if (session.message.text.replace("/shorten", "").replace(" ", "").startsWith("<")) {
@@ -1687,14 +1469,14 @@ bot.dialog('/yoda', function (session) {
 	if (!session.message.text.includes("/")) session.replaceDialog("/fun");
 }).triggerAction({ matches: /^( ||Metagon )\/yoda/g});
 bot.dialog('/design', function (session) {
-	request('http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1', function(error, response, body) {
+	request('https://quotesondesign.com/wp-json/wp/v2/posts?orderby=rand&posts_per_page=1', function(error, response, body) {
 		if (!error && response.statusCode === 200) {
 			body = JSON.parse(body);
-			session.send(body[0].content.replace("<p>", "").replace("</p>", "")+"\n\n--- "+body[0].title);
+			session.send(body[0].content.rendered.replace("<p>", "").replace("</p>", "")+"\n--- "+body[0].title.rendered);
 			if (!session.message.text.includes("/")) session.replaceDialog("/fun");
 		}
 		else {
-			session.endDialog("ERROR! I could not connect to http://quotesondesign.com/wp-json/posts. Please retry. If the problem persists, please contact im@austinhuang.me");
+			session.endDialog("ERROR! I could not connect to https://quotesondesign.com/wp-json/wp/v2/posts. Please retry. If the problem persists, please contact im@austinhuang.me");
 		}
 	});
 }).triggerAction({ matches: /^( ||Metagon )\/design/g});
